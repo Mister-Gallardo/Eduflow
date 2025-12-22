@@ -1,21 +1,18 @@
 {
   "compilerOptions": {
-    /* Логика компиляции */
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "ES2023",
     "moduleResolution": "bundler",
+
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "isolatedModules": true,
-    "noEmit": true,
 
-    /* Строгость (Strict Mode) */
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 
-    /* Проверки качества кода (Linting) */
+    "noEmit": true,
+
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
