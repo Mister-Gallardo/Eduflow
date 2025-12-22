@@ -9,13 +9,20 @@ lerna-debug.log*
 
 node_modules
 dist
+.tmp/
+*.tsbuildinfo
+.vite/
 dist-ssr
 *.local
 
+# Окружение (КРИТИЧНО)
 .env
+.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*
+!.vscode/settings.json
 !.vscode/extensions.json
 .idea
 .DS_Store
