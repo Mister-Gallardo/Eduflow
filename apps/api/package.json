@@ -4,16 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
     "build": "tsc -b",
+    "dev": "tsx watch src/server.ts",
+    "format": "prettier --log-level warn --write '{src/**/*,*}.{ts,tsx,js,json,yml,yaml,css,scss}'",
+    "lint": "eslint .",
     "start": "node dist/server.js",
-    "lint": "eslint ."
+    "types": "tsc --noEmit"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.2.1",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "tsx": "^4.19.2",
-    "@types/express": "^5.0.5"
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.4",
+    "tsx": "^4.21.0"
   }
 }

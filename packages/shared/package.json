@@ -7,8 +7,11 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "lint": "eslint ."
+    "build": "tsc",
+    "dev": "tsc --build --watch",
+    "format": "prettier --log-level warn --write '{src/**/*,*}.{ts,tsx,js,json,yml,yaml,css,scss}'",
+    "lint": "eslint .",
+    "types": "tsc --noEmit"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

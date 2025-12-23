@@ -13,5 +13,11 @@
     "source.fixAll.stylelint": "explicit"
   },
 
+  "css.validate": false,
+  "scss.validate": false,
+
+  "editor.formatOnSave": false,
+
+
   "stylelint.validate": ["css"]
 }

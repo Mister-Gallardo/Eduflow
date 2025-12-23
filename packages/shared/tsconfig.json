@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.trpc.tsbuildinfo",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.shared.tsbuildinfo",
 
     "composite": true,
     "noEmit": false,
@@ -14,10 +14,8 @@
     "lib": ["ES2023"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["../shared/src/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "references": [{ "path": "../shared" }],
   "include": ["src"]
 }

@@ -1,21 +1,24 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import tseslint from "typescript-eslint";
-import eslintJs from "@eslint/js";
-import importPlugin from "eslint-plugin-import";
-import nodePlugin from "eslint-plugin-n";
+import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
+import eslintJs from '@eslint/js'
+import importPlugin from 'eslint-plugin-import'
+import nodePlugin from 'eslint-plugin-n'
+import globals from 'globals'
+import hooksPlugin from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default defineConfig([
   /* -------------------------------------------------- */
   /* Global ignores                                     */
   /* -------------------------------------------------- */
   globalIgnores([
-    "node_modules/",
-    "**/dist/",
-    "**/*.d.ts",
-    "**/*.tsbuildinfo",
-    "eslint.config.mjs",
-    "*/jest.config.mjs",
-    "jest.config.mjs",
+    'node_modules/',
+    '**/dist/',
+    '**/*.d.ts',
+    '**/*.tsbuildinfo',
+    'eslint.config.mjs',
+    '*/jest.config.mjs',
+    'jest.config.mjs',
   ]),
 
   /* -------------------------------------------------- */
@@ -26,6 +29,7 @@ export default defineConfig([
   /* -------------------------------------------------- */
   /* TypeScript (type-aware)                            */
   /* -------------------------------------------------- */
+  ...tseslint.configs.stylisticTypeChecked,
   ...tseslint.configs.recommendedTypeChecked,
 
   /* -------------------------------------------------- */
@@ -44,35 +48,34 @@ export default defineConfig([
         //   './packages/shared/tsconfig.eslint.json',
         //   './packages/trpc/tsconfig.eslint.json',
         // ],
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ['*.mjs', 'eslint.config.mjs'],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
 
     rules: {
       /* ---------- IMPORT ORDER (РАБОТАЕТ) ---------- */
-      "import/order": [
-        "error",
+      'import/order': [
+        'error',
         {
-          alphabetize: { order: "asc", caseInsensitive: true },
-          "newlines-between": "always",
+          alphabetize: { order: 'asc', caseInsensitive: true },
+          'newlines-between': 'always',
           pathGroups: [
             {
-              pattern: "{.,..}/**/env{,.*}",
-              group: "builtin",
-              position: "before",
+              pattern: '{.,..}/**/env{,.*}',
+              group: 'builtin',
+              position: 'before',
             },
           ],
-          pathGroupsExcludedImportTypes: ["builtin"],
+          pathGroupsExcludedImportTypes: ['builtin'],
         },
       ],
-      "@typescript-eslint/consistent-type-imports": "error",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { argsIgnorePattern: "^_" },
-      ],
-      "no-new": "off",
-      "no-console": ["error", { allow: ["warn", "error", "info"] }],
+      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-new': 'off',
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
     },
   },
 
@@ -80,12 +83,15 @@ export default defineConfig([
   /* 🟦 BACKEND — apps/api                              */
   /* -------------------------------------------------- */
   {
-    files: ["apps/api/**/*.ts"],
+    files: ['apps/api/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
     plugins: {
       n: nodePlugin,
     },
     rules: {
-      "n/no-process-env": "error",
+      'n/no-process-env': 'error',
     },
   },
 
@@ -93,20 +99,35 @@ export default defineConfig([
   /* 🟩 FRONTEND — apps/web                             */
   /* -------------------------------------------------- */
   {
-    files: ["apps/web/**/*.{ts,tsx}"],
-    rules: {},
+    files: ['apps/web/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': hooksPlugin,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...hooksPlugin.configs.recommended.rules,
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        { checksVoidReturn: { attributes: false } },
+      ],
+    },
   },
 
   /* -------------------------------------------------- */
   /* 🟩 🟦 SHARED — packages/shared + trpc              */
   /* -------------------------------------------------- */
   {
-    files: ["packages/**/*.{ts,tsx}"],
+    files: ['packages/**/*.{ts,tsx}'],
     plugins: {
       n: nodePlugin,
     },
     rules: {
-      "n/no-process-env": "error",
+      'n/no-process-env': 'error',
     },
   },
-]);
+])
