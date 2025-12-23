@@ -1,5 +1,6 @@
 import express from 'express'
-import fs from 'fs'
+
+const x: number = '5'
 
 const app = express()
 const PORT = 3000
@@ -9,5 +10,5 @@ app.get('/', (_, res) => {
 })
 
 app.listen(PORT, () => {
-  console.info(`API Server is running on http://localhost:${PORT}`, typeof fs)
+  console.info(`API Server is running on http://localhost:${PORT}`, x)
 })
