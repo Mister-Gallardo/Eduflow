@@ -5,4 +5,4 @@ set -e
 pnpm lint-staged --allow-empty
 
 # Проверка типов TypeScript
-# pnpm types
+pnpm types
