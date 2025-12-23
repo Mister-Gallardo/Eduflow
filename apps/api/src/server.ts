@@ -1,6 +1,6 @@
 import express from 'express'
 
-const x: number = '5'
+const x: number = '55'
 
 const app = express()
 const PORT = 3000
