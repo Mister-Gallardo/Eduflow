@@ -1,7 +1,7 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 import eslintJs from '@eslint/js'
-import importPlugin from 'eslint-plugin-import'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import nodePlugin from 'eslint-plugin-n'
 import globals from 'globals'
 import hooksPlugin from 'eslint-plugin-react-hooks'
@@ -37,7 +37,7 @@ export default defineConfig([
   /* -------------------------------------------------- */
   {
     plugins: {
-      import: importPlugin,
+      'simple-import-sort': simpleImportSort,
     },
 
     languageOptions: {
@@ -56,22 +56,31 @@ export default defineConfig([
     },
 
     rules: {
-      /* ---------- IMPORT ORDER (РАБОТАЕТ) ---------- */
-      'import/order': [
+      /* ---------- IMPORT SORT (simple-import-sort) ---------- */
+      'simple-import-sort/imports': [
         'error',
         {
-          alphabetize: { order: 'asc', caseInsensitive: true },
-          'newlines-between': 'always',
-          pathGroups: [
-            {
-              pattern: '{.,..}/**/env{,.*}',
-              group: 'builtin',
-              position: 'before',
-            },
+          groups: [
+            // 1. env imports first
+            ['^.+/env(\\..*)?$'],
+            // 2. Side effect imports (e.g., polyfills)
+            ['^\\u0000'],
+            // 3. Node.js builtins
+            ['^node:'],
+            // 4. External packages
+            ['^@?\\w'],
+            // 5. Internal packages (aliases starting with @/ or ~)
+            ['^@/', '^~'],
+            // 6. Parent imports (../)
+            ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+            // 7. Sibling imports (./)
+            ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+            // 8. Style imports at the end
+            ['^.+\\.s?css$'],
           ],
-          pathGroupsExcludedImportTypes: ['builtin'],
         },
       ],
+      'simple-import-sort/exports': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-new': 'off',
@@ -128,6 +137,21 @@ export default defineConfig([
     },
     rules: {
       'n/no-process-env': 'error',
+    },
+  },
+
+  /* -------------------------------------------------- */
+  /* 🛠 CONFIG FILES FIX (Root configs)                 */
+  /* -------------------------------------------------- */
+  {
+    files: ['*.mjs'],
+    // Применяем это только к файлам в корне
+    ignores: ['apps/**/*', 'packages/**/*'],
+    rules: {
+      // Отключаем правила, требующие строгой типизации для конфигов
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
     },
   },
 ])
