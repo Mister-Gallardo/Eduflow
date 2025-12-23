@@ -1,9 +1,9 @@
 #!/bin/sh
-exit 0
-# set -e
+# exit 0
+set -e
 
-# # Форматируем staged файлы
-# pnpm lint-staged --allow-empty
+# Форматируем staged файлы
+pnpm lint-staged --allow-empty
 
-# # Проверка типов TypeScript
-# pnpm types
+# Проверка типов TypeScript
+pnpm types
