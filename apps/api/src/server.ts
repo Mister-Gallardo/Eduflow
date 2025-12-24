@@ -1,12 +1,12 @@
-import express from 'express'
+import { env } from './lib/env.js'
 
-const app = express()
-const PORT = 3000
+import { logger } from './lib/logger.js'
+import { createApp } from './app.js'
 
-app.get('/', (_, res) => {
-  res.status(200).json({ message: 'API Server is running successfully!' })
-})
+const app = createApp()
+
+const PORT = env.PORT
 
 app.listen(PORT, () => {
-  console.info(`API Server is running on http://localhost:${PORT}`)
+  logger.info('express', `API running on http://localhost:${PORT}`)
 })

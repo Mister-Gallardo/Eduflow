@@ -124,6 +124,34 @@ export default defineConfig([
         'error',
         { checksVoidReturn: { attributes: false } },
       ],
+
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@api/**',
+                // '!@eduflow/backend/**/',
+                // '!@ideanick/backend/**/input',
+                // '!@ideanick/backend/**/can',
+              ],
+              allowTypeImports: true,
+              message:
+                // 'Only types and input schemas are allowed to be imported from backend workspace',
+                'Only types are allowed to be imported from backend workspace',
+            },
+          ],
+        },
+      ],
+
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: '[object.type=MetaProperty][property.name=env]',
+          message: 'Use instead import { env } from "shared/config/env"',
+        },
+      ],
     },
   },
 
