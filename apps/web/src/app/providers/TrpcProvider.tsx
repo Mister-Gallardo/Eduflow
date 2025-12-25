@@ -9,9 +9,6 @@ import superjson from 'superjson'
 
 import { trpc } from '../../shared/api/trpc'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const x: number = ''
-
 const customErrorLink: TRPCLink<AppRouter> = () => {
   return ({ next, op }) => {
     return observable((observer) => {

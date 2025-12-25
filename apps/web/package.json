@@ -9,7 +9,7 @@
     "format": "prettier --log-level warn --write '{src/**/*,*}.{ts,tsx,js,json,yml,yaml,css,scss}'",
     "lint": "eslint .",
     "preview": "vite preview",
-    "types": "tsc --noEmit"
+    "types": "tsc -b"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

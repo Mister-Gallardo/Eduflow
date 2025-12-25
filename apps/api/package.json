@@ -9,7 +9,7 @@
     "format": "prettier --log-level warn --write '{src/**/*,*}.{ts,tsx,js,json,yml,yaml,css,scss}'",
     "lint": "eslint .",
     "start": "node dist/server.js",
-    "types": "tsc --noEmit"
+    "types": "tsc -b"
   },
   "dependencies": {
     "@trpc/server": "^11.8.1",
