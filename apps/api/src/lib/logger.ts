@@ -3,9 +3,9 @@ import { env } from './env.js'
 import { EOL } from 'node:os'
 
 import debug from 'debug'
-import type { TransformableInfo } from 'logform'
 import pc from 'picocolors'
 import { serializeError } from 'serialize-error'
+import type { Logform } from 'winston'
 import winston from 'winston'
 import * as yaml from 'yaml'
 
@@ -27,7 +27,7 @@ const SENSITIVE_KEYS = new Set([
   'apiKey',
 ])
 
-const redactFormat = winston.format((info: TransformableInfo) => {
+const redactFormat = winston.format((info: Logform.TransformableInfo) => {
   const seen = new WeakSet<object>()
 
   const redact = (value: unknown): unknown => {

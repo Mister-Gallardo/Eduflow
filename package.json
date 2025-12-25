@@ -11,23 +11,22 @@
     "web": "pnpm --filter @eduflow/web",
     "shared": "pnpm --filter @eduflow/shared",
     "trpc": "pnpm --filter @eduflow/trpc",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "lint:api": "pnpm api exec eslint .",
-    "lint:fix:api": "pnpm api exec eslint . --fix",
-    "lint:web": "pnpm web exec eslint .",
-    "lint:fix:web": "pnpm web exec eslint . --fix",
-    "lint:shared": "pnpm shared exec eslint .",
-    "lint:fix:shared": "pnpm shared exec eslint . --fix",
-    "lint:trpc": "pnpm trpc exec eslint .",
-    "lint:fix:trpc": "pnpm trpc exec eslint . --fix",
-    "types": "concurrently 'pnpm api types' 'pnpm web types' 'pnpm shared types' 'pnpm trpc types'",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --fix --cache",
+    "lint:api": "pnpm api exec eslint . --cache",
+    "lint:fix:api": "pnpm api exec eslint . --fix --cache",
+    "lint:web": "pnpm web exec eslint . --cache",
+    "lint:fix:web": "pnpm web exec eslint . --fix --cache",
+    "lint:shared": "pnpm shared exec eslint . --cache",
+    "lint:fix:shared": "pnpm shared exec eslint . --fix --cache",
+    "types": "pnpm -r types",
     "dev": "pnpm -r --parallel dev",
     "prettify": "pnpm -r --parallel format",
     "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/node": "^25.0.3",
     "autoprefixer": "^10.4.23",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.2",
@@ -41,7 +40,6 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.1",
-    "w": "^2.3.1"
+    "typescript-eslint": "^8.50.1"
   }
 }

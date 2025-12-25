@@ -11,6 +11,9 @@ importers:
       '@eslint/js':
         specifier: ^9.39.2
         version: 9.39.2
+      '@types/node':
+        specifier: ^25.0.3
+        version: 25.0.3
       autoprefixer:
         specifier: ^10.4.23
         version: 10.4.23(postcss@8.5.6)
@@ -53,9 +56,6 @@ importers:
       typescript-eslint:
         specifier: ^8.50.1
         version: 8.50.1(eslint@9.39.2)(typescript@5.9.3)
-      w:
-        specifier: ^2.3.1
-        version: 2.3.1
 
   apps/api:
     dependencies:
@@ -83,9 +83,6 @@ importers:
       superjson:
         specifier: ^2.2.6
         version: 2.2.6
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
       winston:
         specifier: ^3.19.0
         version: 3.19.0
@@ -105,12 +102,6 @@ importers:
       '@types/express':
         specifier: ^5.0.6
         version: 5.0.6
-      '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
-      logform:
-        specifier: ^2.7.0
-        version: 2.7.0
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -151,9 +142,6 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
     devDependencies:
-      '@types/node':
-        specifier: ^24.10.1
-        version: 24.10.4
       '@types/react':
         specifier: ^19.2.5
         version: 19.2.7
@@ -162,17 +150,15 @@ importers:
         version: 19.2.3(@types/react@19.2.7)
       '@vitejs/plugin-react':
         specifier: ^5.1.1
-        version: 5.1.2(vite@7.3.0(@types/node@24.10.4)(tsx@4.21.0)(yaml@2.8.2))
+        version: 5.1.2(vite@7.3.0(@types/node@25.0.3)(tsx@4.21.0)(yaml@2.8.2))
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
       vite:
         specifier: ^7.2.4
-        version: 7.3.0(@types/node@24.10.4)(tsx@4.21.0)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/shared: {}
-
-  packages/trpc: {}
 
 packages:
 
@@ -822,6 +808,9 @@ packages:
 
   '@types/node@24.10.4':
     resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
+
+  '@types/node@25.0.3':
+    resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -2101,9 +2090,6 @@ packages:
       yaml:
         optional: true
 
-  w@2.3.1:
-    resolution: {integrity: sha512-tsdkeVsK5xvi/zLQZimOcYshowsRJuX5mbdWZsmt+3FncCh/c82N7Ig6GSIJJSF0bjKUv7vfqtgryBr7thq4tA==}
-
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
@@ -2772,6 +2758,10 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
+  '@types/node@25.0.3':
+    dependencies:
+      undici-types: 7.16.0
+
   '@types/parse-json@4.0.2': {}
 
   '@types/prop-types@15.7.15': {}
@@ -2894,7 +2884,7 @@ snapshots:
       '@typescript-eslint/types': 8.50.1
       eslint-visitor-keys: 4.2.1
 
-  '@vitejs/plugin-react@5.1.2(vite@7.3.0(@types/node@24.10.4)(tsx@4.21.0)(yaml@2.8.2))':
+  '@vitejs/plugin-react@5.1.2(vite@7.3.0(@types/node@25.0.3)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.5)
@@ -2902,7 +2892,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.53
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.0(@types/node@24.10.4)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -4066,7 +4056,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite@7.3.0(@types/node@24.10.4)(tsx@4.21.0)(yaml@2.8.2):
+  vite@7.3.0(@types/node@25.0.3)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4075,12 +4065,10 @@ snapshots:
       rollup: 4.54.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.10.4
+      '@types/node': 25.0.3
       fsevents: 2.3.3
       tsx: 4.21.0
       yaml: 2.8.2
-
-  w@2.3.1: {}
 
   which@2.0.2:
     dependencies:
