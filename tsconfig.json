@@ -3,7 +3,6 @@
   "references": [
     { "path": "./apps/web" },
     { "path": "./apps/api" },
-    { "path": "./packages/shared" },
-    { "path": "./packages/trpc" }
+    { "path": "./packages/shared" }
   ]
 }
