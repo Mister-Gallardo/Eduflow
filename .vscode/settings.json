@@ -16,8 +16,8 @@
   "css.validate": false,
   "scss.validate": false,
 
+  "typescript.preferences.includePackageJsonAutoImports": "on",
   "editor.formatOnSave": false,
-
 
   "stylelint.validate": ["css"]
 }

@@ -19,6 +19,8 @@ export default defineConfig([
     'eslint.config.mjs',
     '*/jest.config.mjs',
     'jest.config.mjs',
+    'packages/db/prisma/seed.ts',
+    'packages/db/prisma.config.ts',
   ]),
 
   /* -------------------------------------------------- */
@@ -156,15 +158,15 @@ export default defineConfig([
   },
 
   /* -------------------------------------------------- */
-  /* 🟩 🟦 SHARED — packages/shared + trpc              */
+  /* 🟩 🟦 Packages                                      */
   /* -------------------------------------------------- */
   {
     files: ['packages/**/*.{ts,tsx}'],
     plugins: {
-      n: nodePlugin,
+      // n: nodePlugin,
     },
     rules: {
-      'n/no-process-env': 'error',
+      // 'n/no-process-env': 'error',
     },
   },
 

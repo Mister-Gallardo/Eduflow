@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Example {
+  id   String @id @default(uuid())
+  name String @unique
+}
+
+// model User {
+//   id        String   @id @default(uuid())
+//   email     String   @unique
+//   nick      String   @unique
+//   password  String
+//   name      String?
+//   avatar    String?
+//   role      Role     @default(STUDENT)
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   courses   Course[] // Курсы, которые создал пользователь (если он учитель)
+//   enrolls   Enrollment[] // Записи на курсы
+// }
+
+// enum Role {
+//   STUDENT
+//   TEACHER
+//   ADMIN
+// }
+
+// model Course {
+//   id          String   @id @default(uuid())
+//   title       String
+//   description String?
+//   published   Boolean  @default(false)
+//   authorId    String
+//   author      User     @relation(fields: [authorId], references: [id])
+//   createdAt   DateTime @default(now())
+
+//   enrollments Enrollment[]
+// }
+
+// model Enrollment {
+//   id        String   @id @default(uuid())
+//   userId    String
+//   courseId  String
+//   createdAt DateTime @default(now())
+
+//   user   User   @relation(fields: [userId], references: [id])
+//   course Course @relation(fields: [courseId], references: [id])
+
+//   @@unique([userId, courseId]) // Нельзя записаться на один курс дважды
+// }

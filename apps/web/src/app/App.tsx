@@ -5,7 +5,7 @@ function App() {
 
   if (!data) return
 
-  return <p>{data[0].desc}</p>
+  return <p>{data[0].name}</p>
 }
 
 export default App

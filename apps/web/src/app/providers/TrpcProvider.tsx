@@ -1,6 +1,6 @@
 import { env } from '../../shared/config/env'
 
-import type { AppRouter } from '@api/trpc/router.js'
+import type { AppRouter } from '@eduflow/api'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink, loggerLink, type TRPCLink } from '@trpc/react-query'
 import { observable } from '@trpc/server/observable'
@@ -17,7 +17,7 @@ const customErrorLink: TRPCLink<AppRouter> = () => {
         error: (error) => {
           // Ваша логика с Sentry
           // sentryCaptureException(error)
-          console.error('tRPC Error FFFFF:', error)
+          console.error('tRPC Error:', error)
           observer.error(error)
         },
         complete: () => observer.complete(),

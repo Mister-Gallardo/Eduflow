@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "exports": {
+    ".": "./src/server.ts"
+  },
   "scripts": {
     "build": "tsc -b",
     "dev": "tsx watch ./src/server.ts",
@@ -12,6 +15,9 @@
     "types": "tsc -b"
   },
   "dependencies": {
+    "@eduflow/db": "workspace:*",
+    "@eduflow/logger": "workspace:*",
+    "@eduflow/shared": "workspace:*",
     "@trpc/server": "^11.8.1",
     "cors": "^2.8.5",
     "debug": "^4.4.3",

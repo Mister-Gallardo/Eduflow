@@ -12,6 +12,8 @@
     "types": "tsc -b"
   },
   "dependencies": {
+    "@eduflow/shared": "workspace:*",
+    "@eduflow/api": "workspace:*",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.6",

@@ -1,11 +1,14 @@
+import path from 'node:path'
+
 import * as dotenv from 'dotenv'
 import { z } from 'zod'
 
-dotenv.config()
+dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
 
 const zEnv = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   NODE_ENV: z.enum(['development', 'production']).default('development'),
+  DATABASE_URL: z.string().min(1).max(2048),
 })
 
 // eslint-disable-next-line n/no-process-env

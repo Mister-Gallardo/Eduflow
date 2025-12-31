@@ -1,0 +1,25 @@
+{
+  "name": "@eduflow/logger",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "format": "prettier --log-level warn --write '{src/**/*,*}.{ts,tsx,js,json,yml,yaml,css,scss}'",
+    "lint": "eslint .",
+    "types": "tsc -b"
+  },
+  "dependencies": {
+    "@eduflow/shared": "workspace:*",
+    "debug": "^4.4.3",
+    "picocolors": "^1.1.1",
+    "serialize-error": "^12.0.0",
+    "winston": "^3.19.0",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.12"
+  }
+}

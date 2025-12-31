@@ -1,7 +1,6 @@
-import { env } from './env.js'
-
 import { EOL } from 'node:os'
 
+import { isFunction, omit } from '@eduflow/shared'
 import debug from 'debug'
 import pc from 'picocolors'
 import { serializeError } from 'serialize-error'
@@ -9,7 +8,8 @@ import type { Logform } from 'winston'
 import winston from 'winston'
 import * as yaml from 'yaml'
 
-import { isFunction, omit } from './utils.js'
+const NODE_ENV = process.env.NODE_ENV ?? 'development'
+const APP_NAMESPACE = process.env.APP_NAMESPACE ?? 'eduflow:api'
 
 /* ------------------------------------------------------------------ */
 /* redact sensitive fields                                            */
@@ -118,15 +118,12 @@ const devFormatter = winston.format.printf((info) => {
 /* winston logger                                                     */
 /* ------------------------------------------------------------------ */
 
-// Неймспейс проекта
-const APP_NAMESPACE = 'eduflow:api'
-
 export const winstonLogger = winston.createLogger({
   // Уровень логирования зависит от NODE_ENV
-  level: env.NODE_ENV === 'production' ? 'info' : 'debug',
+  level: NODE_ENV === 'production' ? 'info' : 'debug',
   defaultMeta: {
     service: 'backend',
-    nodeEnv: env.NODE_ENV,
+    nodeEnv: NODE_ENV,
   },
   format: winston.format.combine(
     redactFormat(),
@@ -135,7 +132,7 @@ export const winstonLogger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console({
-      format: env.NODE_ENV === 'development' ? devFormatter : winston.format.json(),
+      format: NODE_ENV === 'development' ? devFormatter : winston.format.json(),
     }),
   ],
 })

@@ -1,6 +1,5 @@
+import { db } from '@eduflow/db'
 import type { Request, Response } from 'express'
-
-// import { prisma } from '../lib/prisma'
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function createContext(opts: { req: Request; res: Response }) {
@@ -12,7 +11,7 @@ export async function createContext(opts: { req: Request; res: Response }) {
   return {
     req,
     res,
-    // prisma,
+    db,
     me,
   }
 }

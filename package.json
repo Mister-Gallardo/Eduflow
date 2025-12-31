@@ -2,27 +2,33 @@
   "name": "eduflow",
   "private": true,
   "version": "0.0.0",
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.27.0",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "api": "pnpm --filter @eduflow/api",
     "web": "pnpm --filter @eduflow/web",
+    "db": "pnpm --filter @eduflow/db",
     "shared": "pnpm --filter @eduflow/shared",
-    "trpc": "pnpm --filter @eduflow/trpc",
+    "logger": "pnpm --filter @eduflow/logger",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --fix --cache",
     "lint:api": "pnpm api exec eslint . --cache",
     "lint:fix:api": "pnpm api exec eslint . --fix --cache",
     "lint:web": "pnpm web exec eslint . --cache",
     "lint:fix:web": "pnpm web exec eslint . --fix --cache",
+    "lint:db": "pnpm db exec eslint . --cache",
+    "lint:fix:db": "pnpm db exec eslint . --fix --cache",
     "lint:shared": "pnpm shared exec eslint . --cache",
     "lint:fix:shared": "pnpm shared exec eslint . --fix --cache",
+    "lint:logger": "pnpm logger exec eslint . --cache",
+    "lint:fix:logger": "pnpm logger exec eslint . --fix --cache",
     "types": "pnpm -r types",
     "dev": "pnpm -r --parallel dev",
     "prettify": "pnpm -r --parallel format",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "pnpm db pg"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

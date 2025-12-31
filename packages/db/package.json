@@ -1,0 +1,32 @@
+{
+  "name": "@eduflow/db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "format": "prettier --log-level warn --write '{src/**/*,*}.{ts,tsx,js,json,yml,yaml,css,scss}'",
+    "pg": "prisma generate",
+    "pi": "prisma db seed",
+    "pm": "prisma migrate dev",
+    "pd": "prisma migrate deploy",
+    "pr": "prisma migrate reset",
+    "ps": "prisma studio",
+    "lint": "eslint .",
+    "types": "tsc -b"
+  },
+  "dependencies": {
+    "@eduflow/logger": "workspace:*",
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "dotenv": "^17.2.3",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.16.0",
+    "prisma": "^7.2.0",
+    "tsx": "^4.21.0"
+  }
+}
