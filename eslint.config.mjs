@@ -7,6 +7,12 @@ import globals from 'globals'
 import hooksPlugin from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
+const RESTRICTED_RELATIVE_IMPORTS = {
+  group: ['**/packages/**', '**/apps/**', '**/api/src/**', '**/web/src/**'],
+  message:
+    'Do not reference the internal directory structure. Use workspace aliases (e.g., @eduflow/db) defined in package.json.',
+}
+
 export default defineConfig([
   /* -------------------------------------------------- */
   /* Global ignores                                     */
@@ -44,21 +50,21 @@ export default defineConfig([
 
     languageOptions: {
       parserOptions: {
-        // project: [
-        //   './apps/api/tsconfig.eslint.json',
-        //   './apps/web/tsconfig.eslint.json',
-        //   './packages/shared/tsconfig.eslint.json',
-        //   './packages/trpc/tsconfig.eslint.json',
-        // ],
         projectService: {
           allowDefaultProject: ['*.mjs', 'eslint.config.mjs'],
         },
         tsconfigRootDir: import.meta.dirname,
       },
     },
-
     rules: {
       /* ---------- IMPORT SORT (simple-import-sort) ---------- */
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [RESTRICTED_RELATIVE_IMPORTS],
+        },
+      ],
+      // 'import/no-relative-packages': 'error', // Disabled for performance
       'simple-import-sort/imports': [
         'error',
         {
@@ -132,17 +138,38 @@ export default defineConfig([
         {
           patterns: [
             {
-              group: [
-                '@api/**',
-                // '!@eduflow/backend/**/',
-                // '!@ideanick/backend/**/input',
-                // '!@ideanick/backend/**/can',
-              ],
+              group: ['@eduflow/api', '@eduflow/api/**'],
               allowTypeImports: true,
-              message:
-                // 'Only types and input schemas are allowed to be imported from backend workspace',
-                'Only types are allowed to be imported from backend workspace',
+              message: 'Only types are allowed to be imported from backend workspace',
             },
+            {
+              group: ['**/api/src/**'],
+              message: 'Use workspace aliases (e.g. @eduflow/api) instead of relative paths.',
+            },
+          ],
+        },
+      ],
+
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@eduflow/db',
+              message: 'Server-only package. Do not import in web.',
+            },
+            {
+              name: '@eduflow/logger',
+              message: 'Server-only package. Do not import in web.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@eduflow/db/*', '@eduflow/logger/*'],
+              message: 'Server-only package. Do not import in web.',
+            },
+            // Re-apply the relative import restriction
+            RESTRICTED_RELATIVE_IMPORTS,
           ],
         },
       ],
