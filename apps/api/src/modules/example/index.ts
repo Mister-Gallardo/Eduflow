@@ -1,6 +1,6 @@
 import { logger } from '@eduflow/logger'
 
-import { trpc } from '../../trpc/trpc.js'
+import { procedure } from '../../trpc/trpc.js'
 
 // const values = [
 //   { id: 0, name: 'name 0', desc: 'desk of name 0. like is fckn cool!' },
@@ -11,13 +11,7 @@ import { trpc } from '../../trpc/trpc.js'
 //   { id: 5, name: 'name 5', desc: 'desk of name 5. like is fckn cool!' },
 // ]
 
-// export const exampleTrpcRoute = trpc.procedure.query(({ ctx, input }) => {
-//   logger.info('example', 'ctx', { ctx })
-//   logger.info('example', 'input', { input })
-//   return values
-// })
-
-export const exampleTrpcRoute = trpc.procedure.query(async ({ ctx }) => {
+export const exampleTrpcRoute = procedure.query(async ({ ctx }) => {
   const result = await ctx.db.example.findMany({
     select: {
       id: true,

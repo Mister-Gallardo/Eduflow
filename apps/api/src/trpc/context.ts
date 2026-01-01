@@ -6,7 +6,7 @@ export async function createContext(opts: { req: Request; res: Response }) {
   const { req, res } = opts
 
   // позже здесь будет JWT
-  const me = null
+  const me = { id: new Date().getMilliseconds() }
 
   return {
     req,
