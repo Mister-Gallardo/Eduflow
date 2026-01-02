@@ -1,8 +1,8 @@
-import { CssBaseline } from '@mui/material'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import App from './app/App.tsx'
+import { ThemeProvider } from './app/providers/ThemeProvider'
 import { TrpcProvider } from './app/providers/TrpcProvider.tsx'
 
 import './global.css'
@@ -10,16 +10,9 @@ import './global.css'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TrpcProvider>
-      <CssBaseline />
-      {/* <GlobalStyles
-        styles={
-          {
-            a: { textDecoration: 'none', color: 'inherit' },
-            '.my-custom-class': { borderRadius: 8 },
-          }
-        }
-      /> */}
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </TrpcProvider>
   </StrictMode>,
 )

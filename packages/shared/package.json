@@ -13,5 +13,7 @@
     "lint": "eslint .",
     "types": "tsc -b"
   },
-  "dependencies": {}
+  "dependencies": {
+    "zod": "^4.2.1"
+  }
 }

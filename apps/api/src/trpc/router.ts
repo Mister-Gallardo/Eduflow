@@ -1,9 +1,9 @@
-import { exampleTrpcRoute } from '../modules/example/index.js'
+import { registerTrpcRoute } from '../modules/auth/auth.router.js'
 
 import { router } from './trpc.js'
 
 export const appRouter = router({
-  example: exampleTrpcRoute,
+  register: registerTrpcRoute,
 })
 
 export type AppRouter = typeof appRouter

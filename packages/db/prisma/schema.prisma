@@ -7,9 +7,28 @@ datasource db {
   provider = "postgresql"
 }
 
-model Example {
-  id   String @id @default(uuid())
-  name String @unique
+model User {
+  id           String @id @default(cuid())
+  email        String @unique
+  fullName     String
+  passwordHash String
+
+  createdAt DateTime @default(now())
+
+  sessions Session[]
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  userId      String
+  refreshHash String
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 // model User {

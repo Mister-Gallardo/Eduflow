@@ -49,12 +49,11 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
         httpBatchLink({
           url: env.VITE_API_URL + '/trpc',
           transformer: superjson,
-          // headers: () => {
-          //   const token = Cookies.get('token')
-          //   return {
-          //     ...(token && { authorization: `Bearer ${token}` }),
-          //   }
-          // },
+          headers() {
+            return {
+              credentials: 'include',
+            }
+          },
         }),
       ],
     }),

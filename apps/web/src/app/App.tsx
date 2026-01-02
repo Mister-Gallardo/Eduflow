@@ -1,11 +1,7 @@
-import { trpc } from '../shared/api/trpc'
+import { AuthPage } from '../pages/auth'
 
 function App() {
-  const { data } = trpc.example.useQuery()
-
-  if (!data) return
-
-  return <p>{data[0].name}</p>
+  return <AuthPage />
 }
 
 export default App

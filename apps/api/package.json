@@ -19,10 +19,12 @@
     "@eduflow/logger": "workspace:*",
     "@eduflow/shared": "workspace:*",
     "@trpc/server": "^11.8.1",
+    "argon2": "^0.44.0",
     "cors": "^2.8.5",
     "debug": "^4.4.3",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "picocolors": "^1.1.1",
     "serialize-error": "^12.0.0",
     "superjson": "^2.2.6",
@@ -34,6 +36,7 @@
     "@types/cors": "^2.8.19",
     "@types/debug": "^4.1.12",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "tsx": "^4.21.0"
   }
 }

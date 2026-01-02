@@ -1,3 +1,5 @@
+import { env } from '../lib/env.js'
+
 import { logger } from '@eduflow/logger'
 import { initTRPC } from '@trpc/server'
 import superjson from 'superjson'
@@ -13,7 +15,11 @@ const trpc = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
-        isPublic: error.cause instanceof ExpectedError || error.code === 'BAD_REQUEST',
+        stack: env.NODE_ENV === 'development' ? shape.data.stack : undefined,
+        isPublic:
+          error.cause instanceof ExpectedError ||
+          error.code === 'BAD_REQUEST' ||
+          error.code === 'CONFLICT',
       },
     }
   },
@@ -27,7 +33,7 @@ export const procedure = trpc.procedure.use(async ({ path, type, next, ctx, getR
 
   const meta = {
     path,
-    userId: ctx.me?.id ?? 'anonymous',
+    userId: ctx.me?.id ?? null,
     durationMs: `${durationMs}ms`,
     input: rawInput,
   }
@@ -38,7 +44,9 @@ export const procedure = trpc.procedure.use(async ({ path, type, next, ctx, getR
   }
 
   const isExpected =
-    result.error.cause instanceof ExpectedError || result.error.code === 'BAD_REQUEST'
+    result.error.cause instanceof ExpectedError ||
+    result.error.code === 'BAD_REQUEST' ||
+    result.error.code === 'CONFLICT'
 
   if (isExpected) {
     logger.info(`trpc:${type}:expected-error`, result.error.message, meta)

@@ -1,75 +1,21 @@
-# React + TypeScript + Vite
+«Сгенерируйте секрет командой node -e "console.log(require('crypto').randomBytes(64).toString('hex'))" и добавьте его в свой .env».
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Защита от XSS (Кража токена) — МАКСИМАЛЬНАЯ
+   Как было раньше: Токены хранили в localStorage. Любой вредоносный скрипт (через зараженную npm-библиотеку или рекламный баннер) мог украсть localStorage.getItem('token') и отправить его хакеру.
+   Как у тебя: Флаг httpOnly делает куку невидимой для JavaScript. Даже если на твоем сайте выполнится чужой код, он физически не сможет достать токен.
+2. Защита от CSRF (Подделка запроса) — ВЫСОКАЯ
+   Проблема: Поскольку куки отправляются браузером автоматически, хакер мог бы создать сайт-подделку, который заставил бы твой браузер отправить запрос на твой API (например, «перевести деньги»).
+   Твое решение: Флаг sameSite: 'lax' (или 'strict') в настройках кук. Он говорит браузеру: «Не отправляй эту куку, если запрос инициирован со стороннего сайта». Это блокирует CSRF-атаки на уровне браузера.
+3. Защита при взломе базы данных — МАКСИМАЛЬНАЯ
+   Как у тебя: Ты используешь Argon2id не только для паролей, но и для Refresh-токенов.
+   Результат: Если хакер украдет всю твою базу данных (dump), он увидит только бесполезные хеши. Он не сможет превратить их обратно в рабочие токены и зайти под аккаунтами пользователей.
+4. Защита от перехвата сессии (Rotation) — ВЫСОКАЯ
+   Твое решение: Каждые 15 минут (Access TTL), когда пользователь обновляет токен, старая сессия в БД аннулируется и выдается новая.
+   Результат: Если злоумышленнику всё же удалось перехватить токен (например, через взлом прокси-сервера), он сможет пользоваться им очень недолго. При первой же попытке обновления настоящим пользователем, система увидит конфликт и «выбросит» обоих.
+5. Безопасность на уровне транспорта — ОБЯЗАТЕЛЬНАЯ
+   Флаг secure: true: Ты настроил его для production. Это гарантирует, что токены никогда не покинут компьютер пользователя через незащищенный HTTP (только зашифрованный HTTPS).
+   Есть ли «дыры»?
+   Единственный теоретический способ атаковать такую систему в 2026 году — это физический доступ к компьютеру пользователя (если он оставил разблокированный браузер) или уязвимость в самом браузере.
+   Вердикт для защиты проекта:
+   Твоя архитектура соответствует современным рекомендациям OWASP Top 10 (2025/2026). Для учебного проекта это уровень «выше ожидаемого», а для реального стартапа — это профессиональный фундамент.
+   Главное: Следи, чтобы JWT_SECRET в продакшене был действительно сложным (64 символа) и не попал в репозиторий. [1][2][3]
