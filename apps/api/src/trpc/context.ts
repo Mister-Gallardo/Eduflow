@@ -1,4 +1,5 @@
 import { db } from '@eduflow/db'
+import { logger } from '@eduflow/logger'
 import type { Request, Response } from 'express'
 
 import { verifyAccessToken } from '../lib/jwt.js'
@@ -10,19 +11,18 @@ export async function createContext(opts: { req: Request; res: Response }) {
   const cookies = req.cookies as AuthCookies | undefined
   const token = cookies?.access
 
-  if (!token) return { me: null, db, res }
+  let me: { id: string; sessionId: string } | null = null
 
-  try {
-    const payload = verifyAccessToken(token)
-
-    return {
-      me: { id: payload.sub, sessionId: payload.sessionId },
-      db,
-      res,
+  if (token) {
+    try {
+      const payload = verifyAccessToken(token)
+      me = { id: payload.sub, sessionId: payload.sessionId }
+    } catch {
+      logger.info('Invalid access token provided in cookies', 'CTX')
     }
-  } catch {
-    return { me: null, db, res }
   }
+
+  return { me, db, req, res }
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>

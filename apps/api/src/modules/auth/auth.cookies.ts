@@ -11,17 +11,17 @@ export function setAuthCookies(res: Response, tokens: { access: string; refresh:
   res.cookie('access', tokens.access, {
     httpOnly: true,
     sameSite: 'lax',
-    maxAge: ACCESS_MAX_AGE,
     secure: env.NODE_ENV === 'production',
+    maxAge: ACCESS_MAX_AGE,
     path: '/',
   })
 
   res.cookie('refresh', tokens.refresh, {
     httpOnly: true,
     sameSite: 'lax',
-    maxAge: REFRESH_MAX_AGE,
     secure: env.NODE_ENV === 'production',
-    path: '/auth',
+    maxAge: REFRESH_MAX_AGE,
+    path: '/',
   })
 }
 

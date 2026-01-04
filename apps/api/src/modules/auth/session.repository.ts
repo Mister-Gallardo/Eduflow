@@ -1,8 +1,10 @@
 import type { Prisma, PrismaClient } from '@eduflow/db'
 
+type PrismaExecutor = PrismaClient | Prisma.TransactionClient
+
 export const sessionRepository = {
   create(
-    prisma: Prisma.TransactionClient,
+    prisma: PrismaExecutor,
     data: {
       userId: string
       refreshHash: string
@@ -12,7 +14,7 @@ export const sessionRepository = {
     return prisma.session.create({ data })
   },
 
-  findValidByUser(prisma: PrismaClient, userId: string) {
+  findValidByUser(prisma: PrismaExecutor, userId: string) {
     return prisma.session.findMany({
       where: {
         userId,
@@ -22,14 +24,14 @@ export const sessionRepository = {
     })
   },
 
-  revoke(prisma: PrismaClient, sessionId: string) {
+  revoke(prisma: PrismaExecutor, sessionId: string) {
     return prisma.session.update({
       where: { id: sessionId },
       data: { revokedAt: new Date() },
     })
   },
 
-  revokeAllForUser(prisma: PrismaClient, userId: string) {
+  revokeAllForUser(prisma: PrismaExecutor, userId: string) {
     return prisma.session.updateMany({
       where: {
         userId,
@@ -37,6 +39,22 @@ export const sessionRepository = {
       },
       data: {
         revokedAt: new Date(),
+      },
+    })
+  },
+
+  deleteExpired(prisma: PrismaExecutor, now: Date) {
+    return prisma.session.deleteMany({
+      where: {
+        expiresAt: { lt: now },
+      },
+    })
+  },
+
+  deleteRevokedOlderThan(prisma: PrismaExecutor, date: Date) {
+    return prisma.session.deleteMany({
+      where: {
+        revokedAt: { not: null, lt: date },
       },
     })
   },

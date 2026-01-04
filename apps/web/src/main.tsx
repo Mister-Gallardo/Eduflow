@@ -2,16 +2,15 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import App from './app/App.tsx'
-import { ThemeProvider } from './app/providers/ThemeProvider'
-import { TrpcProvider } from './app/providers/TrpcProvider.tsx'
-
-import './global.css'
+import { SnackbarProvider, ThemeProvider, TrpcProvider } from './app/providers'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TrpcProvider>
       <ThemeProvider>
-        <App />
+        <SnackbarProvider>
+          <App />
+        </SnackbarProvider>
       </ThemeProvider>
     </TrpcProvider>
   </StrictMode>,

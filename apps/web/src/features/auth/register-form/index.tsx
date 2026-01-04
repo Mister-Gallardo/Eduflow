@@ -2,23 +2,39 @@ import { pick } from '@eduflow/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Button, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
-import { trpc } from '../../../shared/api/trpc'
-import { type RegisterFormSchema, registerFormSchema } from '../../../shared/lib/auth.schema'
+import { trpc } from '../../../shared/api'
+import { type RegisterFormSchema, registerFormSchema } from '../../../shared/lib'
+import { useSnackbar } from '../../../shared/ui'
 
 export const RegisterForm = () => {
-  const registerMutation = trpc.register.useMutation({
-    onSuccess: (data) => {
-      console.info('Успешная регистрация, ID:', data.userId)
+  const navigate = useNavigate()
+  const showSnackbar = useSnackbar()
+
+  const registerMutation = trpc.auth.register.useMutation({
+    onSuccess: () => {
+      void navigate('/')
     },
     onError: (error) => {
-      const message = error.message
-
       const isPublic = error.data?.isPublic
+      const status = error.data?.httpStatus
+      const code = error.data?.code
 
-      const code = error.data?.httpStatus
-
-      console.info(message, isPublic, code)
+      if (
+        isPublic &&
+        (status === 409 || code === 'CONFLICT' || error.message === 'Email already in use')
+      ) {
+        setError('email', {
+          type: 'server',
+          message: 'Этот Email уже зарегистрирован',
+        })
+      } else {
+        void showSnackbar({
+          message: 'Что-то пошло не так. Попробуйте еще раз.',
+          severity: 'error',
+        })
+      }
     },
   })
 
@@ -26,6 +42,7 @@ export const RegisterForm = () => {
     register,
     handleSubmit,
     trigger,
+    setError,
     formState: { errors },
   } = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),

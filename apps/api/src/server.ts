@@ -3,6 +3,7 @@ import { env } from './lib/env.js'
 import { db } from '@eduflow/db'
 import { logger } from '@eduflow/logger'
 
+import { startCronJobs } from './cron/index.js'
 import { createApp } from './app.js'
 
 const startServer = async () => {
@@ -10,6 +11,8 @@ const startServer = async () => {
     await db.$queryRawUnsafe('SELECT 1')
 
     const app = createApp()
+
+    startCronJobs()
 
     const PORT = env.PORT
 

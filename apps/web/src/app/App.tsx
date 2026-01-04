@@ -1,7 +1,7 @@
-import { AuthPage } from '../pages/auth'
+import { AppRouter } from './routes'
 
 function App() {
-  return <AuthPage />
+  return <AppRouter />
 }
 
 export default App

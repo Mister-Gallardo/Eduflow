@@ -178,7 +178,7 @@ export default defineConfig([
         'error',
         {
           selector: '[object.type=MetaProperty][property.name=env]',
-          message: 'Use instead import { env } from "shared/config/env"',
+          message: 'Use instead import { env } from "shared/config"',
         },
       ],
     },

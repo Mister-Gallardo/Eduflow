@@ -1,10 +1,10 @@
 import { env } from '../lib/env.js'
 
 import { logger } from '@eduflow/logger'
-import { initTRPC } from '@trpc/server'
+import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 
-import { ExpectedError } from '../lib/error.js' // Твой класс ошибок
+import { ExpectedError } from '../lib/error.js'
 
 import type { Context } from './context.js'
 
@@ -55,6 +55,19 @@ export const procedure = trpc.procedure.use(async ({ path, type, next, ctx, getR
   }
 
   return result
+})
+
+export const protectedProcedure = procedure.use(({ ctx, next }) => {
+  if (!ctx.me) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      me: ctx.me,
+    },
+  })
 })
 
 export const router = trpc.router
