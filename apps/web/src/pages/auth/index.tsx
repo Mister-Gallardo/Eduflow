@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom'
 import { useMe } from '../../entities/user/model/useMe'
 import { LoginForm } from '../../features/auth/login-form'
 import { RegisterForm } from '../../features/auth/register-form'
+import { logo } from '../../shared/assets'
 
 const MotionBox = motion.create(Box)
 
@@ -35,27 +36,26 @@ export const AuthPage = () => {
     >
       <Container maxWidth="sm">
         <Box sx={{ mb: 4, textAlign: 'center' }}>
-          {/* <Box
+          <Box
             component="img"
-            src="./logo_full.webp"
-            // width={190}
-            height={48}
+            src={logo}
+            height={50}
             sx={{
-              px: 4,
-              py: 1.5,
-              borderRadius: 3,
+              px: 3,
+              py: 1.25,
+              borderRadius: 2,
               backgroundColor: '#2C3444',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
             }}
-          /> */}
-          <Typography
+          />
+          {/* <Typography
             component="h1"
             fontWeight="bold"
             sx={{ mb: 1, fontSize: '28px', color: '#111827' }}
           >
             Eduflow{' '}
-          </Typography>
-          <Typography mt={1} color="text.secondary">
+          </Typography> */}
+          <Typography mt={1} color="text.secondary" sx={{ fontWeight: 300 }}>
             Интерактивная образовательная платформа
           </Typography>
         </Box>
@@ -94,7 +94,7 @@ export const AuthPage = () => {
               value="login"
               label="ВХОД"
               sx={{
-                fontWeight: authMethod === 'login' ? '600' : '550',
+                fontWeight: authMethod === 'login' ? '600' : '500',
                 color: '#9CA3AF',
                 '&.Mui-selected': {
                   color: '#111827',
@@ -110,7 +110,7 @@ export const AuthPage = () => {
               value="register"
               label="РЕГИСТРАЦИЯ"
               sx={{
-                fontWeight: authMethod === 'register' ? '600' : '550',
+                fontWeight: authMethod === 'register' ? '600' : '500',
                 color: '#9CA3AF',
                 '&.Mui-selected': {
                   color: '#111827',

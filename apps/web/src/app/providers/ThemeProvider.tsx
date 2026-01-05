@@ -1,6 +1,11 @@
 import { CssBaseline } from '@mui/material'
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 
+import '@fontsource/inter/300.css'
+import '@fontsource/inter/400.css'
+import '@fontsource/inter/500.css'
+import '@fontsource/inter/600.css'
+
 const theme = createTheme({
   typography: {
     fontFamily: 'Inter, sans-serif',
