@@ -11,9 +11,7 @@ const parsed = zEnv.safeParse(import.meta.env)
 
 if (!parsed.success) {
   const errors = z.treeifyError(parsed.error)
-
-  console.error('❌ Ошибка в переменных окружения:', JSON.stringify(errors, null, 2))
-  process.exit(1)
+  throw new Error(`❌ Ошибка в переменных окружения: ${JSON.stringify(errors, null, 2)}`)
 }
 
 export const env = parsed.data

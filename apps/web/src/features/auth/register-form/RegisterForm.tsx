@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 import { trpc } from '../../../shared/api'
+import { paths } from '../../../shared/config'
 import { type RegisterFormSchema, registerFormSchema } from '../../../shared/lib'
 import { useSnackbar } from '../../../shared/ui'
 
@@ -14,7 +15,7 @@ export const RegisterForm = () => {
 
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
-      void navigate('/')
+      void navigate(paths.home())
     },
     onError: (error) => {
       const isPublic = error.data?.isPublic

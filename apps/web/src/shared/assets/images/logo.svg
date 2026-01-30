@@ -1,0 +1,32 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    /* Общие свойства линий */
+    path, circle { 
+      stroke-width: 2.5; 
+      stroke-linecap: round; 
+      stroke-linejoin: round; 
+    }
+
+    /* РЕГУЛИРОВКА ЦВЕТА ЗДЕСЬ */
+    .circle-path { stroke: #2C3444; } /* Внешний круг */
+    .v-line      { stroke: #2C3444; } /* Вертикаль со скруглениями */
+    .t-line      { stroke: #2C3444; } /* Верхняя перекладина */
+    .m-line      { stroke: #2C3444; } /* Средняя перекладина */
+    .b-line      { stroke: #2C3444; } /* Нижняя перекладина */
+  </style>
+
+  <!-- Внешний круг -->
+  <circle class="circle-path" cx="12" cy="12" r="10"/>
+  
+  <!-- Вертикальная палочка (сохраняет скругления углов) -->
+  <path class="v-line" d="M9.5 7.5C8.67157 7.5 8 8.17157 8 9V15C8 15.8284 8.67157 16.5 9.5 16.5"/>
+  
+  <!-- Верхняя горизонтальная -->
+  <path class="t-line" d="M9.5 7.5H15.5"/>
+  
+  <!-- Средняя горизонтальная -->
+  <path class="m-line" d="M8 12H14"/>
+  
+  <!-- Нижняя горизонтальная -->
+  <path class="b-line" d="M9.5 16.5H15.5"/>
+</svg>

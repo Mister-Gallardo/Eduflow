@@ -1,3 +1,5 @@
+import { Box } from '@mui/material'
+
 import { trpc } from '../../shared/api'
 
 export const HomePage = () => {
@@ -12,10 +14,12 @@ export const HomePage = () => {
   }
 
   return (
-    <div>
+    <Box
+      sx={{ backgroundColor: { xs: 'red', sm: 'green', md: 'blue', lg: 'yellow', xl: 'purple' } }}
+    >
       {data.map((item) => (
         <div key={item.id}>{item.name}</div>
       ))}
-    </div>
+    </Box>
   )
 }

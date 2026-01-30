@@ -1,11 +1,12 @@
 import { type LoginInput, zLoginInput } from '@eduflow/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Alert, Box, Button, Collapse, TextField, Typography } from '@mui/material'
-import { useState } from 'react' // Добавили для локального состояния ошибки
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 import { trpc } from '../../../shared/api'
+import { paths } from '../../../shared/config'
 import { useSnackbar } from '../../../shared/ui'
 
 export const LoginForm = () => {
@@ -27,7 +28,7 @@ export const LoginForm = () => {
 
   const loginMutation = trpc.auth.login.useMutation({
     onSuccess: () => {
-      void navigate('/')
+      void navigate(paths.home())
     },
     onError: (error) => {
       const isPublic = error.data?.isPublic

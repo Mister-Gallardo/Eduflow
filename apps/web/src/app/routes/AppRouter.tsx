@@ -1,9 +1,7 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom'
 
-import { withHeaderRoutes, withoutHeaderRoutes } from './layouts'
-
-const router = createBrowserRouter([withHeaderRoutes, ...withoutHeaderRoutes])
+import { routeConfig } from './config'
 
 export const AppRouter = () => {
-  return <RouterProvider router={router} />
+  return <RouterProvider router={routeConfig} />
 }

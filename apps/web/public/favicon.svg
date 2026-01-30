@@ -1,0 +1,28 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    /* 1. Базовый цвет для всех элементов */
+    path, circle { 
+      stroke: #ffffff; 
+      stroke-width: 2.5; 
+      stroke-linecap: round; 
+      stroke-linejoin: round; 
+    }
+
+    /* 2. Индивидуальные цвета */
+    .v-line { stroke: #ffffff; } 
+    .t-line { stroke: #ffffff; } 
+    .m-line { stroke: #ffffff; } 
+    .b-line { stroke: #ffffff; } 
+
+    /* 3. Адаптация под светлую тему */
+    @media (prefers-color-scheme: light) {
+      circle, .v-line, .t-line, .m-line, .b-line { stroke: #2C3444; }
+    }
+  </style>
+
+  <circle cx="12" cy="12" r="10"/>
+  <path class="v-line" d="M8 9V15C8 15.8284 8.67157 16.5 9.5 16.5M8 9C8 8.17157 8.67157 7.5 9.5 7.5"/>
+  <path class="t-line" d="M9.5 7.5H15.5"/>
+  <path class="m-line" d="M8 12H14"/>
+  <path class="b-line" d="M9.5 16.5H15.5"/>
+</svg>

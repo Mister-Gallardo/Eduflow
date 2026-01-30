@@ -1,0 +1,55 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coolGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <!-- РЕГУЛИРОВКА ФИОЛЕТОВОГО: -->
+      <!-- Увеличьте первый offset (напр. до 30%) и уменьшите последний (напр. до 70%), 
+           чтобы фиолетового стало еще меньше -->
+      <stop offset="30%" stop-color="#38BDF8" /> 
+      <stop offset="50%" stop-color="#A855F7" /> 
+      <stop offset="70%" stop-color="#38BDF8" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    path, circle { 
+      stroke-width: 2.5; 
+      stroke-linecap: round; 
+      stroke-linejoin: round; 
+    }
+
+    .circle-path { 
+      stroke: url(#coolGrad); 
+      transform-origin: center;
+      <!-- animation: rotate-pause 6s infinite ease-in-out; -->
+      animation: rotate-fast 2s infinite linear;
+    }
+
+      /* СОСТОЯНИЕ ПРИ НАВЕДЕНИИ */
+    svg:hover .circle-path {
+      /* Быстрое непрерывное вращение */
+      animation: rotate-fast 1.5s infinite linear;
+    }
+
+    /* Анимация с паузой */
+    @keyframes rotate-pause {
+      0%   { transform: rotate(0deg); }
+      33%  { transform: rotate(360deg); } 
+      100% { transform: rotate(360deg); } 
+    }
+
+    /* Быстрая анимация без остановки */
+    @keyframes rotate-fast {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .letter-part { stroke: #2C3444; }
+  </style>
+
+  <circle class="circle-path" cx="12" cy="12" r="10"/>
+  
+  <path class="letter-part v-line" d="M9.5 7.5C8.67157 7.5 8 8.17157 8 9V15C8 15.8284 8.67157 16.5 9.5 16.5"/>
+  <path class="letter-part t-line" d="M9.5 7.5H15.5"/>
+  <path class="letter-part m-line" d="M9 12H14"/>
+  <path class="letter-part b-line" d="M9.5 16.5H15.5"/>
+</svg>

@@ -23,7 +23,7 @@ export default {
   // Styles (так как stylelint убрали, оставляем только prettier)
   '**/*.{scss,css}': ['prettier --log-level warn --write'],
 
-  // Prisma (полезное дополнение для твоего стека)
+  // Prisma 
   'prisma/**/*.prisma': ['prisma format'],
 
   // Config files

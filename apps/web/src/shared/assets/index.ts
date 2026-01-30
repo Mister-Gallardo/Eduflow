@@ -1,3 +1,4 @@
-import logo from './logo.webp'
+import animated_logo from './images/animated_logo.svg'
+import logo from './images/logo.svg'
 
-export { logo }
+export { animated_logo, logo }

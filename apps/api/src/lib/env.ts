@@ -22,4 +22,5 @@ if (!parsed.success) {
   console.error('❌ Ошибка в переменных окружения:', JSON.stringify(errors, null, 2))
   process.exit(1)
 }
+
 export const env = parsed.data
