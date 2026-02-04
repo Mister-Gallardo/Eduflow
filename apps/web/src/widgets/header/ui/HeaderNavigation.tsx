@@ -1,11 +1,7 @@
 import { Box, Button, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 
-interface NavigationItem {
-  label: string
-  icon?: React.ReactNode
-  to: string
-}
+import type { NavigationItem } from '../model'
 
 interface HeaderNavigationProps {
   items: NavigationItem[]

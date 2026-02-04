@@ -5,14 +5,25 @@ import {
   Slide,
   type SlideProps,
   Snackbar,
+  type SxProps,
+  type Theme,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { SnackbarContext, type SnackbarOptions } from '../../shared/ui'
+import { SnackbarContext, type SnackbarOptions } from '@/shared/ui'
 
 const AUTO_HIDE_DURATION = 5000
+
+const alertStyles: SxProps<Theme> = {
+  width: '100%',
+  maxWidth: { xs: 'auto', sm: '360px', md: '380px', lg: '420px' },
+  display: 'flex',
+  alignItems: 'center',
+  '& .MuiAlert-action': { pt: 0 },
+  cursor: 'pointer',
+}
 
 const Transition = React.forwardRef<
   HTMLDivElement,
@@ -98,14 +109,7 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
                 <CloseIcon fontSize="small" />
               </IconButton>
             }
-            sx={{
-              width: '100%',
-              maxWidth: { xs: 'auto', sm: '360px', md: '380px', lg: '420px' },
-              display: 'flex',
-              alignItems: 'center',
-              '& .MuiAlert-action': { pt: 0 },
-              cursor: 'pointer',
-            }}
+            sx={alertStyles}
             onClick={handleClose}
           >
             {snackbar.message}

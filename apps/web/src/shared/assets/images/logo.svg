@@ -25,7 +25,7 @@
   <path class="t-line" d="M9.5 7.5H15.5"/>
   
   <!-- Средняя горизонтальная -->
-  <path class="m-line" d="M8 12H14"/>
+  <path class="m-line" d="M9 12H14"/>
   
   <!-- Нижняя горизонтальная -->
   <path class="b-line" d="M9.5 16.5H15.5"/>

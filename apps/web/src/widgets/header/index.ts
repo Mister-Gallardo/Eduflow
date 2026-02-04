@@ -1,1 +1,1 @@
-export { Header, HeaderActions, HeaderNavigation } from './ui'
+export { Header, HeaderActions, HeaderNavigation, MobileNavigation } from './ui'

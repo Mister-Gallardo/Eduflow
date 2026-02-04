@@ -1,0 +1,1 @@
+export { blobStyles } from './blob'

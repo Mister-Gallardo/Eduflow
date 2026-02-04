@@ -21,7 +21,7 @@
       stroke: url(#coolGrad); 
       transform-origin: center;
       <!-- animation: rotate-pause 6s infinite ease-in-out; -->
-      animation: rotate-fast 2s infinite linear;
+      animation: rotate-fast 4s infinite linear;
     }
 
       /* СОСТОЯНИЕ ПРИ НАВЕДЕНИИ */

@@ -1,4 +1,4 @@
-import { env } from '../../shared/config/env'
+import { env } from '@/shared/config/env'
 
 import type { AppRouter } from '@eduflow/api'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -7,7 +7,7 @@ import { observable } from '@trpc/server/observable'
 import { useState } from 'react'
 import superjson from 'superjson'
 
-import { trpc } from '../../shared/api'
+import { trpc } from '@/shared/api'
 
 let refreshPromise: Promise<void> | null = null
 
@@ -72,6 +72,8 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
           enabled: () => env.MODE === 'development',
         }),
         httpBatchLink({
+          // url: 'https://k62z1cqb-3000.euw.devtunnels.ms' + '/trpc',
+          // ! ПОМЕНЯТЬ !
           url: env.VITE_API_URL + '/trpc',
           transformer: superjson,
           async fetch(url, options) {

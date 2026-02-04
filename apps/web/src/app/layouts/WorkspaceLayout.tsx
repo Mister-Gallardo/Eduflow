@@ -1,8 +1,8 @@
 import { Box } from '@mui/material'
 import { Outlet } from 'react-router-dom'
 
-import { PageContainer } from '../../shared/ui'
-import { Header } from '../../widgets/header'
+import { PageContainer } from '@/shared/ui'
+import { Header } from '@/widgets/header'
 
 export const WorkspaceLayout = () => {
   return (

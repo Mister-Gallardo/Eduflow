@@ -7,17 +7,23 @@ interface LogoProps {
   size: 'small' | 'medium' | 'large'
   isClickable?: boolean
   isAnimated?: boolean
+  showText?: boolean
 }
 
-export const Logo = ({ size, isClickable = false, isAnimated = false }: LogoProps) => {
+export const Logo = ({
+  size,
+  isClickable = false,
+  isAnimated = false,
+  showText = true,
+}: LogoProps) => {
   const height = {
-    small: 35,
+    small: 40,
     medium: 45,
     large: 55,
   }[size]
 
   const fontSize = {
-    small: 22,
+    small: 24,
     medium: 28,
     large: 36,
   }[size]
@@ -36,17 +42,19 @@ export const Logo = ({ size, isClickable = false, isAnimated = false }: LogoProp
       }}
     >
       {isAnimated ? (
-        <Box component="img" src={animated_logo} height={height} />
+        <Box component="img" src={animated_logo} height={height} alt="Логотип Eduflow" />
       ) : (
-        <Box component="img" src={logo} height={height} />
+        <Box component="img" src={logo} height={height} alt="Логотип Eduflow" />
       )}
-      <Typography
-        component="h1"
-        fontFamily="Outfit, Inter, sans-serif"
-        sx={{ fontSize: `${fontSize}px`, fontWeight: '600' }}
-      >
-        Eduflow
-      </Typography>
+      {showText && (
+        <Typography
+          component="h1"
+          fontFamily="Outfit, Inter, sans-serif"
+          sx={{ fontSize: `${fontSize}px`, fontWeight: '600' }}
+        >
+          Eduflow
+        </Typography>
+      )}
     </Box>
   )
 }

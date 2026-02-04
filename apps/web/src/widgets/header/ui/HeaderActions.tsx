@@ -21,14 +21,7 @@ const ActionButton = ({ icon, onClick, 'aria-label': ariaLabel }: HeaderAction) 
         padding: 1,
         transition: 'all 0.2s ease-in-out',
         '& svg': {
-          fontSize: 24,
-        },
-        '&:hover': {
-          backgroundColor: 'action.hover',
-          color: 'text.primary',
-        },
-        '&:active': {
-          transform: 'scale(0.95)',
+          fontSize: 26,
         },
       }}
     >

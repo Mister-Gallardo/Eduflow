@@ -1,13 +1,31 @@
 import { type LoginInput, zLoginInput } from '@eduflow/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Alert, Box, Button, Collapse, TextField, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  Collapse,
+  type SxProps,
+  TextField,
+  type Theme,
+  Typography,
+} from '@mui/material'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
-import { trpc } from '../../../shared/api'
-import { paths } from '../../../shared/config'
-import { useSnackbar } from '../../../shared/ui'
+import { trpc } from '@/shared/api'
+import { paths } from '@/shared/config'
+import { useSnackbar } from '@/shared/ui'
+
+const alertStyles: SxProps<Theme> = {
+  borderRadius: 2,
+  color: 'error.main',
+  textAlign: 'center',
+  '& .MuiAlert-message': {
+    width: '100%',
+  },
+}
 
 export const LoginForm = () => {
   const navigate = useNavigate()
@@ -100,19 +118,7 @@ export const LoginForm = () => {
       </Box>
 
       <Collapse in={!!authError}>
-        <Alert
-          severity="error"
-          icon={false}
-          variant="standard"
-          sx={{
-            borderRadius: 2,
-            color: 'error.main',
-            textAlign: 'center',
-            '& .MuiAlert-message': {
-              width: '100%',
-            },
-          }}
-        >
+        <Alert severity="error" icon={false} variant="standard" sx={alertStyles}>
           {authError}
         </Alert>
       </Collapse>
@@ -123,10 +129,9 @@ export const LoginForm = () => {
         fullWidth
         disabled={loginMutation.isPending}
         sx={{
+          mt: 1,
           py: 1.5,
-          borderRadius: 2,
-          boxShadow: 'none',
-          '&:hover': { boxShadow: 'none' },
+          textTransform: 'none',
         }}
       >
         {loginMutation.isPending ? 'Вход...' : 'Войти'}

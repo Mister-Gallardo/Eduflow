@@ -1,8 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom'
 
-import AuthPage from '../../pages/auth'
-import { HomePage } from '../../pages/home'
-import { paths } from '../../shared/config'
+import { AuthPage } from '@/pages/auth'
+import { HomePage } from '@/pages/home'
+import { LearnPage } from '@/pages/learn'
+import { paths } from '@/shared/config'
+
 import { AppLayout, AuthLayout } from '../layouts'
 
 export const routeConfig = createBrowserRouter([
@@ -22,6 +24,11 @@ export const routeConfig = createBrowserRouter([
         path: paths.home(),
         element: <HomePage />,
         handle: { header: { title: 'Главная' } },
+      },
+      {
+        path: paths.learn.root(),
+        element: <LearnPage />,
+        handle: { header: { title: 'Обучение' } },
       },
     ],
   },

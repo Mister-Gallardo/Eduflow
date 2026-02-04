@@ -1,13 +1,36 @@
 import { pick } from '@eduflow/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Box, Button, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  type SxProps,
+  TextField,
+  type Theme,
+  Typography,
+} from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
-import { trpc } from '../../../shared/api'
-import { paths } from '../../../shared/config'
-import { type RegisterFormSchema, registerFormSchema } from '../../../shared/lib'
-import { useSnackbar } from '../../../shared/ui'
+import { trpc } from '@/shared/api'
+import { paths } from '@/shared/config'
+import type { RegisterFormSchema } from '@/shared/lib'
+import { registerFormSchema } from '@/shared/lib'
+import { useSnackbar } from '@/shared/ui'
+
+const checkboxStyles: SxProps<Theme> = {
+  alignSelf: 'flex-start',
+  transition: '0.2s',
+  '&:hover': {
+    backgroundColor: 'transparent',
+    color: 'primary.main',
+    transition: '0.2s',
+  },
+  '&.Mui-checked': {
+    color: 'primary.main',
+  },
+}
 
 export const RegisterForm = () => {
   const navigate = useNavigate()
@@ -145,19 +168,7 @@ export const RegisterForm = () => {
               await trigger('terms')
             }}
             disableRipple
-            sx={{
-              color: errors.terms ? 'error.main' : 'default',
-              alignSelf: 'flex-start',
-              transition: '0.2s',
-              '&:hover': {
-                backgroundColor: 'transparent',
-                color: 'primary.main',
-                transition: '0.2s',
-              },
-              '&.Mui-checked': {
-                color: 'primary.main',
-              },
-            }}
+            sx={{ ...checkboxStyles, color: errors.terms ? 'error.main' : 'default' }}
           />
         }
         label={
@@ -182,11 +193,6 @@ export const RegisterForm = () => {
           py: 1.5,
           mt: 1,
           borderRadius: 2,
-          textTransform: 'none',
-          backgroundColor: 'primary.main',
-          '&:hover': {
-            backgroundColor: 'primary.dark',
-          },
         }}
       >
         {registerMutation.isPending ? 'Регистрация...' : 'Зарегистрироваться'}

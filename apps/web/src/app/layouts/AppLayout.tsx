@@ -1,12 +1,15 @@
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
+import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined'
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined'
-import { Box } from '@mui/material'
+import { Box, useMediaQuery, useTheme } from '@mui/material'
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
-import { paths } from '../../shared/config'
-import { Logo, PageContainer } from '../../shared/ui'
-import { Header, HeaderActions, HeaderNavigation } from '../../widgets/header'
+import { paths } from '@/shared/config'
+import { Logo, PageContainer } from '@/shared/ui'
+import { Header, HeaderActions, HeaderNavigation, MobileNavigation } from '@/widgets/header'
 
 const navigationItems = [
   {
@@ -24,37 +27,56 @@ const navigationItems = [
   },
 ]
 
-const headerActions = [
-  {
-    icon: <NotificationsOutlinedIcon />,
-    onClick: () => {
-      // TODO: Implement notifications functionality
-    },
-    'aria-label': 'Уведомления',
-  },
-  {
-    icon: <AccountCircleOutlinedIcon />,
-    onClick: () => {
-      // TODO: Implement profile menu
-    },
-    'aria-label': 'Профиль пользователя',
-  },
-]
-
 export const AppLayout = () => {
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const headerActions = [
+    {
+      icon: <NotificationsOutlinedIcon />,
+      onClick: () => {
+        // TODO: Implement notifications functionality
+      },
+      'aria-label': 'Уведомления',
+    },
+    {
+      icon: <AccountCircleOutlinedIcon />,
+      onClick: () => {
+        // TODO: Implement profile menu
+      },
+      'aria-label': 'Профиль пользователя',
+    },
+    !isDesktop && {
+      icon: mobileMenuOpen ? <CloseOutlinedIcon /> : <MenuOutlinedIcon />,
+      onClick: () => {
+        setMobileMenuOpen((prev) => !prev)
+      },
+      'aria-label': 'Меню навигации',
+    },
+  ]
+
   return (
     <>
       <Header
         containerVariant="fixed"
-        leftSlot={<Logo size="small" isClickable={true} isAnimated={false} />}
+        leftSlot={<Logo size="small" isClickable={true} isAnimated={false} showText={isDesktop} />}
         centerSlot={<HeaderNavigation items={navigationItems} />}
-        rightSlot={<HeaderActions actions={headerActions} />}
+        rightSlot={<HeaderActions actions={headerActions.filter((action) => action !== false)} />}
       />
+
       <Box component="main">
         <PageContainer variant="fixed">
           <Outlet />
         </PageContainer>
       </Box>
+
+      <MobileNavigation
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        items={navigationItems}
+      />
     </>
   )
 }

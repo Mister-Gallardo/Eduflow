@@ -1,9 +1,9 @@
 import { Box, Container, Typography } from '@mui/material'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import { useMe } from '../../entities/user'
-import { paths } from '../../shared/config'
-import { FullPageLoader, Logo } from '../../shared/ui'
+import { useMe } from '@/entities/user'
+import { paths } from '@/shared/config'
+import { FullPageLoader, Logo } from '@/shared/ui'
 
 export const AuthLayout = () => {
   const { data: meData, isLoading: meIsLoading } = useMe()
