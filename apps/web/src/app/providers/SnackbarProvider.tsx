@@ -7,11 +7,10 @@ import {
   Snackbar,
   type SxProps,
   type Theme,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
+import { useIsMobile } from '@/shared/lib'
 import { SnackbarContext, type SnackbarOptions } from '@/shared/ui'
 
 const AUTO_HIDE_DURATION = 5000
@@ -29,8 +28,7 @@ const Transition = React.forwardRef<
   HTMLDivElement,
   SlideProps & { onExited?: (node: HTMLElement) => void }
 >(function Transition(props, ref) {
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobile = useIsMobile()
 
   return (
     <Slide {...props} direction={isMobile ? 'down' : 'left'} ref={ref} onExited={props.onExited} />

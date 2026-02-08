@@ -1,5 +1,10 @@
+import analytics from './images/analytics.svg'
 import animated_logo from './images/animated_logo.svg'
+import design from './images/design.svg'
+import empty from './images/empty.svg'
 import logo from './images/logo.svg'
+import marketing from './images/marketing.svg'
 import online_learning from './images/online-learning.svg'
+import programming from './images/programming.svg'
 
-export { animated_logo, logo, online_learning }
+export { analytics, animated_logo, design, empty, logo, marketing, online_learning, programming }

@@ -1,1 +1,1 @@
-export { useMe } from './model/useMe'
+export * from './model'

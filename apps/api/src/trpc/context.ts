@@ -3,7 +3,7 @@ import { logger } from '@eduflow/logger'
 import type { Request, Response } from 'express'
 
 import { verifyAccessToken } from '../lib/jwt.js'
-import type { AuthCookies } from '../modules/auth/auth.cookies.types.js'
+import type { AuthCookies } from '../modules/auth/auth.types.js'
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function createContext(opts: { req: Request; res: Response }) {

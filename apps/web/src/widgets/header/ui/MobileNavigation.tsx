@@ -1,12 +1,4 @@
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  type SxProps,
-  type Theme,
-  Typography,
-} from '@mui/material'
+import { List, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material'
 import { BottomSheet } from '@shared/ui'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -16,16 +8,6 @@ interface MobileNavigationProps {
   open: boolean
   onClose: () => void
   items: NavigationItem[]
-}
-
-const ListItemButtonStyles: SxProps<Theme> = {
-  py: 1.75,
-  px: 2,
-  mb: 0.5,
-  borderRadius: 2,
-  '&.Mui-selected': {
-    backgroundColor: 'action.selected',
-  },
 }
 
 export const MobileNavigation = ({ open, onClose, items }: MobileNavigationProps) => {
@@ -42,7 +24,15 @@ export const MobileNavigation = ({ open, onClose, items }: MobileNavigationProps
             to={item.to}
             onClick={onClose}
             selected={location.pathname === item.to}
-            sx={ListItemButtonStyles}
+            sx={{
+              py: 1.75,
+              px: 2,
+              mb: 0.5,
+              borderRadius: 2,
+              '&.Mui-selected': {
+                backgroundColor: 'action.selected',
+              },
+            }}
           >
             {item.icon && (
               <ListItemIcon sx={{ mr: 1, minWidth: 'auto', color: 'text.primary' }}>

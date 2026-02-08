@@ -70,6 +70,14 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        html: {
+          overflowX: 'hidden',
+          maxWidth: '100%',
+        },
+        body: {
+          overflowX: 'hidden',
+          maxWidth: '100%',
+        },
         a: { textDecoration: 'none', color: 'inherit' },
       },
     },

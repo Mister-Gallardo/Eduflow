@@ -6,7 +6,8 @@
     "moduleResolution": "nodenext",
     "allowImportingTsExtensions": false,
     "noEmit": true,
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": "."
   },
   "include": ["src"]
 }

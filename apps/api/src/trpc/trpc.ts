@@ -25,39 +25,41 @@ const trpc = initTRPC.context<Context>().create({
   },
 })
 
-export const procedure = trpc.procedure.use(async ({ path, type, next, ctx, getRawInput }) => {
-  const start = Date.now()
-  const result = await next()
-  const durationMs = Date.now() - start
-  const rawInput = await getRawInput()
+export const publicProcedure = trpc.procedure.use(
+  async ({ path, type, next, ctx, getRawInput }) => {
+    const start = Date.now()
+    const result = await next()
+    const durationMs = Date.now() - start
+    const rawInput = await getRawInput()
 
-  const meta = {
-    path,
-    userId: ctx.me?.id ?? null,
-    durationMs: `${durationMs}ms`,
-    input: rawInput,
-  }
+    const meta = {
+      path,
+      userId: ctx.me?.id ?? null,
+      durationMs: `${durationMs}ms`,
+      input: rawInput,
+    }
 
-  if (result.ok) {
-    logger.info(`trpc:${type}:success`, 'Successfull request', { ...meta, output: result.data })
+    if (result.ok) {
+      logger.info(`trpc:${type}:success`, 'Successfull request', { ...meta, output: result.data })
+      return result
+    }
+
+    const isExpected =
+      result.error.cause instanceof ExpectedError ||
+      result.error.code === 'BAD_REQUEST' ||
+      result.error.code === 'CONFLICT'
+
+    if (isExpected) {
+      logger.info(`trpc:${type}:expected-error`, result.error.message, meta)
+    } else {
+      logger.error(`trpc:${type}:error`, result.error.message, meta)
+    }
+
     return result
-  }
+  },
+)
 
-  const isExpected =
-    result.error.cause instanceof ExpectedError ||
-    result.error.code === 'BAD_REQUEST' ||
-    result.error.code === 'CONFLICT'
-
-  if (isExpected) {
-    logger.info(`trpc:${type}:expected-error`, result.error.message, meta)
-  } else {
-    logger.error(`trpc:${type}:error`, result.error.message, meta)
-  }
-
-  return result
-})
-
-export const protectedProcedure = procedure.use(({ ctx, next }) => {
+export const protectedProcedure = publicProcedure.use(({ ctx, next }) => {
   if (!ctx.me) {
     throw new TRPCError({ code: 'UNAUTHORIZED' })
   }

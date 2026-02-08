@@ -1,15 +1,6 @@
 import { pick } from '@eduflow/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  type SxProps,
-  TextField,
-  type Theme,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
@@ -19,18 +10,7 @@ import type { RegisterFormSchema } from '@/shared/lib'
 import { registerFormSchema } from '@/shared/lib'
 import { useSnackbar } from '@/shared/ui'
 
-const checkboxStyles: SxProps<Theme> = {
-  alignSelf: 'flex-start',
-  transition: '0.2s',
-  '&:hover': {
-    backgroundColor: 'transparent',
-    color: 'primary.main',
-    transition: '0.2s',
-  },
-  '&.Mui-checked': {
-    color: 'primary.main',
-  },
-}
+import { checkboxStyles } from './RegisterForm.styles'
 
 export const RegisterForm = () => {
   const navigate = useNavigate()

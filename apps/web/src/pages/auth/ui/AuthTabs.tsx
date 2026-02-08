@@ -1,15 +1,6 @@
-import { type SxProps, Tab, Tabs, type Theme } from '@mui/material'
+import { Tab, Tabs } from '@mui/material'
 
-const tabStyles: SxProps<Theme> = {
-  color: 'text.secondary',
-  '&.Mui-selected': {
-    color: 'text.primary',
-  },
-  transition: 'color 0.2s',
-  '&:hover': {
-    color: 'text.primary',
-  },
-}
+import { tabStyles } from './Auth.styles'
 
 export const AuthTabs = ({
   authMethod,

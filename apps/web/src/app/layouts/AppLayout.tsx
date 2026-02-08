@@ -3,11 +3,12 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined'
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined'
-import { Box, useMediaQuery, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { paths } from '@/shared/config'
+import { useIsMobile } from '@/shared/lib'
 import { Logo, PageContainer } from '@/shared/ui'
 import { Header, HeaderActions, HeaderNavigation, MobileNavigation } from '@/widgets/header'
 
@@ -28,8 +29,7 @@ const navigationItems = [
 ]
 
 export const AppLayout = () => {
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
+  const isDesktop = useIsMobile()
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 

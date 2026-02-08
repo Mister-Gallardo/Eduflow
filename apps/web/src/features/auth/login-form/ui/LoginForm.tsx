@@ -1,15 +1,6 @@
 import { type LoginInput, zLoginInput } from '@eduflow/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Alert,
-  Box,
-  Button,
-  Collapse,
-  type SxProps,
-  TextField,
-  type Theme,
-  Typography,
-} from '@mui/material'
+import { Alert, Box, Button, Collapse, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -18,14 +9,7 @@ import { trpc } from '@/shared/api'
 import { paths } from '@/shared/config'
 import { useSnackbar } from '@/shared/ui'
 
-const alertStyles: SxProps<Theme> = {
-  borderRadius: 2,
-  color: 'error.main',
-  textAlign: 'center',
-  '& .MuiAlert-message': {
-    width: '100%',
-  },
-}
+import { alertStyles } from './LoginForm.styles'
 
 export const LoginForm = () => {
   const navigate = useNavigate()

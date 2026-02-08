@@ -1,19 +1,12 @@
-import { Box, Paper, type SxProps, type Theme } from '@mui/material'
+import { Box, Paper } from '@mui/material'
 import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
 import { LoginForm, RegisterForm } from '@/features/auth'
 import { MotionBox } from '@/shared/ui'
 
+import { paperStyles } from './Auth.styles'
 import { AuthTabs } from './AuthTabs'
-
-const paperStyles: SxProps<Theme> = {
-  p: 4,
-  pt: 3,
-  borderRadius: 3,
-  border: '1px solid #E5E7EB',
-  backgroundColor: '#fff',
-}
 
 export const AuthPage = () => {
   const [authMethod, setAuthMethod] = useState<'login' | 'register'>('login')
