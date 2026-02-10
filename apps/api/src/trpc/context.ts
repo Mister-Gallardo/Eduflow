@@ -26,3 +26,4 @@ export async function createContext(opts: { req: Request; res: Response }) {
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>
+export type AuthorizedContext = Context & { me: NonNullable<Context['me']> }

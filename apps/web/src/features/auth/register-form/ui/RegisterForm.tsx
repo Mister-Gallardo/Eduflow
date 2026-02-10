@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router-dom'
 
 import { trpc } from '@/shared/api'
 import { paths } from '@/shared/config'
-import type { RegisterFormSchema } from '@/shared/lib'
-import { registerFormSchema } from '@/shared/lib'
 import { useSnackbar } from '@/shared/ui'
+
+import type { RegisterFormSchema } from '../model'
+import { registerFormSchema } from '../model'
 
 import { checkboxStyles } from './RegisterForm.styles'
 

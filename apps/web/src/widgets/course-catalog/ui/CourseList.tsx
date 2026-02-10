@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
 import { AnimatePresence } from 'motion/react'
+import { useEffect, useRef } from 'react'
 
 import { CourseCard } from '@/entities/course'
 import type { ApiOutputs } from '@/shared/api/trpc'
@@ -18,6 +19,13 @@ interface CourseListProps {
 
 export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
   const isMobile = useIsMobile()
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' })
+    }
+  }, [listKey])
 
   const mobileContainerVariants = {
     hidden: { opacity: 0 },
@@ -30,12 +38,12 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
     },
     exit: {
       opacity: 0,
-      transition: { duration: 0.15 },
+      transition: { duration: 0.2 },
     },
   }
 
   const mobileItemVariants = {
-    hidden: { opacity: 0, x: 10 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       x: 0,
@@ -44,10 +52,10 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
   }
 
   return isMobile ? (
-    <Box sx={courseListStyles}>
+    <Box sx={courseListStyles} ref={scrollContainerRef}>
       <AnimatePresence initial={false} mode="wait">
         <MotionBox
-          key={listKey}
+          key={`${listKey}-${coursesData.map((c) => c.id).join('')}`}
           variants={mobileContainerVariants}
           initial="hidden"
           animate="visible"

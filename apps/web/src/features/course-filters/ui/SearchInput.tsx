@@ -41,8 +41,6 @@ export const SearchInput = ({ searchQuery, onSearchChange }: CourseFiltersProps)
         },
         '& .MuiInputBase-input': {
           py: 1.25,
-          fontSize: 14,
-          fontWeight: 500,
         },
       }}
       slotProps={{

@@ -29,7 +29,7 @@ const navigationItems = [
 ]
 
 export const AppLayout = () => {
-  const isDesktop = useIsMobile()
+  const isMobile = useIsMobile()
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -48,7 +48,7 @@ export const AppLayout = () => {
       },
       'aria-label': 'Профиль пользователя',
     },
-    !isDesktop && {
+    isMobile && {
       icon: mobileMenuOpen ? <CloseOutlinedIcon /> : <MenuOutlinedIcon />,
       onClick: () => {
         setMobileMenuOpen((prev) => !prev)
@@ -61,12 +61,12 @@ export const AppLayout = () => {
     <>
       <Header
         containerVariant="fixed"
-        leftSlot={<Logo size="small" isClickable={true} isAnimated={false} showText={isDesktop} />}
+        leftSlot={<Logo size="small" isClickable={true} isAnimated={false} showText={!isMobile} />}
         centerSlot={<HeaderNavigation items={navigationItems} />}
         rightSlot={<HeaderActions actions={headerActions.filter((action) => action !== false)} />}
       />
 
-      <Box component="main">
+      <Box component="main" sx={{ overflowX: 'clip' }}>
         <PageContainer variant="fixed">
           <Outlet />
         </PageContainer>

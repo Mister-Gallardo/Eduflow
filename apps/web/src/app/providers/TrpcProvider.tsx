@@ -74,7 +74,8 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
         httpBatchLink({
           // url: 'https://k62z1cqb-3000.euw.devtunnels.ms' + '/trpc',
           // ! ПОМЕНЯТЬ !
-          url: env.VITE_API_URL + '/trpc',
+          // url: env.VITE_API_URL + '/trpc',
+          url: 'http://192.168.1.33:3000' + '/trpc',
           transformer: superjson,
           async fetch(url, options) {
             const res = await fetch(url, {

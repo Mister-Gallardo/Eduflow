@@ -15,7 +15,9 @@ model User {
 
   createdAt DateTime @default(now())
 
-  sessions Session[]
+  sessions    Session[]
+  enrollments Enrollment[]
+  progress    UserProgress[]
 }
 
 model Session {
@@ -39,9 +41,66 @@ model Course {
   duration    String
   level       Level
   category    String
+  authorId    String? 
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
-  // enrollments Enrollment[]
+  modules     Module[]
+  enrollments Enrollment[]
+}
+
+model Module {
+  id       String @id @default(cuid())
+  title    String
+  order    Int    @default(0)
+  courseId String
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([courseId])
+}
+
+model Lesson {
+  id       String @id @default(cuid())
+  title    String
+  order    Int    @default(0)
+  moduleId String
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  steps  Step[]
+
+  @@index([moduleId])
+}
+
+model Step {
+  id       String   @id @default(cuid())
+  title    String
+  order    Int      @default(0)
+  type     StepType
+  content  Json 
+  lessonId String
+
+  lesson       Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userProgress UserProgress[]
+
+  @@index([lessonId])
+}
+
+enum StepType {
+  TEXT
+  VIDEO
+  TEXT_IMAGE
+  TEXT_VIDEO
+  TEST_SINGLE
+  TEST_MULTIPLE
+  MATCHING
+  ORDERING
+  INPUT_TEXT
+  INPUT_NUMBER
+  FREE_TEXT 
+  FILL_GAPS
+  TABLE
 }
 
 enum Level {
@@ -50,35 +109,34 @@ enum Level {
   ADVANCED
 }
 
-// model User {
-//   id        String   @id @default(uuid())
-//   email     String   @unique
-//   nick      String   @unique
-//   password  String
-//   name      String?
-//   avatar    String?
-//   role      Role     @default(STUDENT)
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  createdAt DateTime @default(now())
 
-//   courses   Course[] // Курсы, которые создал пользователь (если он учитель)
-//   enrolls   Enrollment[] // Записи на курсы
-// }
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-// enum Role {
-//   STUDENT
-//   TEACHER
-//   ADMIN
-// }
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+}
 
-// model Enrollment {
-//   id        String   @id @default(uuid())
-//   userId    String
-//   courseId  String
-//   createdAt DateTime @default(now())
+model UserProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  stepId    String
+  isCompleted Boolean @default(false)
+  score     Int?     // For tests
+  answer    Json?    // User's answer
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-//   user   User   @relation(fields: [userId], references: [id])
-//   course Course @relation(fields: [courseId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  step Step @relation(fields: [stepId], references: [id], onDelete: Cascade)
 
-//   @@unique([userId, courseId]) // Нельзя записаться на один курс дважды
-// }
+  @@unique([userId, stepId])
+  @@index([userId])
+  @@index([stepId])
+}

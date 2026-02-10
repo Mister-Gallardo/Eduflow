@@ -70,15 +70,26 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        html: {
-          overflowX: 'hidden',
-          maxWidth: '100%',
-        },
-        body: {
-          overflowX: 'hidden',
-          maxWidth: '100%',
-        },
         a: { textDecoration: 'none', color: 'inherit' },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          fontSize: 16,
+          fontWeight: 500,
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputLabel-root:not(.MuiInputLabel-shrink) + .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline legend':
+            {
+              width: 0,
+              maxWidth: 0,
+            },
+        },
       },
     },
     MuiButton: {

@@ -1,5 +1,4 @@
-// import { logger } from '@eduflow/logger'
-import { db, Level } from '../src/index.js'
+import { db, Level, StepType } from '../src/index.js'
 
 // async function main() {
 //   console.log('🌱 Start seeding...')
@@ -42,12 +41,17 @@ import { db, Level } from '../src/index.js'
 //   })
 
 async function main() {
-  console.log('🌱 Start seeding courses...')
+  console.log('🌱 Start seeding courses with rich content...')
 
   // Очистка перед заполнением
+  await db.userProgress.deleteMany()
+  await db.enrollment.deleteMany()
+  await db.step.deleteMany()
+  await db.lesson.deleteMany()
+  await db.module.deleteMany()
   await db.course.deleteMany()
 
-  const courses = [
+  const coursesData: any[] = [
     {
       title: 'Pentest: Взлом веб-приложений',
       description: 'OWASP Top 10 и практика атак.',
@@ -63,6 +67,136 @@ async function main() {
       duration: '15 часов',
       level: Level.BEGINNER,
       category: 'design',
+      modules: {
+        create: [
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 2: Аналитика и Исследования',
+            order: 2,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 2.1: Исследование пользователей',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Создание Personas',
+                        type: StepType.ORDERING,
+                        order: 1,
+                        content: {
+                          items: [
+                            { id: 'o1', content: 'Анализ данных интервью' },
+                            { id: 'o2', content: 'Сбор информации о пользователях' },
+                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
+                            { id: 'o4', content: 'Сегментация аудитории' },
+                          ],
+                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
     {
       title: 'React для начинающих',
@@ -71,6 +205,98 @@ async function main() {
       duration: '8 часов',
       level: Level.BEGINNER,
       category: 'development',
+      modules: {
+        create: [
+          {
+            title: 'Модуль 1: Основы React',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Знакомство с JSX',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Что такое JSX?',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'JSX — это расширение синтаксиса JavaScript, которое выглядит как HTML.',
+                        },
+                      },
+                      {
+                        title: 'Выбор правильных ответов',
+                        type: StepType.TEST_MULTIPLE,
+                        order: 2,
+                        content: {
+                          question: 'Какие утверждения о JSX верны?',
+                          options: [
+                            {
+                              id: '1',
+                              text: 'Нужно импортировать React для JSX в старых версиях',
+                              isCorrect: true,
+                            },
+                            { id: '2', text: 'JSX — это валидный HTML', isCorrect: false },
+                            {
+                              id: '3',
+                              text: 'В JSX можно вставлять выражения в фигурных скобках',
+                              isCorrect: true,
+                            },
+                            {
+                              id: '4',
+                              text: 'class используется вместо className',
+                              isCorrect: false,
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 2: Хуки',
+            order: 2,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 2.1: useState и useEffect',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Название хука',
+                        type: StepType.INPUT_TEXT,
+                        order: 1,
+                        content: {
+                          question:
+                            'Напишите название хука, который используется для управления состоянием в функциональных компонентах.',
+                          correctAnswers: ['useState'],
+                        },
+                      },
+                      {
+                        title: 'Код на React',
+                        type: StepType.FILL_GAPS,
+                        order: 2,
+                        content: {
+                          text: 'const [count, setCount] = {{gap1}}(0); \n {{gap2}}(() => { console.log("mounted") }, []);',
+                          gaps: [
+                            { id: 'gap1', type: 'text', correctAnswer: 'useState' },
+                            { id: 'gap2', type: 'text', correctAnswer: 'useEffect' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
     {
       title: 'SQL для анализа данных',
@@ -79,6 +305,79 @@ async function main() {
       duration: '14 часов',
       level: Level.INTERMEDIATE,
       category: 'analytics',
+      modules: {
+        create: [
+          {
+            title: 'Модуль 1: Продвинутый SQL',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Оконные функции',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Синтаксис OVER',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'Оконная функция выполняется над набором строк, который называется окном.',
+                        },
+                      },
+                      {
+                        title: 'Количество строк в окне',
+                        type: StepType.INPUT_NUMBER,
+                        order: 2,
+                        content: {
+                          question:
+                            'Сколько строк вернет запрос с COUNT(*) OVER(), если в таблице 10 строк?',
+                          correctAnswer: 10,
+                        },
+                      },
+                      {
+                        title: 'Ранжирование в SQL',
+                        type: StepType.TABLE,
+                        order: 3,
+                        content: {
+                          columns: ['Функция', 'Пропуски в рангах', 'Дубликаты'],
+                          rows: [
+                            {
+                              id: 'r1',
+                              cells: [
+                                { id: 'c1', text: 'ROW_NUMBER()' },
+                                { id: 'c2', text: 'Нет' },
+                                { id: 'c3', text: 'Разные ранги' },
+                              ],
+                            },
+                            {
+                              id: 'r2',
+                              cells: [
+                                { id: 'c4', text: 'RANK()' },
+                                { id: 'c5', text: 'Да' },
+                                { id: 'c6', text: 'Одинаковые ранги' },
+                              ],
+                            },
+                            {
+                              id: 'r3',
+                              cells: [
+                                { id: 'c7', text: 'DENSE_RANK()' },
+                                { id: 'c8', text: 'Нет' },
+                                { id: 'c9', text: 'Одинаковые ранги' },
+                              ],
+                            },
+                          ],
+                          correctCells: ['c1', 'c4', 'c7'], // Пример выбора именно функций
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
     {
       title: 'Influencer Marketing',
@@ -88,7 +387,6 @@ async function main() {
       level: Level.BEGINNER,
       category: 'marketing',
     },
-
     {
       title: 'Защита облаков AWS',
       description: 'Безопасность и доступы.',
@@ -129,7 +427,6 @@ async function main() {
       level: Level.BEGINNER,
       category: 'marketing',
     },
-
     {
       title: 'SOC аналитик',
       description: 'Мониторинг атак.',
@@ -170,7 +467,6 @@ async function main() {
       level: Level.INTERMEDIATE,
       category: 'marketing',
     },
-
     {
       title: 'Ethical Hacking',
       description: 'Эксплойты.',
@@ -211,259 +507,15 @@ async function main() {
       level: Level.ADVANCED,
       category: 'marketing',
     },
-
-    {
-      title: 'Безопасность API и JWT',
-      description: 'Атаки токенов.',
-      price: 6200,
-      duration: '12 часов',
-      level: Level.INTERMEDIATE,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Дизайн-системы в Figma',
-      description: 'Компоненты.',
-      price: 12000,
-      duration: '22 часа',
-      level: Level.ADVANCED,
-      category: 'design',
-    },
-    {
-      title: 'A/B тестирование',
-      description: 'Эксперименты.',
-      price: 9500,
-      duration: '15 часов',
-      level: Level.ADVANCED,
-      category: 'analytics',
-    },
-    {
-      title: 'PostgreSQL тюнинг',
-      description: 'Индексы.',
-      price: 7200,
-      duration: '24 часа',
-      level: Level.INTERMEDIATE,
-      category: 'development',
-    },
-    {
-      title: 'Копирайтинг',
-      description: 'Контент для продаж.',
-      price: 3500,
-      duration: '12 часов',
-      level: Level.INTERMEDIATE,
-      category: 'marketing',
-    },
-
-    {
-      title: 'Криптография для разработчиков',
-      description: 'Хэши и шифрование.',
-      price: 8600,
-      duration: '16 часов',
-      level: Level.INTERMEDIATE,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Веб-дизайн и адаптивность',
-      description: 'Responsive сетки.',
-      price: 6100,
-      duration: '18 часов',
-      level: Level.INTERMEDIATE,
-      category: 'design',
-    },
-    {
-      title: 'Big Data в облаках',
-      description: 'Массивы данных.',
-      price: 15500,
-      duration: '30 часов',
-      level: Level.ADVANCED,
-      category: 'analytics',
-    },
-    {
-      title: 'Docker и Kubernetes',
-      description: 'Контейнеры.',
-      price: 4900,
-      duration: '12 часов',
-      level: Level.INTERMEDIATE,
-      category: 'development',
-    },
-    {
-      title: 'SMM стратегия',
-      description: 'Продвижение брендов.',
-      price: 5600,
-      duration: '18 часов',
-      level: Level.INTERMEDIATE,
-      category: 'marketing',
-    },
-
-    {
-      title: 'Forensics и расследования',
-      description: 'Цифровые следы.',
-      price: 10200,
-      duration: '20 часов',
-      level: Level.ADVANCED,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Иллюстрация в Procreate',
-      description: 'Рисование на iPad.',
-      price: 4500,
-      duration: '12 часов',
-      level: Level.BEGINNER,
-      category: 'design',
-    },
-    {
-      title: 'Математика для Data Science',
-      description: 'Статистика.',
-      price: 6700,
-      duration: '22 часа',
-      level: Level.ADVANCED,
-      category: 'analytics',
-    },
-    {
-      title: 'Swift iOS разработка',
-      description: 'SwiftUI.',
-      price: 9900,
-      duration: '30 часов',
-      level: Level.BEGINNER,
-      category: 'development',
-    },
-    {
-      title: 'Интернет-маркетолог',
-      description: 'SEO и реклама.',
-      price: 15000,
-      duration: '4 месяца',
-      level: Level.BEGINNER,
-      category: 'marketing',
-    },
-
-    {
-      title: 'Zero Trust архитектура',
-      description: 'Современная безопасность.',
-      price: 13200,
-      duration: '18 часов',
-      level: Level.ADVANCED,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Графический дизайн база',
-      description: 'Визуальные принципы.',
-      price: 0,
-      duration: '4 часа',
-      level: Level.BEGINNER,
-      category: 'design',
-    },
-    {
-      title: 'Python для отчетов',
-      description: 'Автоматизация данных.',
-      price: 0,
-      duration: '8 часов',
-      level: Level.BEGINNER,
-      category: 'analytics',
-    },
-    {
-      title: 'Алгоритмы и структуры данных',
-      description: 'База для интервью.',
-      price: 5500,
-      duration: '40 часов',
-      level: Level.BEGINNER,
-      category: 'development',
-    },
-    {
-      title: 'ORM и репутация бренда',
-      description: 'Работа с отзывами.',
-      price: 8800,
-      duration: '14 часов',
-      level: Level.ADVANCED,
-      category: 'marketing',
-    },
-
-    {
-      title: 'Cloud Security Monitoring',
-      description: 'Логи и алерты.',
-      price: 9900,
-      duration: '16 часов',
-      level: Level.INTERMEDIATE,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Figma для верстальщика',
-      description: 'Экспорт ассетов.',
-      price: 0,
-      duration: '3 часа',
-      level: Level.BEGINNER,
-      category: 'design',
-    },
-    {
-      title: 'Веб-аналитика профи',
-      description: 'GA4.',
-      price: 4200,
-      duration: '5 часов',
-      level: Level.INTERMEDIATE,
-      category: 'analytics',
-    },
-    {
-      title: 'Fullstack Python + React',
-      description: 'Веб-сервисы.',
-      price: 18900,
-      duration: '6 месяцев',
-      level: Level.INTERMEDIATE,
-      category: 'development',
-    },
-    {
-      title: 'Targeted Ads',
-      description: 'Таргетированная реклама.',
-      price: 0,
-      duration: '6 часов',
-      level: Level.BEGINNER,
-      category: 'marketing',
-    },
-
-    {
-      title: 'Red Team практикум',
-      description: 'Имитация атак.',
-      price: 15800,
-      duration: '26 часов',
-      level: Level.ADVANCED,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Motion Design',
-      description: 'Анимация интерфейсов.',
-      price: 11000,
-      duration: '25 часов',
-      level: Level.ADVANCED,
-      category: 'design',
-    },
-    {
-      title: 'Машинное обучение основы',
-      description: 'Модели и обучение.',
-      price: 8900,
-      duration: '20 часов',
-      level: Level.INTERMEDIATE,
-      category: 'analytics',
-    },
-    {
-      title: 'Backend на Node.js',
-      description: 'Микросервисы.',
-      price: 12500,
-      duration: '45 часов',
-      level: Level.ADVANCED,
-      category: 'development',
-    },
-    {
-      title: 'Контент-стратегия бренда',
-      description: 'Планирование контента.',
-      price: 6400,
-      duration: '16 часов',
-      level: Level.INTERMEDIATE,
-      category: 'marketing',
-    },
   ]
 
-  const created = await db.course.createMany({
-    data: courses,
-  })
+  for (const courseItem of coursesData) {
+    await db.course.create({
+      data: courseItem,
+    })
+  }
 
-  console.log(`✅ Success! Created ${created.count} courses.`)
+  console.log(`✅ Success! Created ${coursesData.length} courses with nested content.`)
 }
 
 main()

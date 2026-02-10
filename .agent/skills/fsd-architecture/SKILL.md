@@ -15,7 +15,7 @@ Project Stack: React, Vite, TypeScript, pnpm, FSD (Feature-Sliced Design), MUI, 
 
 Follow the layers strictly:
 
-- **Shared**: Reusable UI (MUI based), API clients (tRPC), utils, constants.
+- **Shared**: Reusable UI (MUI based), API clients (tRPC), utils, constants. Shared layer should NOT have a root index.ts. Use segment-based imports.
 - **Entities**: Business entities (e.g., User, Product). Только логика и данные сущности.
 - **Features**: Взаимодействия (например, AddToCart, AuthByEmail).
 - **Widgets**: Композиция entities и features (Header, ProductCard).
@@ -26,7 +26,8 @@ Follow the layers strictly:
 - Use **MUI** (Material UI) for all base components.
 - Use **Framer Motion** for animations (always use `motion.` components).
 - Every FSD slice MUST have a **Public API** (`index.ts`) exporting ONLY needed parts.
-- Files: `kebab-case`.
+- Files: Use PascalCase for components (.tsx) and kebab-case for utilities (.ts).
+- Exception: Static UI components used only on one page can remain in page/ui.
 
 ### 3. Fullstack & pnpm
 

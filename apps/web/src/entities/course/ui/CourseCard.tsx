@@ -1,7 +1,9 @@
 import { AccessTime, TrendingUp } from '@mui/icons-material'
 import { alpha, Box, Chip, Paper, Typography, useTheme } from '@mui/material'
 import { motion } from 'motion/react'
+import { useState } from 'react'
 
+import { trpc } from '@/shared/api'
 import { useIsMobile } from '@/shared/lib'
 
 import { getCategoryGradient, getCategoryIcon, getLevelLabel, getLevelStyles } from '../lib'
@@ -36,6 +38,35 @@ export const CourseCard = ({ course }: CourseCardProps) => {
 
   const levelStyles = getLevelStyles(theme, level)
 
+  const [state, setState] = useState(false)
+
+  const { data } = trpc.learning.getCourseNavigation.useQuery(
+    {
+      courseId: course.id,
+    },
+    {
+      enabled: state,
+    },
+  )
+
+  if (state) {
+    console.info(data)
+  }
+
+  const enrollMutation = trpc.learning.enroll.useMutation({
+    onSuccess: (data) => {
+      console.info(data)
+      setState(true)
+    },
+    onError: (error) => {
+      console.info(error)
+    },
+  })
+
+  const onSubmit = () => {
+    void enrollMutation.mutateAsync({ courseId: course.id })
+  }
+
   return (
     <MotionPaper
       elevation={0}
@@ -49,6 +80,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
           boxShadow: isMobile ? 'none' : `0 16px 24px ${alpha(theme.palette.primary.main, 0.05)}`,
         },
       }}
+      onClick={onSubmit}
     >
       <Box
         sx={{

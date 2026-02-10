@@ -69,7 +69,10 @@ export const LoginForm = () => {
         fullWidth
         error={!!errors.email}
         helperText={errors.email?.message}
-        sx={{ mt: 1, '& .MuiOutlinedInput-root': { borderRadius: 2, backgroundColor: '#fff' } }}
+        sx={{
+          mt: 1,
+          '& .MuiOutlinedInput-root': { borderRadius: 2 },
+        }}
       />
 
       <TextField
@@ -79,7 +82,9 @@ export const LoginForm = () => {
         fullWidth
         error={!!errors.password}
         helperText={errors.password?.message}
-        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, backgroundColor: '#fff' } }}
+        sx={{
+          '& .MuiOutlinedInput-root': { borderRadius: 2 },
+        }}
       />
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
