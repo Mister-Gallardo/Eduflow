@@ -28,17 +28,31 @@ export const BottomSheet = ({ open, onClose, children }: BottomSheetProps) => {
         },
       }}
     >
-      <Box sx={{ pt: 1, pb: 2, px: 0, overflow: 'auto', maxHeight: '85vh' }}>
+      <Box sx={{ pb: 2, px: 0, overflow: 'auto', maxHeight: '85vh' }}>
         <Box
           sx={{
-            width: 90,
-            height: 4,
-            borderRadius: 5,
-            backgroundColor: 'divider',
-            margin: '8px auto 16px',
+            position: 'sticky',
+            top: 0,
+            zIndex: 'layoutHigh',
+            width: '100%',
+            py: 2,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff',
           }}
-          aria-hidden
-        />
+        >
+          <Box
+            sx={{
+              width: 80,
+              height: 4,
+              borderRadius: 5,
+              backgroundColor: 'divider',
+              // margin: '8px auto 16px'
+            }}
+            aria-hidden
+          />
+        </Box>
         {children}
       </Box>
     </Drawer>

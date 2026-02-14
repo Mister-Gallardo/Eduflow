@@ -4,10 +4,10 @@ export const paths = {
   auth: () => '/auth',
 
   learn: {
-    root: () => '/learn',
+    root: () => '/learn/course/:courseId/step?/:stepId?',
 
-    course: (id: string) => `/learn/course/${id}`,
-    lesson: (courseId: string, lessonId: string) => `/learn/course/${courseId}/lesson/${lessonId}`,
+    setup: (courseId: string, stepId?: string) =>
+      stepId ? `/learn/course/${courseId}/step/${stepId}` : `/learn/course/${courseId}`,
   },
 
   teach: {

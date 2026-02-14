@@ -5,9 +5,11 @@ import '@fontsource/inter/300.css'
 import '@fontsource/inter/400.css'
 import '@fontsource/inter/500.css'
 import '@fontsource/inter/600.css'
+import '@fontsource/inter/700.css'
 import '@fontsource/outfit/600.css'
 
 const BRAND_PRIMARY = '#2C3444'
+const BRAND_LIGHT = '#718096'
 const BRAND_DARK = '#1f2532'
 const BRAND_ACCENT = '#FFB900'
 const BRAND_ACCENT_DARK = '#e5a600'
@@ -37,6 +39,23 @@ declare module '@mui/material/styles' {
     layoutMedium: number
     layoutHigh: number
   }
+
+  interface Theme {
+    layout: {
+      headerHeight: {
+        mobile: number
+        desktop: number
+      }
+    }
+  }
+  interface ThemeOptions {
+    layout?: {
+      headerHeight?: {
+        mobile?: number
+        desktop?: number
+      }
+    }
+  }
 }
 
 const theme = createTheme({
@@ -50,6 +69,7 @@ const theme = createTheme({
   palette: {
     primary: {
       main: BRAND_PRIMARY,
+      light: BRAND_LIGHT,
       dark: BRAND_DARK,
     },
     secondary: {
@@ -64,7 +84,13 @@ const theme = createTheme({
     },
     text: {
       primary: BRAND_PRIMARY,
-      secondary: 'rgb(113, 128, 150)',
+      secondary: BRAND_LIGHT,
+    },
+  },
+  layout: {
+    headerHeight: {
+      mobile: 57,
+      desktop: 61,
     },
   },
   components: {
@@ -78,6 +104,10 @@ const theme = createTheme({
         root: {
           fontSize: 16,
           fontWeight: 500,
+
+          // '@media (max-width: 900px)': {
+          //   fontSize: 16,
+          // },
         },
       },
     },
@@ -123,6 +153,28 @@ const theme = createTheme({
           '&:hover': {
             backgroundColor: BRAND_ACCENT_DARK,
           },
+        },
+      },
+    },
+    MuiTooltip: {
+      defaultProps: {
+        arrow: true,
+        enterDelay: 0,
+      },
+      styleOverrides: {
+        tooltip: {
+          maxWidth: 340,
+          backgroundColor: BRAND_PRIMARY,
+          paddingTop: 12,
+          paddingBottom: 12,
+          paddingLeft: 20,
+          paddingRight: 20,
+          fontSize: 12,
+          fontWeight: 500,
+          borderRadius: 6,
+        },
+        arrow: {
+          color: BRAND_PRIMARY,
         },
       },
     },

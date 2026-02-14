@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom'
 import { animated_logo, logo } from '../../assets'
 
 interface LogoProps {
-  size: 'small' | 'medium' | 'large'
+  size: 'extraSmall' | 'small' | 'medium' | 'large'
   isClickable?: boolean
   isAnimated?: boolean
   showText?: boolean
+  scale?: number
 }
 
 export const Logo = ({
@@ -15,14 +16,17 @@ export const Logo = ({
   isClickable = false,
   isAnimated = false,
   showText = true,
+  scale = 1,
 }: LogoProps) => {
   const height = {
+    extraSmall: 32,
     small: 40,
     medium: 45,
     large: 55,
   }[size]
 
   const fontSize = {
+    extraSmall: 20,
     small: 24,
     medium: 28,
     large: 36,
@@ -39,6 +43,8 @@ export const Logo = ({
         justifyContent: 'center',
         gap: 1,
         cursor: isClickable ? 'pointer' : 'default',
+        transform: scale !== 1 ? `scale(${scale})` : 'none',
+        transformOrigin: 'left center',
       }}
     >
       {isAnimated ? (

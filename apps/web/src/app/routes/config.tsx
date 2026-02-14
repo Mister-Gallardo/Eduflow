@@ -4,8 +4,9 @@ import { AuthPage } from '@/pages/auth'
 import { HomePage } from '@/pages/home'
 import { LearnPage } from '@/pages/learn'
 import { paths } from '@/shared/config'
+import { Result404 } from '@/shared/ui'
 
-import { AppLayout, AuthLayout } from '../layouts'
+import { AppLayout, AuthLayout, LearnLayout } from '../layouts'
 
 export const routeConfig = createBrowserRouter([
   {
@@ -23,12 +24,21 @@ export const routeConfig = createBrowserRouter([
       {
         path: paths.home(),
         element: <HomePage />,
-        handle: { header: { title: 'Главная' } },
       },
+
+      {
+        path: '*',
+        element: <Result404 />,
+      },
+    ],
+  },
+  {
+    element: <LearnLayout />,
+    children: [
       {
         path: paths.learn.root(),
         element: <LearnPage />,
-        handle: { header: { title: 'Обучение' } },
+        // handle: { header: { title: 'Обучение' } },
       },
     ],
   },

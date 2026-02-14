@@ -21,7 +21,7 @@ export const categoryTabStyles: SxProps<Theme> = {
   whiteSpace: 'nowrap',
   flexShrink: 0,
   transition: 'color 0.2s ease',
-  zIndex: 1,
+  zIndex: 'layoutLow',
 }
 
 export const courseFiltersStyles: SxProps<Theme> = {

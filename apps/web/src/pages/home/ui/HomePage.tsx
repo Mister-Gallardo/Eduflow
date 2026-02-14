@@ -16,7 +16,13 @@ export const HomePage = () => {
 
   return (
     <Box>
-      <Box component="section" sx={sectionStyles}>
+      <Box
+        component="section"
+        sx={{
+          ...sectionStyles,
+          height: { xs: 'auto', md: `calc(100vh - ${theme.layout.headerHeight.desktop}px)` },
+        }}
+      >
         <GridBackground />
 
         <HeroSection />

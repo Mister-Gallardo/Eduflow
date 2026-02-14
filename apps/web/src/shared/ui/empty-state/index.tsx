@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material'
 
 import { empty } from '@/shared/assets'
 
-export const NotFound = () => (
+export const EmptyState = () => (
   <Box
     sx={{
       display: 'flex',

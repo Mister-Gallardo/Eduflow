@@ -57,6 +57,13 @@ export const getCourseNavigationService = async (
         courseId,
       },
     },
+    include: {
+      course: {
+        select: {
+          title: true,
+        },
+      },
+    },
   })
 
   if (!enrollment) {
@@ -102,7 +109,7 @@ export const getCourseNavigationService = async (
       isCompleted: true,
       updatedAt: true,
     },
-    orderBy: { updatedAt: 'desc' }, // Most recent first
+    orderBy: { updatedAt: 'desc' },
   })
 
   const progressMap = new Map(progress.map((p) => [p.stepId, p.isCompleted]))
@@ -137,7 +144,7 @@ export const getCourseNavigationService = async (
     })),
   }))
 
-  return { navigation, lastViewedStepId }
+  return { navigation, lastViewedStepId, courseTitle: enrollment.course.title }
 }
 
 // export const getStepDataService = async (ctx: Context, input: GetStepDataInput) => {

@@ -2,7 +2,6 @@ import type { SxProps, Theme } from '@mui/material'
 
 export const sectionStyles: SxProps<Theme> = {
   width: '100%',
-  height: { xs: 'auto', md: 'calc(100vh - 60px)' },
   minHeight: 700,
   maxHeight: { md: 1000 },
   pt: { xs: 5, md: 0 },

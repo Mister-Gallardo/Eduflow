@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { CourseFilters } from '@/features/course-filters'
 import { trpc } from '@/shared/api'
 import { useDebounce } from '@/shared/lib'
-import { NotFound } from '@/shared/ui/not-found'
+import { EmptyState } from '@/shared/ui'
 import { ViewAllDesktopButton } from '@/widgets/course-catalog/ui/ViewAllDesktopButton'
 
 import { courseCatalogStyles } from './CourseCatalog.styles'
@@ -39,7 +39,7 @@ export const CourseCatalog = () => {
     return baseParams
   }
 
-  const { data: coursesData = [], isLoading: coursesIsLoading } = trpc.courses.getCourses.useQuery(
+  const { data: coursesData = [], isLoading: isCoursesLoading } = trpc.courses.getCourses.useQuery(
     getQueryParams(),
     {
       placeholderData: (previousData) => previousData,
@@ -68,15 +68,15 @@ export const CourseCatalog = () => {
         onSearchChange={setSearchQuery}
       />
 
-      {coursesIsLoading ? (
+      {isCoursesLoading ? (
         <LoadingSkeleton />
       ) : coursesData.length > 0 ? (
         <CourseList coursesData={coursesData} listKey={selectedCategory} />
       ) : (
-        <NotFound />
+        <EmptyState />
       )}
 
-      <ViewAllDesktopButton length={coursesData.length} isLoading={coursesIsLoading} />
+      <ViewAllDesktopButton length={coursesData.length} isLoading={isCoursesLoading} />
     </Box>
   )
 }

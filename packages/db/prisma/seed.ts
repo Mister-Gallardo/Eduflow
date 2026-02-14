@@ -166,6 +166,1166 @@ async function main() {
             },
           },
           {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 1: Основы UX и Дизайн-мышление',
+            order: 1,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 1.1: Что такое UX на самом деле?',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Определение UX',
+                        type: StepType.TEXT,
+                        order: 1,
+                        content: {
+                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
+                        },
+                      },
+                      {
+                        title: 'Процесс проектирования',
+                        type: StepType.VIDEO,
+                        order: 2,
+                        content: {
+                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
+                          provider: 'youtube',
+                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
+                        },
+                      },
+                      {
+                        title: 'Проверка знаний: UX vs UI',
+                        type: StepType.TEST_SINGLE,
+                        order: 3,
+                        content: {
+                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
+                          options: [
+                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
+                            {
+                              id: '2',
+                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
+                              isCorrect: true,
+                            },
+                            { id: '3', text: 'Это одно и то же', isCorrect: false },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 1.2: Психология пользователя',
+                  order: 2,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Закон Хика',
+                        type: StepType.TEXT_IMAGE,
+                        order: 1,
+                        content: {
+                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
+                          imageUrl: 'https://example.com/hicks-law.jpg',
+                        },
+                      },
+                      {
+                        title: 'Сопоставление законов UX',
+                        type: StepType.MATCHING,
+                        order: 2,
+                        content: {
+                          left: [
+                            { id: 'l1', content: 'Закон Хика' },
+                            { id: 'l2', content: 'Закон Фиттса' },
+                            { id: 'l3', content: 'Закон близости' },
+                          ],
+                          right: [
+                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
+                            {
+                              id: 'r2',
+                              content: 'Элементы поблизости воспринимаются как связанные',
+                            },
+                            {
+                              id: 'r3',
+                              content: 'Время движения к цели зависит от её размера и расстояния',
+                            },
+                          ],
+                          pairs: [
+                            { leftId: 'l1', rightId: 'r1' },
+                            { leftId: 'l2', rightId: 'r3' },
+                            { leftId: 'l3', rightId: 'r2' },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 3: 3 модуль',
+            order: 2,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 3.1: Исследование пользователей',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Создание Personas',
+                        type: StepType.ORDERING,
+                        order: 1,
+                        content: {
+                          items: [
+                            { id: 'o1', content: 'Анализ данных интервью' },
+                            { id: 'o2', content: 'Сбор информации о пользователях' },
+                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
+                            { id: 'o4', content: 'Сегментация аудитории' },
+                          ],
+                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            title: 'Модуль 4: Аналитика и Исследования',
+            order: 2,
+            lessons: {
+              create: [
+                {
+                  title: 'Урок 4.1: Исследование пользователей',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Создание Personas',
+                        type: StepType.ORDERING,
+                        order: 1,
+                        content: {
+                          items: [
+                            { id: 'o1', content: 'Анализ данных интервью' },
+                            { id: 'o2', content: 'Сбор информации о пользователях' },
+                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
+                            { id: 'o4', content: 'Сегментация аудитории' },
+                          ],
+                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 4.2: Исследование пользователей',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Создание Personas',
+                        type: StepType.ORDERING,
+                        order: 1,
+                        content: {
+                          items: [
+                            { id: 'o1', content: 'Анализ данных интервью' },
+                            { id: 'o2', content: 'Сбор информации о пользователях' },
+                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
+                            { id: 'o4', content: 'Сегментация аудитории' },
+                          ],
+                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  title: 'Урок 4.3: Исследование пользователей',
+                  order: 1,
+                  steps: {
+                    create: [
+                      {
+                        title: 'Создание Personas',
+                        type: StepType.ORDERING,
+                        order: 1,
+                        content: {
+                          items: [
+                            { id: 'o1', content: 'Анализ данных интервью' },
+                            { id: 'o2', content: 'Сбор информации о пользователях' },
+                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
+                            { id: 'o4', content: 'Сегментация аудитории' },
+                          ],
+                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
             title: 'Модуль 2: Аналитика и Исследования',
             order: 2,
             lessons: {

@@ -21,8 +21,7 @@ export const PageContainer = ({ variant, children }: PageContainerProps) => (
       }[variant],
       px: {
         xs: 1.5,
-        sm: 2.5,
-        lg: 0,
+        sm: 3,
       },
     }}
   >

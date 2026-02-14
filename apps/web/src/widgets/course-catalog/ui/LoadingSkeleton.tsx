@@ -1,9 +1,9 @@
-import { alpha, Box, Skeleton, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 
 import { useIsMobile } from '@/shared/lib'
+import { MySkeleton } from '@/shared/ui'
 
 export const LoadingSkeleton = () => {
-  const theme = useTheme()
   const isMobile = useIsMobile()
 
   return (
@@ -15,14 +15,12 @@ export const LoadingSkeleton = () => {
       }}
     >
       {Array.from({ length: isMobile ? 1 : 6 }).map((_, i) => (
-        <Skeleton
+        <MySkeleton
           key={i}
           variant="rounded"
-          animation="wave"
           sx={{
             height: 310,
             borderRadius: 4,
-            bgcolor: alpha(theme.palette.primary.main, 0.05),
           }}
         />
       ))}

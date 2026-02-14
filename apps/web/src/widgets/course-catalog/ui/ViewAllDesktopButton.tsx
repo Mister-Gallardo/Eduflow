@@ -1,6 +1,7 @@
-import { alpha, Button, Skeleton, useTheme } from '@mui/material'
+import { Button } from '@mui/material'
 
 import { useIsMobile } from '@/shared/lib'
+import { MySkeleton } from '@/shared/ui'
 
 import { viewAllDesktopButtonStyles } from './CourseCatalog.styles'
 
@@ -10,22 +11,19 @@ interface ViewAllDesktopButtonProps {
 }
 
 export const ViewAllDesktopButton = ({ length, isLoading }: ViewAllDesktopButtonProps) => {
-  const theme = useTheme()
   const isMobile = useIsMobile()
 
   return (
     <>
       {isLoading
         ? !isMobile && (
-            <Skeleton
+            <MySkeleton
               variant="rounded"
-              animation="wave"
               sx={{
                 alignSelf: 'center',
                 width: 250,
                 height: 60,
                 borderRadius: 4,
-                bgcolor: alpha(theme.palette.primary.main, 0.05),
               }}
             />
           )

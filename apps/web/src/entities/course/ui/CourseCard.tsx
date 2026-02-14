@@ -1,10 +1,12 @@
 import { AccessTime, TrendingUp } from '@mui/icons-material'
 import { alpha, Box, Chip, Paper, Typography, useTheme } from '@mui/material'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { trpc } from '@/shared/api'
+import { paths } from '@/shared/config'
 import { useIsMobile } from '@/shared/lib'
+import { useSnackbar } from '@/shared/ui'
 
 import { getCategoryGradient, getCategoryIcon, getLevelLabel, getLevelStyles } from '../lib'
 import type { Course } from '../model'
@@ -31,6 +33,8 @@ const MotionPaper = motion.create(Paper)
 export const CourseCard = ({ course }: CourseCardProps) => {
   const theme = useTheme()
   const isMobile = useIsMobile()
+  const navigate = useNavigate()
+  const showSnackbar = useSnackbar()
 
   const { title, description, duration, level, price, category } = course
 
@@ -38,28 +42,22 @@ export const CourseCard = ({ course }: CourseCardProps) => {
 
   const levelStyles = getLevelStyles(theme, level)
 
-  const [state, setState] = useState(false)
-
-  const { data } = trpc.learning.getCourseNavigation.useQuery(
-    {
-      courseId: course.id,
-    },
-    {
-      enabled: state,
-    },
-  )
-
-  if (state) {
-    console.info(data)
-  }
-
   const enrollMutation = trpc.learning.enroll.useMutation({
     onSuccess: (data) => {
-      console.info(data)
-      setState(true)
+      void navigate(paths.learn.setup(course.id))
+
+      if (data.message !== 'Already enrolled') {
+        void showSnackbar({
+          message: 'Вы успешно записались на курс!',
+          severity: 'success',
+        })
+      }
     },
-    onError: (error) => {
-      console.info(error)
+    onError: () => {
+      void showSnackbar({
+        message: 'Что-то пошло не так. Попробуйте еще раз.',
+        severity: 'error',
+      })
     },
   })
 
@@ -71,7 +69,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
     <MotionPaper
       elevation={0}
       whileHover={{
-        y: -10,
+        y: !isMobile ? -10 : 0,
         transition: { duration: 0.2, ease: 'easeOut' },
       }}
       sx={{
@@ -105,7 +103,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
             justifyContent: 'flex-start',
             alignItems: 'flex-start',
             position: 'relative',
-            zIndex: 2,
+            zIndex: 'layoutLow',
           }}
         >
           <Chip
@@ -121,7 +119,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
             position: 'absolute',
             bottom: 16,
             left: 16,
-            zIndex: 2,
+            zIndex: 'layoutLow',
           }}
         >
           <Chip

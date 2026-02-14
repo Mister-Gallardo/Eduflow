@@ -8,6 +8,7 @@ interface HeaderAction {
 
 interface HeaderActionsProps {
   actions: HeaderAction[]
+  edgeToEnd?: boolean
 }
 
 const ActionButton = ({ icon, onClick, 'aria-label': ariaLabel }: HeaderAction) => {
@@ -30,13 +31,19 @@ const ActionButton = ({ icon, onClick, 'aria-label': ariaLabel }: HeaderAction) 
   )
 }
 
-export const HeaderActions = ({ actions }: HeaderActionsProps) => {
+export const HeaderActions = ({ actions, edgeToEnd = false }: HeaderActionsProps) => {
   return (
     <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
         gap: 0.5,
+
+        ...(edgeToEnd && {
+          '& > :last-child': {
+            mr: '-10px',
+          },
+        }),
       }}
     >
       {actions.map((action, index) => (

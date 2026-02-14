@@ -45,7 +45,7 @@ export const CategoryTabs = ({ selectedCategory, onCategoryChange }: CategoryTab
                     inset: 0,
                     borderRadius: 3,
                     bgcolor: theme.palette.primary.main,
-                    zIndex: -1,
+                    zIndex: 'background',
                   }}
                 />
               )}

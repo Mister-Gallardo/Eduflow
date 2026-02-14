@@ -51,7 +51,7 @@ export const categoryStyles: SxProps<Theme> = {
   maxHeight: '92%',
   objectFit: 'contain',
   opacity: 1,
-  zIndex: 1,
+  zIndex: 'layoutLow',
   pointerEvents: 'none',
   filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.12))',
 }
