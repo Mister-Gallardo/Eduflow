@@ -2,11 +2,10 @@ import { Box, Paper } from '@mui/material'
 import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
-import { LoginForm, RegisterForm } from '@/features/auth'
+import { AuthTabs, LoginForm, RegisterForm } from '@/features/auth'
 import { MotionBox } from '@/shared/ui'
 
-import { paperStyles } from './Auth.styles'
-import { AuthTabs } from './AuthTabs'
+import { paperStyles } from './AuthPage.styles'
 
 export const AuthPage = () => {
   const [authMethod, setAuthMethod] = useState<'login' | 'register'>('login')

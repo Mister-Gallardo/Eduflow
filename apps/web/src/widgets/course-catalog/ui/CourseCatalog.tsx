@@ -5,11 +5,11 @@ import { CourseFilters } from '@/features/course-filters'
 import { trpc } from '@/shared/api'
 import { useDebounce } from '@/shared/lib'
 import { EmptyState } from '@/shared/ui'
-import { ViewAllDesktopButton } from '@/widgets/course-catalog/ui/ViewAllDesktopButton'
 
+import { CourseList } from './course-list'
 import { courseCatalogStyles } from './CourseCatalog.styles'
-import { CourseList } from './CourseList'
-import { LoadingSkeleton } from './LoadingSkeleton'
+import { LoadingSkeleton } from './loading-skeleton'
+import { ViewAllDesktopButton } from './view-all-desktop-button'
 
 export const CourseCatalog = () => {
   const [selectedCategory, setSelectedCategory] = useState('popular')

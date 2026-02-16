@@ -90,8 +90,6 @@ model Step {
 enum StepType {
   TEXT
   VIDEO
-  TEXT_IMAGE
-  TEXT_VIDEO
   TEST_SINGLE
   TEST_MULTIPLE
   MATCHING

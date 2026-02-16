@@ -1,1 +1,1 @@
-export { CourseSidebar } from './ui'
+export * from './ui'

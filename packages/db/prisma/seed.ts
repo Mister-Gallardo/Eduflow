@@ -1,49 +1,552 @@
 import { db, Level, StepType } from '../src/index.js'
 
-// async function main() {
-//   console.log('🌱 Start seeding...')
+// --- Helper Functions to Generate Content ---
 
-//   // Используем upsert, чтобы сид можно было запускать многократно (идемпотентность)
-//   const admin = await db.example.upsert({
-//     where: {
-//       name: 'admin@eduflow.local',
-//     },
-//     update: {},
-//     create: {
-//       name: 'admin@eduflow.local',
-//     },
-//   })
+// 1. TEXT
+const createTextContent = (html: string) => ({ html })
 
-//   console.log('Admin upserted: ', admin.name)
+// 2. VIDEO
+const createVideoContent = (url: string) => ({ url })
 
-//   // Пример создания связанных данных
-//   //   const exampleProject = await db.project.upsert({
-//   //     where: { slug: 'welcome-project' },
-//   //     update: {},
-//   //     create: {
-//   //       title: 'Welcome Project',
-//   //       slug: 'welcome-project',
-//   //       authorId: admin.id,
-//   //     },
-//   //   })
+// 3. TEST_SINGLE
+const createTestSingleContent = (
+  question: string,
+  options: { id: string; text: string; isCorrect?: boolean }[],
+) => ({
+  question,
+  options,
+  correctOptionId: options.find((o) => o.isCorrect)?.id,
+})
 
-//   //   console.log(`✅ Created project: ${exampleProject.title}`)
-//   console.log('✅ Success!')
-// }
+// 4. TEST_MULTIPLE
+const createTestMultipleContent = (
+  question: string,
+  options: { id: string; text: string; isCorrect?: boolean }[],
+) => ({
+  question,
+  options,
+  correctOptionIds: options.filter((o) => o.isCorrect).map((o) => o.id),
+})
 
-// main()
-//   .catch((e) => {
-//     console.error('❌ Seeding error:', e)
-//     process.exit(1)
-//   })
-//   .finally(async () => {
-//     await db.$disconnect()
-//   })
+// 5. MATCHING (Content logic: pairs define correct matches)
+const createMatchingContent = (
+  pairs: { leftId: string; leftContent: string; rightId: string; rightContent: string }[],
+) => {
+  return {
+    left: pairs.map((p) => ({ id: p.leftId, content: p.leftContent })),
+    right: pairs.map((p) => ({ id: p.rightId, content: p.rightContent })),
+    pairs: pairs.map((p) => ({ leftId: p.leftId, rightId: p.rightId })),
+  }
+}
+
+// 6. ORDERING (Content logic: items in correct order)
+const createOrderingContent = (items: { id: string; content: string }[]) => ({
+  items,
+  correctOrder: items.map((i) => i.id),
+})
+
+// 7. INPUT_TEXT
+const createInputTextContent = (question: string, correctAnswers: string[]) => ({
+  question,
+  correctAnswers,
+})
+
+// 8. INPUT_NUMBER
+const createInputNumberContent = (question: string, correctAnswer: number) => ({
+  question,
+  correctAnswer,
+})
+
+// 9. FREE_TEXT
+const createFreeTextContent = (question: string) => ({
+  question,
+})
+
+// 10. FILL_GAPS
+// Text should contain placeholders like {{id}}
+const createFillGapsContent = (text: string, gaps: { id: string; correctAnswer: string }[]) => ({
+  text,
+  gaps,
+})
+
+// 11. TABLE
+// correctCells are IDs of cells that should be selected (e.g. "Select all prime numbers")
+const createTableContent = (
+  columns: string[],
+  rows: { id: string; cells: { id: string; text: string }[] }[],
+  correctCells: string[],
+) => ({
+  columns,
+  rows,
+  correctCells,
+})
+
+// --- Data Definitions ---
+
+interface StepDefinition {
+  title: string
+  type: StepType
+  content: any
+}
+
+interface LessonDefinition {
+  title: string
+  steps: StepDefinition[]
+}
+
+interface ModuleDefinition {
+  title: string
+  lessons: LessonDefinition[]
+}
+
+interface CourseDefinition {
+  title: string
+  description: string
+  price: number
+  duration: string
+  level: Level
+  category: string
+  modules: ModuleDefinition[]
+}
+
+const allCourses: CourseDefinition[] = [
+  {
+    title: 'Influencer Marketing',
+    description:
+      'Научитесь эффективно работать с блогерами и лидерами мнений для продвижения бренда.',
+    price: 0,
+    duration: '5 часов',
+    level: Level.BEGINNER,
+    category: 'marketing',
+    modules: [
+      {
+        title: 'Введение в Influencer Marketing',
+        lessons: [
+          {
+            title: 'Кто такие инфлюенсеры?',
+            steps: [
+              {
+                title: 'Определение и типы',
+                type: StepType.TEXT,
+                content: createTextContent(
+                  `<h3>Кто такой инфлюенсер?</h3><p>Инфлюенсер — это человек, который имеет влияние на определенную аудиторию.</p><p>Типы инфлюенсеров:</p><ul><li>Нано (1к-10к подписчиков)</li><li>Микро (10к-100к)</li><li>Макро (100к-1м)</li><li>Миллионники (1м+)</li></ul>`,
+                ),
+              },
+              {
+                title: 'Видео-разбор типов блогеров',
+                type: StepType.VIDEO,
+                content: createVideoContent('https://www.youtube.com/watch?v=dQw4w9WgXcQ'), // Placeholder
+              },
+              {
+                title: 'Проверка знаний: Типы',
+                type: StepType.MATCHING,
+                content: createMatchingContent([
+                  {
+                    leftId: 'nano',
+                    leftContent: 'Нано',
+                    rightId: '1-10k',
+                    rightContent: '1к - 10к',
+                  },
+                  {
+                    leftId: 'micro',
+                    leftContent: 'Микро',
+                    rightId: '10-100k',
+                    rightContent: '10к - 100к',
+                  },
+                  {
+                    leftId: 'macro',
+                    leftContent: 'Макро',
+                    rightId: '100k-1m',
+                    rightContent: '100к - 1м',
+                  },
+                ]),
+              },
+            ],
+          },
+          {
+            title: 'Стратегия работы',
+            steps: [
+              {
+                title: 'Цели кампании',
+                type: StepType.TEXT,
+                content: createTextContent(
+                  `<p>Перед началом работы важно определить цели: охват, вовлеченность или продажи.</p>`,
+                ),
+              },
+              {
+                title: 'Выбор цели',
+                type: StepType.TEST_SINGLE,
+                content: createTestSingleContent('Что является главной целью имиджевой кампании?', [
+                  { id: 'opt1', text: 'Прямые продажи', isCorrect: false },
+                  { id: 'opt2', text: 'Повышение узнаваемости', isCorrect: true },
+                  { id: 'opt3', text: 'Сбор лидов', isCorrect: false },
+                ]),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Поиск и проверка блогеров',
+        lessons: [
+          {
+            title: 'Где искать?',
+            steps: [
+              {
+                title: 'Инструменты поиска',
+                type: StepType.TEST_MULTIPLE,
+                content: createTestMultipleContent('Какие методы поиска блогеров существуют?', [
+                  { id: 'm1', text: 'Хэштеги', isCorrect: true },
+                  { id: 'm2', text: 'Геолокация', isCorrect: true },
+                  { id: 'm3', text: 'Телепатия', isCorrect: false },
+                  { id: 'm4', text: 'Специальные биржи', isCorrect: true },
+                ]),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'TypeScript: Типизация',
+    description:
+      'Глубокое погружение в систему типов TypeScript. Generics, Union, Intersection и многое другое.',
+    price: 3200,
+    duration: '10 часов',
+    level: Level.INTERMEDIATE,
+    category: 'development',
+    modules: [
+      {
+        title: 'Основы типов',
+        lessons: [
+          {
+            title: 'Базовые типы',
+            steps: [
+              {
+                title: 'Примитивы',
+                type: StepType.TEXT,
+                content: createTextContent(
+                  `<p>TypeScript поддерживает все стандартные типы JavaScript: boolean, number, string.</p><pre><code>let isDone: boolean = false;</code></pre>`,
+                ),
+              },
+              {
+                title: 'Заполните пропуски',
+                type: StepType.FILL_GAPS,
+                content: createFillGapsContent(
+                  'Для объявления строковой переменной используйте тип {{type}}. Примером значения типа boolean является {{bool}}.',
+                  [
+                    { id: 'type', correctAnswer: 'string' },
+                    { id: 'bool', correctAnswer: 'true' }, // or false, simple check
+                  ],
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Продвинутые типы',
+        lessons: [
+          {
+            title: 'Generics',
+            steps: [
+              {
+                title: 'Что такое Generic?',
+                type: StepType.VIDEO,
+                content: createVideoContent('https://www.youtube.com/watch?v=123456789'),
+              },
+              {
+                title: 'Практика: Функция identity',
+                type: StepType.INPUT_TEXT,
+                content: createInputTextContent(
+                  'Напишите ключевое слово, используемое для объявления функции в TS',
+                  ['function'],
+                ),
+              },
+            ],
+          },
+          {
+            title: 'Utility Types',
+            steps: [
+              {
+                title: 'Partial и Required',
+                type: StepType.TABLE,
+                content: createTableContent(
+                  ['Тип', 'Описание'],
+                  [
+                    {
+                      id: 'r1',
+                      cells: [
+                        { id: 'c11', text: 'Partial<T>' },
+                        { id: 'c12', text: 'Делает все поля опциональными' },
+                      ],
+                    },
+                    {
+                      id: 'r2',
+                      cells: [
+                        { id: 'c21', text: 'Required<T>' },
+                        { id: 'c22', text: 'Делает все поля обязательными' },
+                      ],
+                    },
+                    {
+                      id: 'r3',
+                      cells: [
+                        { id: 'c31', text: 'Readonly<T>' },
+                        { id: 'c32', text: 'Только для чтения' },
+                      ],
+                    },
+                  ],
+                  ['c11', 'c12', 'c21', 'c22', 'c31', 'c32'], // Dummy "Select all" task or just reading
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Финальный тест',
+        lessons: [
+          {
+            title: 'Экзамен',
+            steps: [
+              {
+                title: 'Порядок компиляции',
+                type: StepType.ORDERING,
+                content: createOrderingContent([
+                  { id: '1', content: 'Написание кода .ts' },
+                  { id: '2', content: 'Запуск tsc' },
+                  { id: '3', content: 'Генерация .js файлов' },
+                  { id: '4', content: 'Исполнение в node/браузере' },
+                ]),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Защита облаков AWS',
+    description: 'Безопасность и доступы. IAM, VPC, CloudTrail.',
+    price: 12500,
+    duration: '20 часов',
+    level: Level.ADVANCED,
+    category: 'cybersecurity',
+    modules: [
+      {
+        title: 'IAM (Identity and Access Management)',
+        lessons: [
+          {
+            title: 'Политики и Роли',
+            steps: [
+              {
+                title: 'JSON Policy Structure',
+                type: StepType.TEXT,
+                content: createTextContent(`<p>Политики AWS описываются в формате JSON.</p>`),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: '3D-моделирование в Blender',
+    description: 'Создание сцен, моделирование объектов, рендеринг.',
+    price: 9200,
+    duration: '30 часов',
+    level: Level.INTERMEDIATE,
+    category: 'design',
+    modules: [
+      {
+        title: 'Интерфейс Blender',
+        lessons: [
+          {
+            title: 'Навигация',
+            steps: [
+              {
+                title: 'Горячие клавиши',
+                type: StepType.MATCHING,
+                content: createMatchingContent([
+                  {
+                    leftId: 'g',
+                    leftContent: 'G',
+                    rightId: 'move',
+                    rightContent: 'Перемещение (Grab)',
+                  },
+                  {
+                    leftId: 'r',
+                    leftContent: 'R',
+                    rightId: 'rotate',
+                    rightContent: 'Вращение (Rotate)',
+                  },
+                  {
+                    leftId: 's',
+                    leftContent: 'S',
+                    rightId: 'scale',
+                    rightContent: 'Масштаб (Scale)',
+                  },
+                ]),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Data Science: Старт',
+    description: 'Pandas и NumPy. Основы анализа данных на Python.',
+    price: 0,
+    duration: '10 часов',
+    level: Level.BEGINNER,
+    category: 'analytics',
+    modules: [
+      {
+        title: 'NumPy',
+        lessons: [
+          {
+            title: 'Массивы',
+            steps: [
+              {
+                title: 'Создание массива',
+                type: StepType.INPUT_NUMBER,
+                content: createInputNumberContent(
+                  'Сколько измерений у массива np.array([1, 2, 3])?',
+                  1,
+                ),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'E-mail маркетинг',
+    description: 'Автоматизация писем.',
+    price: 2900,
+    duration: '10 часов',
+    level: Level.BEGINNER,
+    category: 'marketing',
+    modules: [],
+  },
+  {
+    title: 'SOC аналитик',
+    description: 'Мониторинг атак.',
+    price: 10800,
+    duration: '18 часов',
+    level: Level.INTERMEDIATE,
+    category: 'cybersecurity',
+    modules: [],
+  },
+  {
+    title: 'Типографика для продвинутых',
+    description: 'Шрифтовые пары.',
+    price: 3800,
+    duration: '10 часов',
+    level: Level.ADVANCED,
+    category: 'design',
+    modules: [],
+  },
+  {
+    title: 'BI аналитика',
+    description: 'Дашборды.',
+    price: 8200,
+    duration: '18 часов',
+    level: Level.INTERMEDIATE,
+    category: 'analytics',
+    modules: [],
+  },
+  {
+    title: 'Go для высоких нагрузок',
+    description: 'Горутины.',
+    price: 13000,
+    duration: '35 часов',
+    level: Level.ADVANCED,
+    category: 'development',
+    modules: [],
+  },
+  {
+    title: 'SEO-специалист',
+    description: 'Продвижение сайтов.',
+    price: 7800,
+    duration: '20 часов',
+    level: Level.INTERMEDIATE,
+    category: 'marketing',
+    modules: [],
+  },
+  {
+    title: 'Ethical Hacking',
+    description: 'Эксплойты.',
+    price: 14500,
+    duration: '28 часов',
+    level: Level.ADVANCED,
+    category: 'cybersecurity',
+    modules: [],
+  },
+  {
+    title: 'Айдентика и брендинг',
+    description: 'Логотипы.',
+    price: 8300,
+    duration: '20 часов',
+    level: Level.INTERMEDIATE,
+    category: 'design',
+    modules: [],
+  },
+  {
+    title: 'Продуктовая аналитика',
+    description: 'Метрики.',
+    price: 11000,
+    duration: '25 часов',
+    level: Level.INTERMEDIATE,
+    category: 'analytics',
+    modules: [],
+  },
+  {
+    title: 'Next.js 14',
+    description: 'SSR и App Router.',
+    price: 0,
+    duration: '15 часов',
+    level: Level.ADVANCED,
+    category: 'development',
+    modules: [
+      {
+        title: 'App Router',
+        lessons: [
+          {
+            title: 'Routing',
+            steps: [
+              {
+                title: 'File system routing',
+                type: StepType.TEXT,
+                content: createTextContent(
+                  '<p>Next.js использует файловую систему для роутинга.</p>',
+                ),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Performance маркетинг',
+    description: 'ROI и аналитика рекламных кампаний.',
+    price: 14200,
+    duration: '30 часов',
+    level: Level.ADVANCED,
+    category: 'marketing',
+    modules: [],
+  },
+]
 
 async function main() {
   console.log('🌱 Start seeding courses with rich content...')
 
   // Очистка перед заполнением
+  // Удаляем в правильном порядке из-за foreign keys
   await db.userProgress.deleteMany()
   await db.enrollment.deleteMany()
   await db.step.deleteMany()
@@ -51,1631 +554,81 @@ async function main() {
   await db.module.deleteMany()
   await db.course.deleteMany()
 
-  const coursesData: any[] = [
-    {
-      title: 'Pentest: Взлом веб-приложений',
-      description: 'OWASP Top 10 и практика атак.',
-      price: 9800,
-      duration: '20 часов',
-      level: Level.INTERMEDIATE,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'UX/UI Дизайн: Проектирование',
-      description: 'От анализа пользователей до прототипов.',
-      price: 7500,
-      duration: '15 часов',
-      level: Level.BEGINNER,
-      category: 'design',
-      modules: {
-        create: [
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 1: Основы UX и Дизайн-мышление',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Что такое UX на самом деле?',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Определение UX',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'User Experience (UX) — это то, как человек взаимодействует с продуктом. Это его чувства, эмоции и практический опыт.',
-                        },
-                      },
-                      {
-                        title: 'Процесс проектирования',
-                        type: StepType.VIDEO,
-                        order: 2,
-                        content: {
-                          url: 'https://www.youtube.com/watch?v=TtInP9mP-50',
-                          provider: 'youtube',
-                          description: 'Посмотрите это короткое видео о дизайн-процессе.',
-                        },
-                      },
-                      {
-                        title: 'Проверка знаний: UX vs UI',
-                        type: StepType.TEST_SINGLE,
-                        order: 3,
-                        content: {
-                          question: 'Правда ли, что UX — это только то, как выглядит интерфейс?',
-                          options: [
-                            { id: '1', text: 'Да, абсолютно', isCorrect: false },
-                            {
-                              id: '2',
-                              text: 'Нет, UX — это про опыт и логику, а UI — про визуал',
-                              isCorrect: true,
-                            },
-                            { id: '3', text: 'Это одно и то же', isCorrect: false },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 1.2: Психология пользователя',
-                  order: 2,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Закон Хика',
-                        type: StepType.TEXT_IMAGE,
-                        order: 1,
-                        content: {
-                          body: 'Чем больше вариантов выбора у пользователя, тем больше времени ему требуется на принятие решения.',
-                          imageUrl: 'https://example.com/hicks-law.jpg',
-                        },
-                      },
-                      {
-                        title: 'Сопоставление законов UX',
-                        type: StepType.MATCHING,
-                        order: 2,
-                        content: {
-                          left: [
-                            { id: 'l1', content: 'Закон Хика' },
-                            { id: 'l2', content: 'Закон Фиттса' },
-                            { id: 'l3', content: 'Закон близости' },
-                          ],
-                          right: [
-                            { id: 'r1', content: 'Время принятия решения зависит от числа опций' },
-                            {
-                              id: 'r2',
-                              content: 'Элементы поблизости воспринимаются как связанные',
-                            },
-                            {
-                              id: 'r3',
-                              content: 'Время движения к цели зависит от её размера и расстояния',
-                            },
-                          ],
-                          pairs: [
-                            { leftId: 'l1', rightId: 'r1' },
-                            { leftId: 'l2', rightId: 'r3' },
-                            { leftId: 'l3', rightId: 'r2' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 3: 3 модуль',
-            order: 2,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 3.1: Исследование пользователей',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Создание Personas',
-                        type: StepType.ORDERING,
-                        order: 1,
-                        content: {
-                          items: [
-                            { id: 'o1', content: 'Анализ данных интервью' },
-                            { id: 'o2', content: 'Сбор информации о пользователях' },
-                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
-                            { id: 'o4', content: 'Сегментация аудитории' },
-                          ],
-                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 4: Аналитика и Исследования',
-            order: 2,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 4.1: Исследование пользователей',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Создание Personas',
-                        type: StepType.ORDERING,
-                        order: 1,
-                        content: {
-                          items: [
-                            { id: 'o1', content: 'Анализ данных интервью' },
-                            { id: 'o2', content: 'Сбор информации о пользователях' },
-                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
-                            { id: 'o4', content: 'Сегментация аудитории' },
-                          ],
-                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 4.2: Исследование пользователей',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Создание Personas',
-                        type: StepType.ORDERING,
-                        order: 1,
-                        content: {
-                          items: [
-                            { id: 'o1', content: 'Анализ данных интервью' },
-                            { id: 'o2', content: 'Сбор информации о пользователях' },
-                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
-                            { id: 'o4', content: 'Сегментация аудитории' },
-                          ],
-                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
-                        },
-                      },
-                    ],
-                  },
-                },
-                {
-                  title: 'Урок 4.3: Исследование пользователей',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Создание Personas',
-                        type: StepType.ORDERING,
-                        order: 1,
-                        content: {
-                          items: [
-                            { id: 'o1', content: 'Анализ данных интервью' },
-                            { id: 'o2', content: 'Сбор информации о пользователях' },
-                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
-                            { id: 'o4', content: 'Сегментация аудитории' },
-                          ],
-                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 2: Аналитика и Исследования',
-            order: 2,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 2.1: Исследование пользователей',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Создание Personas',
-                        type: StepType.ORDERING,
-                        order: 1,
-                        content: {
-                          items: [
-                            { id: 'o1', content: 'Анализ данных интервью' },
-                            { id: 'o2', content: 'Сбор информации о пользователях' },
-                            { id: 'o3', content: 'Отрисовка карточки персонажа' },
-                            { id: 'o4', content: 'Сегментация аудитории' },
-                          ],
-                          correctOrder: ['o2', 'o1', 'o4', 'o3'],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      title: 'React для начинающих',
-      description: 'Компоненты и хуки.',
-      price: 0,
-      duration: '8 часов',
-      level: Level.BEGINNER,
-      category: 'development',
-      modules: {
-        create: [
-          {
-            title: 'Модуль 1: Основы React',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Знакомство с JSX',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Что такое JSX?',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'JSX — это расширение синтаксиса JavaScript, которое выглядит как HTML.',
-                        },
-                      },
-                      {
-                        title: 'Выбор правильных ответов',
-                        type: StepType.TEST_MULTIPLE,
-                        order: 2,
-                        content: {
-                          question: 'Какие утверждения о JSX верны?',
-                          options: [
-                            {
-                              id: '1',
-                              text: 'Нужно импортировать React для JSX в старых версиях',
-                              isCorrect: true,
-                            },
-                            { id: '2', text: 'JSX — это валидный HTML', isCorrect: false },
-                            {
-                              id: '3',
-                              text: 'В JSX можно вставлять выражения в фигурных скобках',
-                              isCorrect: true,
-                            },
-                            {
-                              id: '4',
-                              text: 'class используется вместо className',
-                              isCorrect: false,
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'Модуль 2: Хуки',
-            order: 2,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 2.1: useState и useEffect',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Название хука',
-                        type: StepType.INPUT_TEXT,
-                        order: 1,
-                        content: {
-                          question:
-                            'Напишите название хука, который используется для управления состоянием в функциональных компонентах.',
-                          correctAnswers: ['useState'],
-                        },
-                      },
-                      {
-                        title: 'Код на React',
-                        type: StepType.FILL_GAPS,
-                        order: 2,
-                        content: {
-                          text: 'const [count, setCount] = {{gap1}}(0); \n {{gap2}}(() => { console.log("mounted") }, []);',
-                          gaps: [
-                            { id: 'gap1', type: 'text', correctAnswer: 'useState' },
-                            { id: 'gap2', type: 'text', correctAnswer: 'useEffect' },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      title: 'SQL для анализа данных',
-      description: 'Оконные функции.',
-      price: 5400,
-      duration: '14 часов',
-      level: Level.INTERMEDIATE,
-      category: 'analytics',
-      modules: {
-        create: [
-          {
-            title: 'Модуль 1: Продвинутый SQL',
-            order: 1,
-            lessons: {
-              create: [
-                {
-                  title: 'Урок 1.1: Оконные функции',
-                  order: 1,
-                  steps: {
-                    create: [
-                      {
-                        title: 'Синтаксис OVER',
-                        type: StepType.TEXT,
-                        order: 1,
-                        content: {
-                          body: 'Оконная функция выполняется над набором строк, который называется окном.',
-                        },
-                      },
-                      {
-                        title: 'Количество строк в окне',
-                        type: StepType.INPUT_NUMBER,
-                        order: 2,
-                        content: {
-                          question:
-                            'Сколько строк вернет запрос с COUNT(*) OVER(), если в таблице 10 строк?',
-                          correctAnswer: 10,
-                        },
-                      },
-                      {
-                        title: 'Ранжирование в SQL',
-                        type: StepType.TABLE,
-                        order: 3,
-                        content: {
-                          columns: ['Функция', 'Пропуски в рангах', 'Дубликаты'],
-                          rows: [
-                            {
-                              id: 'r1',
-                              cells: [
-                                { id: 'c1', text: 'ROW_NUMBER()' },
-                                { id: 'c2', text: 'Нет' },
-                                { id: 'c3', text: 'Разные ранги' },
-                              ],
-                            },
-                            {
-                              id: 'r2',
-                              cells: [
-                                { id: 'c4', text: 'RANK()' },
-                                { id: 'c5', text: 'Да' },
-                                { id: 'c6', text: 'Одинаковые ранги' },
-                              ],
-                            },
-                            {
-                              id: 'r3',
-                              cells: [
-                                { id: 'c7', text: 'DENSE_RANK()' },
-                                { id: 'c8', text: 'Нет' },
-                                { id: 'c9', text: 'Одинаковые ранги' },
-                              ],
-                            },
-                          ],
-                          correctCells: ['c1', 'c4', 'c7'], // Пример выбора именно функций
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      title: 'Influencer Marketing',
-      description: 'Работа с блогерами.',
-      price: 0,
-      duration: '5 часов',
-      level: Level.BEGINNER,
-      category: 'marketing',
-    },
-    {
-      title: 'Защита облаков AWS',
-      description: 'Безопасность и доступы.',
-      price: 12500,
-      duration: '20 часов',
-      level: Level.ADVANCED,
-      category: 'cybersecurity',
-    },
-    {
-      title: '3D-моделирование в Blender',
-      description: 'Создание сцен.',
-      price: 9200,
-      duration: '30 часов',
-      level: Level.INTERMEDIATE,
-      category: 'design',
-    },
-    {
-      title: 'Data Science: Старт',
-      description: 'Pandas и NumPy.',
-      price: 0,
-      duration: '10 часов',
-      level: Level.BEGINNER,
-      category: 'analytics',
-    },
-    {
-      title: 'TypeScript: Типизация',
-      description: 'Generics и infer.',
-      price: 3200,
-      duration: '10 часов',
-      level: Level.INTERMEDIATE,
-      category: 'development',
-    },
-    {
-      title: 'E-mail маркетинг',
-      description: 'Автоматизация писем.',
-      price: 2900,
-      duration: '10 часов',
-      level: Level.BEGINNER,
-      category: 'marketing',
-    },
-    {
-      title: 'SOC аналитик',
-      description: 'Мониторинг атак.',
-      price: 10800,
-      duration: '18 часов',
-      level: Level.INTERMEDIATE,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Типографика для продвинутых',
-      description: 'Шрифтовые пары.',
-      price: 3800,
-      duration: '10 часов',
-      level: Level.ADVANCED,
-      category: 'design',
-    },
-    {
-      title: 'BI аналитика',
-      description: 'Дашборды.',
-      price: 8200,
-      duration: '18 часов',
-      level: Level.INTERMEDIATE,
-      category: 'analytics',
-    },
-    {
-      title: 'Go для высоких нагрузок',
-      description: 'Горутины.',
-      price: 13000,
-      duration: '35 часов',
-      level: Level.ADVANCED,
-      category: 'development',
-    },
-    {
-      title: 'SEO-специалист',
-      description: 'Продвижение сайтов.',
-      price: 7800,
-      duration: '20 часов',
-      level: Level.INTERMEDIATE,
-      category: 'marketing',
-    },
-    {
-      title: 'Ethical Hacking',
-      description: 'Эксплойты.',
-      price: 14500,
-      duration: '28 часов',
-      level: Level.ADVANCED,
-      category: 'cybersecurity',
-    },
-    {
-      title: 'Айдентика и брендинг',
-      description: 'Логотипы.',
-      price: 8300,
-      duration: '20 часов',
-      level: Level.INTERMEDIATE,
-      category: 'design',
-    },
-    {
-      title: 'Продуктовая аналитика',
-      description: 'Метрики.',
-      price: 11000,
-      duration: '25 часов',
-      level: Level.INTERMEDIATE,
-      category: 'analytics',
-    },
-    {
-      title: 'Next.js 14',
-      description: 'SSR и App Router.',
-      price: 0,
-      duration: '15 часов',
-      level: Level.ADVANCED,
-      category: 'development',
-    },
-    {
-      title: 'Performance маркетинг',
-      description: 'ROI.',
-      price: 14200,
-      duration: '30 часов',
-      level: Level.ADVANCED,
-      category: 'marketing',
-    },
-  ]
+  for (const courseDef of allCourses) {
+    console.log(`Creating course: ${courseDef.title}`)
 
-  for (const courseItem of coursesData) {
-    await db.course.create({
-      data: courseItem,
+    const course = await db.course.create({
+      data: {
+        title: courseDef.title,
+        description: courseDef.description,
+        price: courseDef.price,
+        duration: courseDef.duration,
+        level: courseDef.level,
+        category: courseDef.category,
+      },
     })
+
+    // Если модулей нет, создадим заглушку чтобы курс не был пустым
+    const modulesToCreate =
+      courseDef.modules.length > 0
+        ? courseDef.modules
+        : [
+            {
+              title: 'Введение',
+              lessons: [
+                {
+                  title: 'Обзор курса',
+                  steps: [
+                    {
+                      title: 'Добро пожаловать',
+                      type: StepType.TEXT,
+                      content: createTextContent(
+                        `<p>Добро пожаловать на курс "${courseDef.title}"!</p>`,
+                      ),
+                    },
+                  ],
+                },
+              ],
+            },
+          ]
+
+    for (let mIndex = 0; mIndex < modulesToCreate.length; mIndex++) {
+      const modDef = modulesToCreate[mIndex]
+      const module = await db.module.create({
+        data: {
+          title: modDef.title,
+          order: mIndex,
+          courseId: course.id,
+        },
+      })
+
+      for (let lIndex = 0; lIndex < modDef.lessons.length; lIndex++) {
+        const lessonDef = modDef.lessons[lIndex]
+        const lesson = await db.lesson.create({
+          data: {
+            title: lessonDef.title,
+            order: lIndex,
+            moduleId: module.id,
+          },
+        })
+
+        for (let sIndex = 0; sIndex < lessonDef.steps.length; sIndex++) {
+          const stepDef = lessonDef.steps[sIndex]
+          await db.step.create({
+            data: {
+              title: stepDef.title,
+              order: sIndex,
+              type: stepDef.type,
+              content: stepDef.content,
+              lessonId: lesson.id,
+            },
+          })
+        }
+      }
+    }
   }
 
-  console.log(`✅ Success! Created ${coursesData.length} courses with nested content.`)
+  console.log(`✅ Success! Created ${allCourses.length} courses with nested content.`)
 }
 
 main()

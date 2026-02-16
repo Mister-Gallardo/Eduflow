@@ -1,2 +1,1 @@
-export { findActiveModuleId } from './find-active-modules'
-export { SidebarActionContext, useSidebarAction } from './SidebarContext'
+export { findActiveModuleId } from './find-active-module-id'

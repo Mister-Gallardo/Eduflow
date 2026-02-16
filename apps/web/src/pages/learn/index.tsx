@@ -2,8 +2,8 @@ import { Box, Button, Typography } from '@mui/material'
 import { useEffect } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 
+import type { LearnOutletContext } from '@/entities/course'
 import { paths } from '@/shared/config'
-import type { LearnOutletContext } from '@/widgets/course-sidebar/model'
 
 export const LearnPage = () => {
   const { courseId = '', stepId } = useParams()

@@ -5,9 +5,9 @@ import { CourseCatalog } from '@/widgets/course-catalog'
 
 import { getStats } from '../lib'
 
-import { HeroSection } from './HeroSection'
-import { sectionStyles, statsStyles } from './Home.styles'
-import { StatBlock } from './StatBlock'
+import { HeroSection } from './hero-section'
+import { sectionStyles, statsStyles } from './HomePage.styles'
+import { StatBlock } from './stat-block'
 
 export const HomePage = () => {
   const theme = useTheme()

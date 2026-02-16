@@ -1,6 +1,9 @@
-import { alpha, type Theme } from '@mui/material'
+import { alpha, type Theme } from '@mui/material/styles'
 
-import { analytics, design, marketing, programming } from '@/shared/assets'
+import analyticsImg from '@/shared/assets/images/analytics.svg'
+import designImg from '@/shared/assets/images/design.svg'
+import marketingImg from '@/shared/assets/images/marketing.svg'
+import programmingImg from '@/shared/assets/images/programming.svg'
 
 import type { CourseLevel } from '../model'
 
@@ -19,18 +22,18 @@ export const getCategoryGradient = (category: string): string => {
   }
 }
 
-export const getCategoryIcon = (category: string): string => {
+export const getCategoryImg = (category: string): string => {
   switch (category.toLowerCase()) {
     case 'development':
-      return programming
+      return programmingImg
     case 'design':
-      return design
+      return designImg
     case 'analytics':
-      return analytics
+      return analyticsImg
     case 'marketing':
-      return marketing
+      return marketingImg
     default:
-      return programming
+      return programmingImg
   }
 }
 

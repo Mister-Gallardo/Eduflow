@@ -2,16 +2,17 @@ import { Box, useTheme } from '@mui/material'
 import { motion } from 'motion/react'
 import { useParams } from 'react-router-dom'
 
+import type { NavigationModule } from '@/entities/course'
+import { SidebarActionContext } from '@/entities/course'
 import { useIsMobile } from '@/shared/lib'
 import { BottomSheet } from '@/shared/ui'
 
-import { findActiveModuleId, SidebarActionContext } from '../lib'
-import type { NavigationModule } from '../model'
+import { findActiveModuleId } from '../lib'
 
 import { sidebarStyles } from './CourseSidebar.styles'
-import { SidebarContent } from './SidebarContent'
+import { SidebarContent } from './sidebar-content'
 
-const SIDEBAR_WIDTH = 260
+const SIDEBAR_WIDTH = 240
 
 interface CourseSidebarProps {
   navigation: NavigationModule[]

@@ -2,7 +2,7 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined'
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
 import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined'
-import { alpha, type Theme } from '@mui/material'
+import { alpha, type Theme } from '@mui/material/styles'
 
 import type { Stat } from '../model'
 

@@ -1,4 +1,4 @@
-export { Header } from './Header'
-export { HeaderActions } from './HeaderActions'
-export { HeaderNavigation } from './HeaderNavigation'
-export { MobileNavigation } from './MobileNavigation'
+export { Header } from './header'
+export { HeaderActions } from './header-actions'
+export { HeaderNavigation } from './header-navigation'
+export { MobileNavigation } from './mobile-navigation'

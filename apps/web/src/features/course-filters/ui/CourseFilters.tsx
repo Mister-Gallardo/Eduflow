@@ -1,9 +1,8 @@
-import { alpha, Box, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 
-import { CategoryTabs } from '@/features/course-filters/ui/CategoryTabs'
-import { SearchInput } from '@/features/course-filters/ui/SearchInput'
-
+import { CategoryTabs } from './category-tabs'
 import { courseFiltersStyles } from './CourseFilters.styles'
+import { SearchInput } from './search-input'
 
 interface CourseFiltersProps {
   selectedCategory: string
@@ -17,20 +16,10 @@ export const CourseFilters = ({
   onCategoryChange,
   searchQuery,
   onSearchChange,
-}: CourseFiltersProps) => {
-  const theme = useTheme()
+}: CourseFiltersProps) => (
+  <Box sx={courseFiltersStyles}>
+    <SearchInput searchQuery={searchQuery} onSearchChange={onSearchChange} />
 
-  return (
-    <Box
-      sx={{
-        ...courseFiltersStyles,
-        borderColor: alpha(theme.palette.primary.main, 0.1),
-        boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.05)}`,
-      }}
-    >
-      <SearchInput searchQuery={searchQuery} onSearchChange={onSearchChange} />
-
-      <CategoryTabs selectedCategory={selectedCategory} onCategoryChange={onCategoryChange} />
-    </Box>
-  )
-}
+    <CategoryTabs selectedCategory={selectedCategory} onCategoryChange={onCategoryChange} />
+  </Box>
+)

@@ -1,44 +1,55 @@
 import { createBrowserRouter } from 'react-router-dom'
 
-import { AuthPage } from '@/pages/auth'
 import { HomePage } from '@/pages/home'
-import { LearnPage } from '@/pages/learn'
+import { NotFoundPage } from '@/pages/not-found'
 import { paths } from '@/shared/config'
-import { Result404 } from '@/shared/ui'
+import { GlobalLoader } from '@/shared/ui'
 
-import { AppLayout, AuthLayout, LearnLayout } from '../layouts'
+import { AppLayout, AuthLayout, LearnLayout, RootLayout } from '../layouts'
 
 export const routeConfig = createBrowserRouter([
   {
-    element: <AuthLayout />,
+    element: <RootLayout />,
+    hydrateFallbackElement: <GlobalLoader />,
     children: [
       {
-        path: paths.auth(),
-        element: <AuthPage />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: paths.auth(),
+            lazy: async () => {
+              const { AuthPage } = await import('@/pages/auth')
+              return { Component: AuthPage }
+            },
+          },
+        ],
       },
-    ],
-  },
-  {
-    element: <AppLayout />,
-    children: [
       {
-        path: paths.home(),
-        element: <HomePage />,
-      },
+        element: <AppLayout />,
+        children: [
+          {
+            path: paths.home(),
+            element: <HomePage />,
+          },
 
-      {
-        path: '*',
-        element: <Result404 />,
+          {
+            path: '*',
+            element: <NotFoundPage />,
+          },
+        ],
       },
-    ],
-  },
-  {
-    element: <LearnLayout />,
-    children: [
       {
-        path: paths.learn.root(),
-        element: <LearnPage />,
-        // handle: { header: { title: 'Обучение' } },
+        element: <LearnLayout />,
+        children: [
+          {
+            path: paths.learn.root(),
+            lazy: async () => {
+              const { LearnPage } = await import('@/pages/learn')
+              return { Component: LearnPage }
+            },
+            // handle: { header: { title: 'Обучение' } },
+          },
+        ],
       },
     ],
   },

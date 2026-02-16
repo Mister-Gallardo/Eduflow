@@ -1,4 +1,4 @@
-import type { EnrollCourseInput, GetCourseNavigationInput } from '@eduflow/shared'
+import type { EnrollCourseInput, GetCourseNavigationInput, GetStepDataInput } from '@eduflow/shared'
 import { TRPCError } from '@trpc/server'
 
 import type { AuthorizedContext } from '../../trpc/context.js'
@@ -17,7 +17,7 @@ export const enrollService = async (ctx: AuthorizedContext, input: EnrollCourseI
     throw new TRPCError({ code: 'NOT_FOUND', message: 'Course not found' })
   }
 
-  // Check if already enrolled
+  // Check if user already enrolled
   const existingEnrollment = await ctx.db.enrollment.findUnique({
     where: {
       userId_courseId: {
@@ -147,54 +147,55 @@ export const getCourseNavigationService = async (
   return { navigation, lastViewedStepId, courseTitle: enrollment.course.title }
 }
 
-// export const getStepDataService = async (ctx: Context, input: GetStepDataInput) => {
-//   const { user } = ctx
-//   if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' })
+export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepDataInput) => {
+  const user = ctx.me
 
-//   const { stepId } = input
+  const { stepId } = input
 
-//   const step = await ctx.db.step.findUnique({
-//     where: { id: stepId },
-//     include: {
-//       lesson: {
-//         include: {
-//           module: true,
-//         },
-//       },
-//     },
-//   })
+  const step = await ctx.db.step.findUnique({
+    where: { id: stepId },
+    include: {
+      lesson: {
+        include: {
+          module: true,
+        },
+      },
+    },
+  })
 
-//   if (!step) {
-//     throw new TRPCError({ code: 'NOT_FOUND', message: 'Step not found' })
-//   }
+  if (!step) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'Step not found' })
+  }
 
-//   // Verify enrollment
-//   const enrollment = await ctx.db.enrollment.findUnique({
-//     where: {
-//       userId_courseId: {
-//         userId: user.id,
-//         courseId: step.lesson.module.courseId,
-//       },
-//     },
-//   })
+  const enrollment = await ctx.db.enrollment.findUnique({
+    where: {
+      userId_courseId: {
+        userId: user.id,
+        courseId: step.lesson.module.courseId,
+      },
+    },
+  })
 
-//   if (!enrollment) {
-//     throw new TRPCError({ code: 'FORBIDDEN', message: 'Not enrolled in this course' })
-//   }
+  if (!enrollment) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Not enrolled in this course' })
+  }
 
-//   // Remove sensitive data (answers) from content
-//   // Assuming content is a flexible JSON, we need a strategy to strip answers.
-//   // This depends on how we structure the JSON.
-//   // detailed parsing logic should be here.
-//   const safeContent = stripAnswers(step.content, step.type)
+  // Remove sensitive data (answers) from content
+  // Assuming content is a flexible JSON, we need a strategy to strip answers.
+  // This depends on how we structure the JSON.
+  // detailed parsing logic should be here.
+  // const safeContent = stripAnswers(step.content, step.type)
 
-//   return {
-//     ...step,
-//     content: safeContent,
-//   }
-// }
+  // return {
+  //   ...step,
+  //   content: safeContent,
+  // }
 
-// // Helper to strip answers based on step type
+  return {
+    step,
+  }
+}
+
 // const stripAnswers = (content: any, type: string) => {
 //   // Deep copy to avoid mutating original
 //   const safe = JSON.parse(JSON.stringify(content))
