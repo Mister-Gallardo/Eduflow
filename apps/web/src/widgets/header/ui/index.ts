@@ -1,4 +1,5 @@
 export { Header } from './header'
 export { HeaderActions } from './header-actions'
 export { HeaderNavigation } from './header-navigation'
+export { LearnHeaderLeft } from './learn-header-left'
 export { MobileNavigation } from './mobile-navigation'

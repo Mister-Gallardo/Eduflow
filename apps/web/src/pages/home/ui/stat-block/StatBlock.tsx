@@ -1,4 +1,4 @@
-import { alpha, Box, Typography, useTheme } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
 import { MotionBox } from '@/shared/ui'
 
@@ -7,9 +7,6 @@ import type { Stat } from '../../model'
 import { iconStyles } from './StatBlock.styles'
 
 export const StatBlock = ({ stat, index }: { stat: Stat; index: number }) => {
-  const theme = useTheme()
-  const primary = theme.palette.primary
-
   const Icon = stat.icon
 
   return (
@@ -51,7 +48,7 @@ export const StatBlock = ({ stat, index }: { stat: Stat; index: number }) => {
           sx={{
             fontSize: { xs: 'clamp(10px, 3.5vw, 12px)', md: 12 },
             fontWeight: 600,
-            color: alpha(primary.main, 0.6),
+            color: 'text.secondary',
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
           }}

@@ -2,12 +2,10 @@ import { Box, useTheme } from '@mui/material'
 import { motion } from 'motion/react'
 import { useParams } from 'react-router-dom'
 
-import type { NavigationModule } from '@/entities/course'
-import { SidebarActionContext } from '@/entities/course'
+import type { NavigationModule } from '@/entities/course-navigation'
+import { useSidebarContext } from '@/entities/course-navigation'
 import { useIsMobile } from '@/shared/lib'
 import { BottomSheet } from '@/shared/ui'
-
-import { findActiveModuleId } from '../lib'
 
 import { sidebarStyles } from './CourseSidebar.styles'
 import { SidebarContent } from './sidebar-content'
@@ -17,7 +15,6 @@ const SIDEBAR_WIDTH = 240
 interface CourseSidebarProps {
   navigation: NavigationModule[]
   open: boolean
-  onClose: () => void
   courseTitle: string
   isLoading: boolean
 }
@@ -25,30 +22,25 @@ interface CourseSidebarProps {
 export const CourseSidebar = ({
   navigation,
   open,
-  onClose,
   courseTitle,
   isLoading = false,
 }: CourseSidebarProps) => {
   const theme = useTheme()
   const isMobile = useIsMobile()
   // const isMobile = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md + 20))
+  const { onClose } = useSidebarContext()
 
-  const { courseId = '', stepId } = useParams()
-
-  const activeModuleId = findActiveModuleId(navigation, stepId)
+  const { courseId = '' } = useParams()
 
   if (isMobile) {
     return (
-      <BottomSheet open={open} onClose={onClose}>
-        <SidebarActionContext.Provider value={{ onClose }}>
-          <SidebarContent
-            navigation={navigation}
-            courseId={courseId}
-            activeModuleId={activeModuleId}
-            courseTitle={courseTitle}
-            isLoading={isLoading}
-          />
-        </SidebarActionContext.Provider>
+      <BottomSheet open={open} onClose={() => onClose?.()}>
+        <SidebarContent
+          navigation={navigation}
+          courseId={courseId}
+          courseTitle={courseTitle}
+          isLoading={isLoading}
+        />
       </BottomSheet>
     )
   }
@@ -78,7 +70,6 @@ export const CourseSidebar = ({
         <SidebarContent
           navigation={navigation}
           courseId={courseId}
-          activeModuleId={activeModuleId}
           courseTitle={courseTitle}
           isLoading={isLoading}
         />

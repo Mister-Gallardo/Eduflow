@@ -1,0 +1,95 @@
+import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  List,
+  Tooltip,
+  Typography,
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+
+import { tooltipTextSecondaryStyles } from '@/shared/ui/styles'
+
+import type { NavigationModule } from '../../model'
+import { useSidebarContext } from '../../model'
+import { LessonItem } from '../lesson-item'
+
+import {
+  moduleAccordionSummaryStyles,
+  moduleNumberBlockStyles,
+  moduleTitleStyles,
+} from './ModuleAccordion.styles'
+
+interface ModuleAccordionProps {
+  module: NavigationModule
+  index: number
+  courseId: string
+  isMobile?: boolean
+}
+
+export const ModuleAccordion = ({ module, index, courseId }: ModuleAccordionProps) => {
+  const { activeModuleId } = useSidebarContext()
+  const isModuleActive = activeModuleId === module.id
+  const [expanded, setExpanded] = useState(isModuleActive)
+
+  useEffect(() => {
+    setExpanded(isModuleActive)
+  }, [isModuleActive])
+
+  const handleChange = (_: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpanded(isExpanded)
+  }
+
+  return (
+    <Accordion
+      expanded={expanded}
+      onChange={handleChange}
+      disableGutters
+      elevation={0}
+      slotProps={{ transition: { unmountOnExit: true } }}
+      sx={{
+        '&::before': { display: 'none' },
+        backgroundColor: 'transparent',
+      }}
+    >
+      <Tooltip
+        title={
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 13 }}>
+              {module.title}
+            </Typography>
+            <Typography variant="caption" sx={tooltipTextSecondaryStyles}>
+              Количество уроков: {module.lessons.length}
+            </Typography>
+          </Box>
+        }
+        placement="right"
+      >
+        <AccordionSummary
+          sx={moduleAccordionSummaryStyles}
+          expandIcon={<ExpandMoreOutlinedIcon sx={{ fontSize: 16 }} />}
+        >
+          <Box sx={moduleNumberBlockStyles}>
+            <Typography variant="caption" sx={{ fontWeight: 600, fontSize: 10, lineHeight: 1 }}>
+              {index + 1}
+            </Typography>
+          </Box>
+
+          <Typography variant="body2" sx={moduleTitleStyles}>
+            {module.title}
+          </Typography>
+        </AccordionSummary>
+      </Tooltip>
+
+      <AccordionDetails sx={{ p: 0 }}>
+        <List disablePadding>
+          {module.lessons.map((lesson) => (
+            <LessonItem key={lesson.id} lesson={lesson} courseId={courseId} />
+          ))}
+        </List>
+      </AccordionDetails>
+    </Accordion>
+  )
+}

@@ -1,6 +1,6 @@
-import { SnackbarProvider } from './snackbar-provider'
-import { ThemeProvider } from './theme-provider'
-import { TrpcProvider } from './trpc-provider'
+import { SnackbarProvider } from './SnackbarProvider'
+import { ThemeProvider } from './ThemeProvider'
+import { TrpcProvider } from './TrpcProvider'
 
 export const Providers = ({ children }: { children: React.ReactNode }) => (
   <TrpcProvider>

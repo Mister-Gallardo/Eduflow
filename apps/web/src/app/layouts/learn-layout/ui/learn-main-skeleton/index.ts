@@ -1,1 +1,0 @@
-export { LearnMainSkeleton } from './LearnMainSkeleton'

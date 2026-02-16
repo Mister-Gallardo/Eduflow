@@ -47,7 +47,7 @@ export const CourseCatalog = () => {
   )
 
   return (
-    <Box component="section" sx={courseCatalogStyles}>
+    <Box id="course-catalog" component="section" sx={courseCatalogStyles}>
       <Typography
         variant="h2"
         align="center"

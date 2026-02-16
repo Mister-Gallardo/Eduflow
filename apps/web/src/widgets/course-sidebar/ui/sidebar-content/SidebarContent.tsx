@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 
-import type { NavigationModule } from '@/entities/course'
-import { ModuleAccordion } from '@/entities/course'
+import type { NavigationModule } from '@/entities/course-navigation'
+import { ModuleAccordion } from '@/entities/course-navigation'
 import { AppSkeleton } from '@/shared/ui'
 
 import { sidebarContentListStyles } from './SidebarContent.styles'
@@ -9,7 +9,6 @@ import { sidebarContentListStyles } from './SidebarContent.styles'
 interface SidebarContentProps {
   navigation: NavigationModule[]
   courseId: string
-  activeModuleId: string | null
   courseTitle: string
   isLoading: boolean
 }
@@ -17,7 +16,6 @@ interface SidebarContentProps {
 export const SidebarContent = ({
   navigation,
   courseId,
-  activeModuleId,
   courseTitle,
   isLoading,
 }: SidebarContentProps) => (
@@ -44,13 +42,7 @@ export const SidebarContent = ({
       ) : (
         <>
           {navigation.map((module, index) => (
-            <ModuleAccordion
-              key={module.id}
-              module={module}
-              index={index}
-              courseId={courseId}
-              activeModuleId={module.id === activeModuleId}
-            />
+            <ModuleAccordion key={module.id} module={module} index={index} courseId={courseId} />
           ))}
         </>
       )}

@@ -34,11 +34,20 @@ export const titleStyles: SxProps<Theme> = {
   color: 'primary.main',
 }
 
-export const imageStyles: SxProps<Theme> = {
+export const imageContainerStyles: SxProps<Theme> = {
   position: 'relative',
   width: '100%',
   overflow: 'hidden',
   borderRadius: 5,
   boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
   backgroundColor: 'white',
+}
+
+export const imageStyles: SxProps<Theme> = {
+  position: 'relative',
+  display: 'block',
+  zIndex: 'layoutMedium',
+  width: '100%',
+  height: 'auto',
+  aspectRatio: '500 / 367.56',
 }

@@ -1,1 +1,0 @@
-export { SectionLayout } from './SectionLayout'

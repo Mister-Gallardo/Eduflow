@@ -1,1 +1,0 @@
-export { StepNavigationItem } from './StepNavigationItem'

@@ -5,7 +5,13 @@ import { alpha, Box, Button, Typography, useTheme } from '@mui/material'
 import onlineLearningImg from '@/shared/assets/images/online-learning.svg'
 import { blobStyles, MotionBox } from '@/shared/ui'
 
-import { heroSectionStyles, imageStyles, promoBadgeStyles, titleStyles } from './HeroSection.styles'
+import {
+  heroSectionStyles,
+  imageContainerStyles,
+  imageStyles,
+  promoBadgeStyles,
+  titleStyles,
+} from './HeroSection.styles'
 
 export const HeroSection = () => {
   const theme = useTheme()
@@ -86,6 +92,8 @@ export const HeroSection = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Button
+            component="a"
+            href="#course-catalog"
             variant="contained"
             size="large"
             endIcon={<ArrowForwardIcon />}
@@ -111,7 +119,7 @@ export const HeroSection = () => {
           position: 'relative',
         }}
       >
-        <Box sx={imageStyles}>
+        <Box sx={imageContainerStyles}>
           <Box
             sx={{
               ...blobStyles,
@@ -148,18 +156,7 @@ export const HeroSection = () => {
             }}
           />
 
-          <Box
-            component="img"
-            src={onlineLearningImg}
-            alt="Онлайн-обучение"
-            sx={{
-              position: 'relative',
-              zIndex: 'layoutMedium',
-              width: '100%',
-              height: 'auto',
-              display: 'block',
-            }}
-          />
+          <Box component="img" src={onlineLearningImg} alt="Онлайн-обучение" sx={imageStyles} />
         </Box>
       </MotionBox>
     </Box>
