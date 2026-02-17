@@ -32,7 +32,7 @@ export const CategoryTabs = ({ selectedCategory, onCategoryChange }: CategoryTab
             onClick={() => onCategoryChange(cat.value)}
             sx={categoryTabStyles}
           >
-            <AnimatePresence>
+            <AnimatePresence mode="wait" initial={false}>
               {isActive && (
                 <MotionBox
                   layoutId="activeTabBg"

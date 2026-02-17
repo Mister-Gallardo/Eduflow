@@ -1,11 +1,10 @@
 import { Box, useTheme } from '@mui/material'
-import { motion } from 'motion/react'
 import { useParams } from 'react-router-dom'
 
 import type { NavigationModule } from '@/entities/course-navigation'
 import { useSidebarContext } from '@/entities/course-navigation'
 import { useIsMobile } from '@/shared/lib'
-import { BottomSheet } from '@/shared/ui'
+import { BottomSheet, MotionAside } from '@/shared/ui'
 
 import { sidebarStyles } from './CourseSidebar.styles'
 import { SidebarContent } from './sidebar-content'
@@ -46,7 +45,7 @@ export const CourseSidebar = ({
   }
 
   return (
-    <motion.aside
+    <MotionAside
       initial={false}
       animate={{
         width: open ? SIDEBAR_WIDTH : 0,
@@ -74,6 +73,6 @@ export const CourseSidebar = ({
           isLoading={isLoading}
         />
       </Box>
-    </motion.aside>
+    </MotionAside>
   )
 }

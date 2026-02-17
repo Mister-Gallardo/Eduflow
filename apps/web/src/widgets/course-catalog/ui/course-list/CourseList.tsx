@@ -54,7 +54,7 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
 
   return isMobile ? (
     <Box sx={courseListStyles} ref={scrollContainerRef}>
-      <AnimatePresence initial={false} mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <MotionBox
           key={`${listKey}-${coursesData.map((c) => c.id).join('')}`}
           variants={mobileContainerVariants}
@@ -92,7 +92,7 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
         gap: 3,
       }}
     >
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="popLayout" initial={true}>
         {coursesData.map((course, index) => (
           <MotionBox
             key={course.id}

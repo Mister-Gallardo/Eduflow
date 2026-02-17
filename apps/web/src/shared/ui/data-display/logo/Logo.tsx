@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 
-import animatedLogoImg from '../../assets/images/animated_logo.svg'
-import logoImg from '../../assets/images/logo.svg'
+import animatedLogoImg from '../../../assets/images/animated_logo.svg'
+import logoImg from '../../../assets/images/logo.svg'
 
 import { logoStyles } from './Logo.styles'
 

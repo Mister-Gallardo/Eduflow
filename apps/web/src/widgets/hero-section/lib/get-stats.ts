@@ -4,9 +4,9 @@ import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
 import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined'
 import { alpha, type Theme } from '@mui/material/styles'
 
-import type { Stat } from '../model'
+import type { Metric } from '@/shared/ui/data-display/metric-block/types'
 
-export const getStats = (colors: Theme['palette']['customColors']): Stat[] => [
+export const getMetrics = (colors: Theme['palette']['customColors']): Metric[] => [
   {
     label: 'Курсов',
     value: '50+',

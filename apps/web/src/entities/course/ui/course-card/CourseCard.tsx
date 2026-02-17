@@ -1,12 +1,11 @@
 import { AccessTime, TrendingUp } from '@mui/icons-material'
-import { alpha, Box, Chip, Paper, Typography, useTheme } from '@mui/material'
-import { motion } from 'motion/react'
+import { alpha, Box, Chip, Typography, useTheme } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 import { trpc } from '@/shared/api'
 import { paths } from '@/shared/config'
 import { useIsMobile } from '@/shared/lib'
-import { useSnackbar } from '@/shared/ui'
+import { MotionPaper, useSnackbar } from '@/shared/ui'
 
 import { getCategoryGradient, getCategoryImg, getLevelLabel, getLevelStyles } from '../../lib'
 import type { Course } from '../../model'
@@ -27,8 +26,6 @@ import {
 interface CourseCardProps {
   course: Course
 }
-
-const MotionPaper = motion.create(Paper)
 
 export const CourseCard = ({ course }: CourseCardProps) => {
   const theme = useTheme()

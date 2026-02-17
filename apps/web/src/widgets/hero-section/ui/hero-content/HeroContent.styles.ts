@@ -1,6 +1,32 @@
 import type { SxProps, Theme } from '@mui/material/styles'
 
-export const heroSectionStyles: SxProps<Theme> = {
+export const sectionStyles: SxProps<Theme> = {
+  width: '100%',
+  height: (theme) => ({ xs: 'auto', md: `calc(100vh - ${theme.layout.headerHeight.desktop}px)` }),
+  minHeight: 700,
+  maxHeight: { md: 1000 },
+  pt: { xs: 5, md: 0 },
+  pb: { xs: 10, md: 0 },
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  gap: { xs: 6, md: 10 },
+}
+
+export const statsStyles: SxProps<Theme> = {
+  mx: 'auto',
+  display: 'grid',
+  gridTemplateColumns: {
+    xs: 'repeat(2, 1fr)',
+    md: 'repeat(4, auto)',
+  },
+
+  gap: { xs: 3, sm: 6, md: 8 },
+  justifyContent: 'center',
+  alignItems: 'center',
+}
+
+export const heroContentStyles: SxProps<Theme> = {
   display: 'flex',
   flexDirection: { xs: 'column', md: 'row' },
   columnGap: 2,

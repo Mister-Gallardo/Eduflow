@@ -1,0 +1,1 @@
+export { FullPageDivider } from './FullPageDivider'

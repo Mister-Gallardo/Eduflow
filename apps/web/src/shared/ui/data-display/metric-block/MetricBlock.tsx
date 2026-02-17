@@ -2,16 +2,15 @@ import { Box, Typography } from '@mui/material'
 
 import { MotionBox } from '@/shared/ui'
 
-import type { Stat } from '../../model'
+import { iconStyles } from './MetricBlock.styles'
+import type { Metric } from './types'
 
-import { iconStyles } from './StatBlock.styles'
-
-export const StatBlock = ({ stat, index }: { stat: Stat; index: number }) => {
-  const Icon = stat.icon
+export const MetricBlock = ({ metric, index }: { metric: Metric; index: number }) => {
+  const Icon = metric.icon
 
   return (
     <MotionBox
-      key={stat.label}
+      key={metric.label}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
@@ -24,8 +23,8 @@ export const StatBlock = ({ stat, index }: { stat: Stat; index: number }) => {
       <Box
         sx={{
           ...iconStyles,
-          backgroundColor: stat.bgColor,
-          color: stat.color,
+          backgroundColor: metric.bgColor,
+          color: metric.color,
         }}
       >
         <Icon sx={{ fontSize: 28 }} />
@@ -41,7 +40,7 @@ export const StatBlock = ({ stat, index }: { stat: Stat; index: number }) => {
             mb: 0.5,
           }}
         >
-          {stat.value}
+          {metric.value}
         </Typography>
         <Typography
           variant="body2"
@@ -53,7 +52,7 @@ export const StatBlock = ({ stat, index }: { stat: Stat; index: number }) => {
             letterSpacing: '0.05em',
           }}
         >
-          {stat.label}
+          {metric.label}
         </Typography>
       </Box>
     </MotionBox>

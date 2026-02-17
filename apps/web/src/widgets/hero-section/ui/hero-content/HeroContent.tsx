@@ -6,20 +6,18 @@ import onlineLearningImg from '@/shared/assets/images/online-learning.svg'
 import { blobStyles, MotionBox } from '@/shared/ui'
 
 import {
-  heroSectionStyles,
+  heroContentStyles,
   imageContainerStyles,
   imageStyles,
   promoBadgeStyles,
   titleStyles,
-} from './HeroSection.styles'
+} from './HeroContent.styles'
 
-export const HeroSection = () => {
+export const HeroContent = () => {
   const theme = useTheme()
-  const colors = theme.palette.customColors
-  const primary = theme.palette.primary
 
   return (
-    <Box sx={heroSectionStyles}>
+    <Box sx={heroContentStyles}>
       <Box
         sx={{
           display: 'flex',
@@ -61,7 +59,7 @@ export const HeroSection = () => {
             <Typography component="h1" sx={titleStyles}>
               Учитесь у лучших.
               <br />
-              <Box component="span" sx={{ color: alpha(primary.main, 0.6) }}>
+              <Box component="span" sx={{ color: alpha(theme.palette.primary.main, 0.6) }}>
                 Станьте лучше.
               </Box>
             </Typography>
@@ -75,7 +73,7 @@ export const HeroSection = () => {
             <Typography
               variant="body1"
               sx={{
-                color: alpha(primary.main, 0.8),
+                color: alpha(theme.palette.primary.main, 0.8),
                 fontSize: { xs: 16, md: 18 },
                 lineHeight: 1.6,
               }}
@@ -125,7 +123,7 @@ export const HeroSection = () => {
               ...blobStyles,
               top: '-10%',
               left: '-15%',
-              background: `radial-gradient(circle, ${colors.red} 0%, transparent 35%)`,
+              background: `radial-gradient(circle, ${theme.palette.customColors.red} 0%, transparent 35%)`,
             }}
           />
 
@@ -134,7 +132,7 @@ export const HeroSection = () => {
               ...blobStyles,
               top: '-20%',
               right: '-15%',
-              background: `radial-gradient(circle, ${colors.green} 0%, transparent 45%)`,
+              background: `radial-gradient(circle, ${theme.palette.customColors.green} 0%, transparent 45%)`,
             }}
           />
 
@@ -143,7 +141,7 @@ export const HeroSection = () => {
               ...blobStyles,
               bottom: '-20%',
               right: '-15%',
-              background: `radial-gradient(circle, ${colors.orange} 0%, transparent 35%)`,
+              background: `radial-gradient(circle, ${theme.palette.customColors.orange} 0%, transparent 35%)`,
             }}
           />
 
@@ -152,11 +150,17 @@ export const HeroSection = () => {
               ...blobStyles,
               bottom: '-20%',
               left: '-10%',
-              background: `radial-gradient(circle, ${colors.indigo} 0%, transparent 25%)`,
+              background: `radial-gradient(circle, ${theme.palette.customColors.indigo} 0%, transparent 25%)`,
             }}
           />
 
-          <Box component="img" src={onlineLearningImg} alt="Онлайн-обучение" sx={imageStyles} />
+          <Box
+            component="img"
+            sx={imageStyles}
+            src={onlineLearningImg}
+            loading="eager"
+            alt="Онлайн-обучение"
+          />
         </Box>
       </MotionBox>
     </Box>
