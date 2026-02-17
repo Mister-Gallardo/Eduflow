@@ -53,7 +53,7 @@ export const promoBadgeStyles: SxProps<Theme> = {
 
 export const titleStyles: SxProps<Theme> = {
   fontSize: { xs: 40, md: 44, lg: 54 },
-  fontWeight: 800,
+  fontWeight: 700,
   lineHeight: 1.1,
   letterSpacing: '-0.02em',
   mb: 2,

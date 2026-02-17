@@ -18,12 +18,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        '@app': path.resolve(__dirname, './src/app'),
-        '@pages': path.resolve(__dirname, './src/pages'),
-        '@widgets': path.resolve(__dirname, './src/widgets'),
-        '@features': path.resolve(__dirname, './src/features'),
-        '@entities': path.resolve(__dirname, './src/entities'),
-        '@shared': path.resolve(__dirname, './src/shared'),
       },
     },
 
@@ -40,6 +34,8 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (id.includes('node_modules')) {
               if (id.includes('@mui')) return 'vendor-mui'
+              if (id.includes('framer-motion') || id.includes('motion')) return 'vendor-motion'
+              if (id.includes('react-dom')) return 'vendor-react'
               return 'vendor'
             }
           },

@@ -52,7 +52,7 @@ export const Logo = ({
         <Typography
           component="h1"
           fontFamily="Outfit, Inter, sans-serif"
-          sx={{ fontSize: `${fontSize}px`, fontWeight: '600' }}
+          sx={{ fontSize: `${fontSize}px`, fontWeight: 600 }}
         >
           Eduflow
         </Typography>

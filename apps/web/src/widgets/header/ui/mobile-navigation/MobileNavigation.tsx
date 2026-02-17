@@ -1,6 +1,7 @@
 import { List, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material'
-import { BottomSheet } from '@shared/ui'
 import { Link, useLocation } from 'react-router-dom'
+
+import { BottomSheet } from '@/shared/ui'
 
 import type { NavigationItem } from '../../model'
 

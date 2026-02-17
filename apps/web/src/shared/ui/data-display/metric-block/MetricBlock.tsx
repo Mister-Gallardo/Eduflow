@@ -34,7 +34,7 @@ export const MetricBlock = ({ metric, index }: { metric: Metric; index: number }
         <Typography
           sx={{
             fontSize: { xs: 24, md: 28 },
-            fontWeight: 800,
+            fontWeight: 700,
             color: 'primary.main',
             lineHeight: 1,
             mb: 0.5,

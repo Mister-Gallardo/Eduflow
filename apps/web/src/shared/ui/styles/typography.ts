@@ -5,5 +5,5 @@ export const tooltipTextSecondaryStyles: SxProps<Theme> = {
   mt: 0.5,
   color: 'text.secondary',
   fontSize: 12,
-  fontWeight: 500,
+  fontWeight: 400,
 }

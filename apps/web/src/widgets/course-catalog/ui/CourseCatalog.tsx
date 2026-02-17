@@ -52,7 +52,7 @@ export const CourseCatalog = () => {
         variant="h2"
         align="center"
         sx={{
-          fontWeight: 800,
+          fontWeight: 700,
           color: 'text.primary',
           fontSize: { xs: 32, md: 40, lg: 50 },
           lineHeight: 1.2,
