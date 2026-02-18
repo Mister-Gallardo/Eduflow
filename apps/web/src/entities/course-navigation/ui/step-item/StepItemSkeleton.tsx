@@ -1,4 +1,4 @@
-import { AppSkeleton } from '@/shared/ui'
+import { AppSkeleton } from '@/shared/ui/feedback/app-skeleton'
 
 import { stepItemStyles } from './StepItem.styles'
 

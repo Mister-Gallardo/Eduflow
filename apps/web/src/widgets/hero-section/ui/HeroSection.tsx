@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import { GridBackground } from '@/shared/ui'
+import { GridBackground } from '@/shared/ui/layout/grid-background'
 
 import { HeroContent } from './hero-content'
 import { HeroMetrics } from './hero-metrics'

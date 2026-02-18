@@ -1,2 +1,2 @@
-export { useHeaderActions } from './model'
+export { useHeaderActions } from './lib'
 export * from './ui'

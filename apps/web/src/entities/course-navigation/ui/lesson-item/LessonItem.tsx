@@ -2,6 +2,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import {
   Box,
   CircularProgress,
+  ListItem,
   ListItemButton,
   ListItemText,
   Tooltip,
@@ -10,9 +11,9 @@ import {
 import { Link } from 'react-router-dom'
 
 import type { NavigationLesson } from '@/entities/course-navigation/model'
-import { paths } from '@/shared/config'
-import { useIsMobile } from '@/shared/lib'
-import { tooltipTextSecondaryStyles } from '@/shared/ui/styles'
+import { paths } from '@/shared/config/paths'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { tooltipTextSecondaryStyles } from '@/shared/ui/styles/typography'
 
 import { useSidebarContext } from '../../model'
 
@@ -20,12 +21,11 @@ import { lessonStyles, lessonTitleStyles } from './LessonItem.styles'
 
 interface LessonItemProps {
   lesson: NavigationLesson
-  courseId: string
 }
 
-export const LessonItem = ({ lesson, courseId }: LessonItemProps) => {
+export const LessonItem = ({ lesson }: LessonItemProps) => {
   const isMobile = useIsMobile()
-  const { onClose, activeLessonId } = useSidebarContext()
+  const { onClose, activeLessonId, courseId } = useSidebarContext()
 
   const totalSteps = lesson.steps.length
   const completedSteps = lesson.steps.filter((s) => s.isCompleted).length
@@ -59,6 +59,7 @@ export const LessonItem = ({ lesson, courseId }: LessonItemProps) => {
               completedSteps > 0 && (
                 <CircularProgress
                   variant="determinate"
+                  aria-label="Прогресс прохождения курса"
                   value={totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0}
                   size={16}
                   thickness={6}
@@ -83,50 +84,55 @@ export const LessonItem = ({ lesson, courseId }: LessonItemProps) => {
       }
       placement="right"
     >
-      <ListItemButton
-        component={Link}
-        to={lessonPath}
-        onClick={isMobile ? () => onClose?.() : undefined}
-        selected={isActive}
-        disableRipple
-        sx={lessonStyles}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+      <ListItem disablePadding sx={{ display: 'block' }}>
+        <ListItemButton
+          component={Link}
+          to={lessonPath}
+          onClick={isMobile ? () => onClose() : undefined}
+          selected={isActive}
+          disableRipple
+          sx={lessonStyles}
         >
-          {isFullyCompleted ? (
-            <CheckCircleIcon sx={{ fontSize: 18, display: 'block', color: 'customColors.green' }} />
-          ) : (
-            <CircularProgress
-              variant="determinate"
-              value={totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0}
-              size={18}
-              thickness={hasProgress ? 5 : 4}
-              sx={{
-                color: 'customColors.green',
-              }}
-            />
-          )}
-        </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {isFullyCompleted ? (
+              <CheckCircleIcon
+                sx={{ fontSize: 18, display: 'block', color: 'customColors.green' }}
+              />
+            ) : (
+              <CircularProgress
+                variant="determinate"
+                aria-label="Прогресс прохождения курса"
+                value={totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0}
+                size={18}
+                thickness={hasProgress ? 5 : 4}
+                sx={{
+                  color: 'customColors.green',
+                }}
+              />
+            )}
+          </Box>
 
-        <ListItemText
-          primary={
-            <Typography
-              variant="body2"
-              sx={{
-                ...lessonTitleStyles,
-                fontWeight: isActive ? 600 : 400,
-              }}
-            >
-              {lesson.title}
-            </Typography>
-          }
-        />
-      </ListItemButton>
+          <ListItemText
+            primary={
+              <Typography
+                variant="body2"
+                sx={{
+                  ...lessonTitleStyles,
+                  fontWeight: isActive ? 600 : 400,
+                }}
+              >
+                {lesson.title}
+              </Typography>
+            }
+          />
+        </ListItemButton>
+      </ListItem>
     </Tooltip>
   )
 }

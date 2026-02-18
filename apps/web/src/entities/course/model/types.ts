@@ -1,12 +1,5 @@
+import type { ApiOutputs } from '@/shared/api/trpc'
+
 export type CourseLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
 
-export interface Course {
-  id: string
-  title: string
-  description: string
-  price: number
-  duration: string
-  level: CourseLevel
-  category: string
-  createdAt: Date | string
-}
+export type Course = ApiOutputs['courses']['getCourses'][number]

@@ -241,6 +241,61 @@ const allCourses: CourseDefinition[] = [
                   ],
                 ),
               },
+              {
+                title: 'Демонстрация всех возможностей верстки',
+                type: StepType.TEXT,
+                content: createTextContent(`
+    <h1>Заголовок H1: Главная тема модуля</h1>
+    <p>Это основной текст параграфа. Мы используем шрифт <strong>Inter</strong> с весом 400 и высотой строки 1.7 для максимальной читаемости в контейнере 900px.</p>
+    
+    <blockquote>
+      "TypeScript — это не просто надстройка, это способ мышления о структурах данных." — Цитата для проверки стилей blockquote.
+    </blockquote>
+
+    <h2>Заголовок H2: Работа со списками</h2>
+    <p>Маркеры списка должны быть окрашены в <code>primary.main</code>, чтобы подчеркнуть престижность интерфейса:</p>
+    <ul>
+      <li>Первый важный пункт обучения</li>
+      <li>Второй пункт с <em>курсивным выделением</em> для акцента</li>
+      <li>Третий пункт, содержащий <a href="#">внешнюю ссылку на документацию</a></li>
+    </ul>
+
+    <h3>Заголовок H3: Работа с кодом</h3>
+    <p>Инлайновый код, такой как <code>interface User {}</code>, должен иметь легкий фон. А ниже представлен полноценный блок кода:</p>
+    
+    <pre><code>function identity<T>(arg: T): T {
+  // Комментарий внутри блока кода
+  console.log("Тип аргумента: " + typeof arg);
+  return arg;
+}
+
+const output = identity&lt;string&gt;("myString");</code></pre>
+
+    <h4>Заголовок H4: Визуальный контент</h4>
+    <p>Ниже представлено изображение, которое должно автоматически вписаться в ширину 900px с мягким скруглением углов:</p>
+    
+    <img src="https://images.unsplash.com/photo-1516116216624-53e697fedbea?q=80&w=1000&auto=format&fit=crop" alt="Пример кода" />
+
+    <p>Завершающий абзац с <strong>жирным начертанием 600</strong> для проверки того, как текст выделяется на общем фоне.</p>
+  `),
+              },
+              {
+                title: 'Тест видео и верстки',
+                type: StepType.TEXT,
+                content: createTextContent(`
+    <h1>Разработка высоконагруженных систем на языке TypeScript в 2026 году</h1>
+    <p>Обрати внимание, как заголовок выше теперь умещается в пару строк, не доминируя над всем контентом.</p>
+    
+    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video lesson" allowfullscreen></iframe>
+    
+    <h2>Продвинутая работа с Generic-интерфейсами и сложными Union-типами</h2>
+    <p>Даже такой длинный заголовок H2 теперь выглядит аккуратно. Внутри видео-плеера мы добавили легкую тень и скругление углов 12px для "престижного" вида.</p>
+    
+    <pre><code>type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};</code></pre>
+  `),
+              },
             ],
           },
         ],
@@ -554,6 +609,10 @@ async function main() {
   await db.module.deleteMany()
   await db.course.deleteMany()
 
+  const testUser = await db.user.findUnique({
+    where: { email: 'test@example.com' },
+  })
+
   for (const courseDef of allCourses) {
     console.log(`Creating course: ${courseDef.title}`)
 
@@ -629,6 +688,69 @@ async function main() {
   }
 
   console.log(`✅ Success! Created ${allCourses.length} courses with nested content.`)
+
+  // 1. Находим конкретный курс по заголовку
+  const tsCourse = await db.course.findFirst({
+    where: { title: 'TypeScript: Типизация' },
+    include: {
+      modules: {
+        orderBy: { order: 'asc' },
+        take: 1,
+        include: {
+          lessons: {
+            orderBy: { order: 'asc' },
+            take: 1,
+            include: {
+              steps: { orderBy: { order: 'asc' } },
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (tsCourse && testUser) {
+    // 2. Создаем запись об обучении (Enrollment)
+    await db.enrollment.upsert({
+      where: {
+        userId_courseId: {
+          userId: testUser.id,
+          courseId: tsCourse.id,
+        },
+      },
+      update: {},
+      create: {
+        userId: testUser.id,
+        courseId: tsCourse.id,
+      },
+    })
+
+    // 3. Берем первые 2 шага ("Примитивы" и "Заполните пропуски")
+    const firstModule = tsCourse.modules[0]
+    const firstLesson = firstModule?.lessons[0]
+    const stepsToComplete = firstLesson?.steps.slice(0, 2) || []
+
+    for (const step of stepsToComplete) {
+      await db.userProgress.upsert({
+        where: {
+          userId_stepId: {
+            userId: testUser.id,
+            stepId: step.id,
+          },
+        },
+        update: { isCompleted: true },
+        create: {
+          userId: testUser.id,
+          stepId: step.id,
+          isCompleted: true,
+          answer: { note: 'Completed via TS seed' },
+        },
+      })
+      console.log(`✅ Step "${step.title}" marked as completed for ${testUser.email}`)
+    }
+  } else {
+    console.warn('⚠️ TypeScript course or Test User not found. Progress not set.')
+  }
 }
 
 main()

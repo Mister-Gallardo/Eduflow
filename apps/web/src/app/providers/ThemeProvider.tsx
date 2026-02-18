@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/st
 import '@/shared/ui/styles/fonts.css'
 
 const BRAND_PRIMARY = '#2C3444'
-const BRAND_LIGHT = '#718096'
+const BRAND_LIGHT = '#667387'
 const BRAND_DARK = '#1f2532'
 const BRAND_ACCENT = '#FFB900'
 const BRAND_ACCENT_DARK = '#e5a600'
@@ -113,10 +113,6 @@ const theme = createTheme({
         root: {
           fontSize: 16,
           fontWeight: 500,
-
-          // '@media (max-width: 900px)': {
-          //   fontSize: 16,
-          // },
         },
       },
     },
@@ -129,6 +125,11 @@ const theme = createTheme({
               maxWidth: 0,
             },
         },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: { borderRadius: 8 },
       },
     },
     MuiButton: {

@@ -1,7 +1,7 @@
 import { AppBar, Box, Toolbar } from '@mui/material'
 import type { ReactNode } from 'react'
 
-import { PageContainer, type PageContainerVariant } from '@/shared/ui'
+import { PageContainer, type PageContainerVariant } from '@/shared/ui/layout/page-container'
 
 interface BaseHeaderProps {
   containerVariant: PageContainerVariant

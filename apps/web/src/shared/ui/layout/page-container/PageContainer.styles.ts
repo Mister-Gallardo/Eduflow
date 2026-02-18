@@ -12,5 +12,5 @@ export const pageContainerStyles: SxProps<Theme> = {
 export const maxWidth = {
   fixed: { lg: '1140px', xl: '1440px' },
   fluid: '100%',
-  narrow: '900px',
+  narrow: '948px',
 } as const

@@ -22,7 +22,7 @@ export const moduleNumberBlockStyles: SxProps<Theme> = {
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: 'primary.main',
-  color: '#fff',
+  color: (theme) => theme.palette.common.white,
 }
 
 export const moduleTitleStyles: SxProps<Theme> = {

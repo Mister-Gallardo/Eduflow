@@ -1,4 +1,10 @@
-import type { EnrollCourseInput, GetCourseNavigationInput, GetStepDataInput } from '@eduflow/shared'
+import {
+  type EnrollCourseInput,
+  type GetCourseNavigationInput,
+  type GetStepDataInput,
+  type InitCourseSessionInput,
+  omit,
+} from '@eduflow/shared'
 import { TRPCError } from '@trpc/server'
 
 import type { AuthorizedContext } from '../../trpc/context.js'
@@ -39,6 +45,145 @@ export const enrollService = async (ctx: AuthorizedContext, input: EnrollCourseI
   })
 
   return { success: true }
+}
+
+export const initCourseSessionService = async (
+  ctx: AuthorizedContext,
+  input: InitCourseSessionInput,
+) => {
+  const user = ctx.me
+  const { courseId, enroll } = input
+
+  // Step 1: Handle enrollment (optional)
+  if (enroll) {
+    const course = await ctx.db.course.findUnique({
+      where: { id: courseId },
+    })
+
+    if (!course) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Course not found' })
+    }
+
+    // Upsert-style: create enrollment if not exists
+    const existingEnrollment = await ctx.db.enrollment.findUnique({
+      where: {
+        userId_courseId: { userId: user.id, courseId },
+      },
+    })
+
+    if (!existingEnrollment) {
+      await ctx.db.enrollment.create({
+        data: { userId: user.id, courseId },
+      })
+    }
+  }
+
+  // Step 2: Verify enrollment
+  const enrollment = await ctx.db.enrollment.findUnique({
+    where: {
+      userId_courseId: { userId: user.id, courseId },
+    },
+    include: {
+      course: { select: { title: true } },
+    },
+  })
+
+  if (!enrollment) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Not enrolled in this course' })
+  }
+
+  // Step 3: Get navigation tree
+  const modules = await ctx.db.module.findMany({
+    where: { courseId },
+    orderBy: { order: 'asc' },
+    include: {
+      lessons: {
+        orderBy: { order: 'asc' },
+        include: {
+          steps: {
+            orderBy: { order: 'asc' },
+            select: {
+              id: true,
+              title: true,
+              type: true,
+              order: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  // Step 4: Get user progress
+  const progress = await ctx.db.userProgress.findMany({
+    where: {
+      userId: user.id,
+      step: { lesson: { module: { courseId } } },
+    },
+    select: {
+      stepId: true,
+      isCompleted: true,
+      updatedAt: true,
+    },
+    orderBy: { updatedAt: 'desc' },
+  })
+
+  const progressMap = new Map(progress.map((p) => [p.stepId, p.isCompleted]))
+
+  // Find last viewed step
+  let lastViewedStepId = progress[0]?.stepId
+
+  if (!lastViewedStepId && modules.length > 0) {
+    const firstModule = modules[0]
+    if (firstModule && firstModule.lessons.length > 0) {
+      const firstLesson = firstModule.lessons[0]
+      if (firstLesson && firstLesson.steps.length > 0) {
+        lastViewedStepId = firstLesson.steps[0].id
+      }
+    }
+  }
+
+  // Navigation tree with progress
+  const navigation = modules.map((module) => ({
+    id: module.id,
+    title: module.title,
+    lessons: module.lessons.map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      steps: lesson.steps.map((step) => ({
+        id: step.id,
+        title: step.title,
+        type: step.type,
+        isCompleted: progressMap.get(step.id) ?? false,
+      })),
+    })),
+  }))
+
+  // Step 5: Get first step data (based on lastViewedStepId)
+  let firstStepData = null
+
+  if (lastViewedStepId) {
+    const step = await ctx.db.step.findUnique({
+      where: {
+        id: lastViewedStepId,
+        lesson: { module: { courseId } },
+      },
+      include: {
+        lesson: { include: { module: true } },
+      },
+    })
+
+    if (step) {
+      firstStepData = { step: omit(step, ['lesson', 'lessonId']) }
+    }
+  }
+
+  return {
+    navigation,
+    lastViewedStepId,
+    courseTitle: enrollment.course.title,
+    firstStepData,
+  }
 }
 
 export const getCourseNavigationService = async (
@@ -150,10 +295,17 @@ export const getCourseNavigationService = async (
 export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepDataInput) => {
   const user = ctx.me
 
-  const { stepId } = input
+  const { courseId, stepId } = input
 
   const step = await ctx.db.step.findUnique({
-    where: { id: stepId },
+    where: {
+      id: stepId,
+      lesson: {
+        module: {
+          courseId: courseId,
+        },
+      },
+    },
     include: {
       lesson: {
         include: {
@@ -192,7 +344,7 @@ export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepD
   // }
 
   return {
-    step,
+    step: omit(step, ['lesson', 'lessonId']),
   }
 }
 

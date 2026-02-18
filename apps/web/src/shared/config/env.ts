@@ -6,6 +6,7 @@ const zEnv = z.object({
   VITE_API_URL: z.string().trim().min(1),
 })
 
+// Отключаем правило для использвоания import.meta.env
 // eslint-disable-next-line no-restricted-syntax
 const parsed = zEnv.safeParse(import.meta.env)
 

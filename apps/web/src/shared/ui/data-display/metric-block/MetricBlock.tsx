@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 
-import { MotionBox } from '@/shared/ui'
+import { MotionBox } from '@/shared/ui/animations/motion'
 
 import { iconStyles } from './MetricBlock.styles'
 import type { Metric } from './types'

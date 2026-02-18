@@ -2,8 +2,8 @@ import { Box, Button, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 
 import pageNotFoundImg from '@/shared/assets/images/page-not-found.svg'
-import { paths } from '@/shared/config'
-import { useIsMobile } from '@/shared/lib'
+import { paths } from '@/shared/config/paths'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
 
 import { result404Styles } from './Result404.styles'
 

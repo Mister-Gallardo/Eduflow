@@ -1,13 +1,13 @@
 import { Box, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
-import { CourseFilters } from '@/features/course-filters'
-import { trpc } from '@/shared/api'
-import { useDebounce } from '@/shared/lib'
-import { EmptyState } from '@/shared/ui'
+import { CategoryTabs, SearchInput } from '@/features/course'
+import { trpc } from '@/shared/api/trpc'
+import { useDebounce } from '@/shared/lib/useDebounce'
+import { EmptyState } from '@/shared/ui/feedback/empty-state'
 
 import { CourseList } from './course-list'
-import { courseCatalogStyles } from './CourseCatalog.styles'
+import { courseCatalogStyles, courseFiltersStyles } from './CourseCatalog.styles'
 import { LoadingSkeleton } from './loading-skeleton'
 import { ViewAllDesktopButton } from './view-all-desktop-button'
 
@@ -17,30 +17,22 @@ export const CourseCatalog = () => {
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
-  const getQueryParams = () => {
-    const baseParams: {
-      search?: string
-      categories?: string[]
-      sortBy?: 'newest' | 'price_asc' | 'price_desc'
-      limit?: number
-    } = {
+  const queryParams = useMemo(() => {
+    const categories =
+      selectedCategory === 'popular'
+        ? ['development', 'design', 'analytics', 'marketing']
+        : [selectedCategory]
+
+    return {
       search: debouncedSearch || undefined,
       limit: 6,
+      sortBy: 'newest' as const,
+      categories,
     }
-
-    baseParams.sortBy = 'newest'
-
-    if (selectedCategory === 'popular') {
-      baseParams.categories = ['development', 'design', 'analytics', 'marketing']
-    } else {
-      baseParams.categories = [selectedCategory]
-    }
-
-    return baseParams
-  }
+  }, [debouncedSearch, selectedCategory])
 
   const { data: coursesData = [], isLoading: isCoursesLoading } = trpc.courses.getCourses.useQuery(
-    getQueryParams(),
+    queryParams,
     {
       placeholderData: (previousData) => previousData,
     },
@@ -61,12 +53,11 @@ export const CourseCatalog = () => {
         Найдите программу <br /> для быстрого старта
       </Typography>
 
-      <CourseFilters
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+      <Box sx={courseFiltersStyles}>
+        <SearchInput searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+
+        <CategoryTabs selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
+      </Box>
 
       {isCoursesLoading ? (
         <LoadingSkeleton />

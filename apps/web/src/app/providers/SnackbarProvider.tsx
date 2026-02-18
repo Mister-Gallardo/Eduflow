@@ -10,8 +10,9 @@ import {
 } from '@mui/material'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { useIsMobile } from '@/shared/lib'
-import { SnackbarContext, type SnackbarOptions } from '@/shared/ui'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import type { SnackbarOptions } from '@/shared/ui/feedback/snackbar'
+import { SnackbarContext } from '@/shared/ui/feedback/snackbar'
 
 const AUTO_HIDE_DURATION = 5000
 
@@ -24,16 +25,10 @@ const alertStyles: SxProps<Theme> = {
   cursor: 'pointer',
 }
 
-const Transition = React.forwardRef<
-  HTMLDivElement,
-  SlideProps & { onExited?: (node: HTMLElement) => void }
->(function Transition(props, ref) {
+const Transition = (props: SlideProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const isMobile = useIsMobile()
-
-  return (
-    <Slide {...props} direction={isMobile ? 'down' : 'left'} ref={ref} onExited={props.onExited} />
-  )
-})
+  return <Slide {...props} direction={isMobile ? 'down' : 'left'} />
+}
 
 export function SnackbarProvider({ children }: { children: React.ReactNode }) {
   const [snackbar, setSnackbar] = useState<SnackbarOptions | null>(null)

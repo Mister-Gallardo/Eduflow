@@ -1,1 +1,1 @@
-export { TextStep } from './TextStep'
+export * from './text-step'

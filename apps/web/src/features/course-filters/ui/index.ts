@@ -1,1 +1,0 @@
-export { CourseFilters } from './CourseFilters'

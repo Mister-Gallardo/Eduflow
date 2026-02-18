@@ -4,9 +4,10 @@ import { Box, Button, Checkbox, FormControlLabel, TextField, Typography } from '
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
-import { trpc } from '@/shared/api'
-import { paths } from '@/shared/config'
-import { useSnackbar } from '@/shared/ui'
+import { trpc } from '@/shared/api/trpc'
+import { messages } from '@/shared/config/messages'
+import { paths } from '@/shared/config/paths'
+import { useSnackbar } from '@/shared/ui/feedback/snackbar'
 
 import type { RegisterFormSchema } from '../../model'
 import { registerFormSchema } from '../../model'
@@ -35,8 +36,8 @@ export const RegisterForm = () => {
           message: 'Этот Email уже зарегистрирован',
         })
       } else {
-        void showSnackbar({
-          message: 'Что-то пошло не так. Попробуйте еще раз.',
+        showSnackbar({
+          message: messages.genericError,
           severity: 'error',
         })
       }
@@ -55,7 +56,7 @@ export const RegisterForm = () => {
   })
 
   const onSubmit = (data: RegisterFormSchema) => {
-    void registerMutation.mutateAsync(pick(data, ['fullName', 'email', 'password']))
+    registerMutation.mutate(pick(data, ['fullName', 'email', 'password']))
   }
 
   return (
@@ -63,6 +64,7 @@ export const RegisterForm = () => {
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       sx={{
+        mt: 1,
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
@@ -78,13 +80,6 @@ export const RegisterForm = () => {
         onBlur={(e) => {
           void register('fullName').onBlur(e)
         }}
-        sx={{
-          mt: 1,
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
-            backgroundColor: '#fff',
-          },
-        }}
       />
 
       <TextField
@@ -95,12 +90,6 @@ export const RegisterForm = () => {
         helperText={errors.email?.message}
         onBlur={(e) => {
           void register('email').onBlur(e)
-        }}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
-            backgroundColor: '#fff',
-          },
         }}
       />
 
@@ -114,12 +103,6 @@ export const RegisterForm = () => {
         onBlur={(e) => {
           void register('password').onBlur(e)
         }}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
-            backgroundColor: '#fff',
-          },
-        }}
       />
 
       <TextField
@@ -131,12 +114,6 @@ export const RegisterForm = () => {
         helperText={errors.confirmPassword?.message}
         onBlur={(e) => {
           void register('confirmPassword').onBlur(e)
-        }}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
-            backgroundColor: '#fff',
-          },
         }}
       />
 

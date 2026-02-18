@@ -1,9 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
 
 import { HomePage } from '@/pages/home'
-import { NotFoundPage } from '@/pages/not-found'
-import { paths } from '@/shared/config'
-import { GlobalLoader } from '@/shared/ui'
+import { paths } from '@/shared/config/paths'
+import { GlobalLoader } from '@/shared/ui/feedback/global-loader'
 
 import { AppLayout, AuthLayout, LearnLayout, RootLayout } from '../layouts'
 
@@ -34,7 +33,10 @@ export const routeConfig = createBrowserRouter([
 
           {
             path: '*',
-            element: <NotFoundPage />,
+            lazy: async () => {
+              const { NotFoundPage } = await import('@/pages/not-found')
+              return { Component: NotFoundPage }
+            },
           },
         ],
       },

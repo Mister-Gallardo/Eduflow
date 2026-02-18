@@ -1,6 +1,6 @@
 import { Box, useTheme } from '@mui/material'
 
-import { MetricBlock } from '@/shared/ui'
+import { MetricBlock } from '@/shared/ui/data-display/metric-block'
 import { getMetrics } from '@/widgets/hero-section/lib'
 
 import { metricksStyles } from './HeroMetrics.styles'

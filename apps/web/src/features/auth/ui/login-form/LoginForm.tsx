@@ -5,9 +5,10 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
-import { trpc } from '@/shared/api'
-import { paths } from '@/shared/config'
-import { useSnackbar } from '@/shared/ui'
+import { trpc } from '@/shared/api/trpc'
+import { messages } from '@/shared/config/messages'
+import { paths } from '@/shared/config/paths'
+import { useSnackbar } from '@/shared/ui/feedback/snackbar'
 
 import { alertStyles } from './LoginForm.styles'
 
@@ -40,8 +41,8 @@ export const LoginForm = () => {
         setError('email', { type: 'manual' })
         setError('password', { type: 'manual' })
       } else {
-        void showSnackbar({
-          message: 'Что-то пошло не так. Попробуйте еще раз.',
+        showSnackbar({
+          message: messages.genericError,
           severity: 'error',
         })
       }
@@ -49,7 +50,7 @@ export const LoginForm = () => {
   })
 
   const onSubmit = (data: LoginInput) => {
-    void loginMutation.mutateAsync(data)
+    loginMutation.mutate(data)
   }
 
   const handleFieldChange = () => {
@@ -61,7 +62,7 @@ export const LoginForm = () => {
     <Box
       component="form"
       onSubmit={handleSubmit(onSubmit)}
-      sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
+      sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
     >
       <TextField
         {...register('email', { onChange: handleFieldChange })}
@@ -69,10 +70,6 @@ export const LoginForm = () => {
         fullWidth
         error={!!errors.email}
         helperText={errors.email?.message}
-        sx={{
-          mt: 1,
-          '& .MuiOutlinedInput-root': { borderRadius: 2 },
-        }}
       />
 
       <TextField
@@ -82,19 +79,13 @@ export const LoginForm = () => {
         fullWidth
         error={!!errors.password}
         helperText={errors.password?.message}
-        sx={{
-          '& .MuiOutlinedInput-root': { borderRadius: 2 },
-        }}
       />
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Typography
           variant="caption"
           component="a"
-          // href='#'
-          onClick={() =>
-            showSnackbar({ severity: 'warning', message: 'Данная функция в разработке...' })
-          }
+          onClick={() => showSnackbar({ severity: 'warning', message: messages.underConstruction })}
           sx={{
             color: 'text.secondary',
             textDecoration: 'none',

@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
 import { SidebarContext, useCourseNavigation } from '@/entities/course-navigation'
-import { StepContentSkeleton } from '@/entities/step-content'
-import { useIsMobile } from '@/shared/lib'
-import { PageContainer, Result404 } from '@/shared/ui'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { Result404 } from '@/shared/ui/feedback/result-404'
+import { PageContainer } from '@/shared/ui/layout/page-container'
 import { CourseSidebar } from '@/widgets/course-sidebar'
 import { Header, HeaderActions, LearnHeaderLeft, useHeaderActions } from '@/widgets/header'
 import { StepsPanel } from '@/widgets/steps-panel'
@@ -52,17 +52,17 @@ export const LearnLayout = () => {
         >
           <SidebarContext.Provider
             value={{
-              onClose: () => setSidebarOpen(false),
               activeModuleId: state.activeModuleId,
-              activeLessonId: state.activeLesson?.id,
+              activeLessonId: state.activeLesson?.id ?? null,
+              navigation: navigation,
+              courseId: state.courseId,
+              courseTitle: state.courseTitle,
+              open: sidebarOpen,
+              onClose: () => setSidebarOpen(false),
+              isLoading: state.isCourseNavigationLoading,
             }}
           >
-            <CourseSidebar
-              navigation={navigation}
-              open={sidebarOpen}
-              courseTitle={state.courseTitle}
-              isLoading={state.isCourseNavigationLoading}
-            />
+            <CourseSidebar />
           </SidebarContext.Provider>
 
           <Box
@@ -83,7 +83,6 @@ export const LearnLayout = () => {
             )}
 
             <Box
-              // key={state.pathname}
               component="main"
               ref={mainContentRef}
               sx={{
@@ -94,11 +93,7 @@ export const LearnLayout = () => {
               }}
             >
               <PageContainer variant="narrow">
-                {state.isCourseNavigationLoading ? (
-                  <StepContentSkeleton />
-                ) : (
-                  <Outlet context={context} />
-                )}
+                <Outlet context={context} />
               </PageContainer>
             </Box>
           </Box>

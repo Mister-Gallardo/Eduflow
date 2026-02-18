@@ -3,7 +3,7 @@ import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
 import { AuthTabs, LoginForm, RegisterForm } from '@/features/auth'
-import { MotionBox } from '@/shared/ui'
+import { MotionBox } from '@/shared/ui/animations/motion'
 
 import { paperStyles } from './AuthPage.styles'
 
@@ -30,5 +30,3 @@ export const AuthPage = () => {
     </Paper>
   )
 }
-
-export default AuthPage

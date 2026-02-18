@@ -10,7 +10,7 @@ interface StepRendererProps {
 export const StepRenderer = ({ step }: StepRendererProps) => {
   switch (step.type) {
     case 'TEXT':
-      return <TextStep data={step.data} />
+      return <TextStep content={step.content} />
 
     default:
       return (

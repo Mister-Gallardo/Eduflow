@@ -1,7 +1,7 @@
 import { Box, Button, Typography, useTheme } from '@mui/material'
 import { AnimatePresence } from 'motion/react'
 
-import { MotionBox } from '@/shared/ui'
+import { MotionBox } from '@/shared/ui/animations/motion'
 
 import { categoryTabsStyles, categoryTabStyles } from './CategoryTabs.styles'
 

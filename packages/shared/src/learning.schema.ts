@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 
 // Types of steps - matching Prisma enum
@@ -39,8 +40,17 @@ export const VideoContentSchema = z.object({ url: z.string() })
 export type VideoContent = z.infer<typeof VideoContentSchema>
 
 export type StepContent =
-  | { type: 'TEXT'; data: TextContent }
-  | { type: 'VIDEO'; data: VideoContent }
+  | { type: 'TEXT'; content: TextContent }
+  | { type: 'VIDEO'; content: VideoContent }
+  | { type: 'TEST_SINGLE'; content: any }
+  | { type: 'TEST_MULTIPLE'; content: any }
+  | { type: 'MATCHING'; content: any }
+  | { type: 'ORDERING'; content: any }
+  | { type: 'INPUT_TEXT'; content: any }
+  | { type: 'INPUT_NUMBER'; content: any }
+  | { type: 'FREE_TEXT'; content: any }
+  | { type: 'FILL_GAPS'; content: any }
+  | { type: 'TABLE'; content: any }
 
 // export const VideoContent = BaseContent.extend({
 //   url: z.string(),
@@ -117,8 +127,14 @@ export type EnrollCourseInput = z.infer<typeof zEnrollCourseInput>
 export const zGetCourseNavigationInput = z.object({ courseId: z.string() })
 export type GetCourseNavigationInput = z.infer<typeof zGetCourseNavigationInput>
 
-export const zGetStepDataInput = z.object({ stepId: z.string() })
+export const zGetStepDataInput = z.object({ courseId: z.string(), stepId: z.string() })
 export type GetStepDataInput = z.infer<typeof zGetStepDataInput>
+
+export const zInitCourseSessionInput = z.object({
+  courseId: z.string(),
+  enroll: z.boolean().optional(),
+})
+export type InitCourseSessionInput = z.infer<typeof zInitCourseSessionInput>
 
 // export const AnswerSchema = z.union([
 //   z.string(), // TEST_SINGLE, INPUT_TEXT

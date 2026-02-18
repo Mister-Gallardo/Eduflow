@@ -1,7 +1,7 @@
 import { ExpandLess } from '@mui/icons-material'
 import { Box, useTheme } from '@mui/material'
 
-import { MotionBox } from '@/shared/ui'
+import { MotionBox } from '@/shared/ui/animations/motion'
 
 import { chevronStyles } from './PanelChevron.styles'
 

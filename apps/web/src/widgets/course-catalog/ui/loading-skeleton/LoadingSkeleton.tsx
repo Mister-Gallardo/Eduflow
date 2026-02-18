@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 
-import { useIsMobile } from '@/shared/lib'
-import { AppSkeleton } from '@/shared/ui'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { AppSkeleton } from '@/shared/ui/feedback/app-skeleton'
 
 export const LoadingSkeleton = () => {
   const isMobile = useIsMobile()

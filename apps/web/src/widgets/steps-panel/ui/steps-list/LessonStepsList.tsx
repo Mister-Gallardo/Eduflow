@@ -1,8 +1,7 @@
 import { Box } from '@mui/material'
 
-import type { NavigationStep } from '@/entities/course-navigation'
-import { StepItem, StepItemSkeleton } from '@/entities/step-content'
-import { MotionBox } from '@/shared/ui'
+import { type NavigationStep, StepItem, StepItemSkeleton } from '@/entities/course-navigation'
+import { MotionBox } from '@/shared/ui/animations/motion'
 
 import { panelStyles } from './LessonStepsList.styles'
 

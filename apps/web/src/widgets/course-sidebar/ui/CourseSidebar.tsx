@@ -1,45 +1,25 @@
 import { Box, useTheme } from '@mui/material'
-import { useParams } from 'react-router-dom'
 
-import type { NavigationModule } from '@/entities/course-navigation'
 import { useSidebarContext } from '@/entities/course-navigation'
-import { useIsMobile } from '@/shared/lib'
-import { BottomSheet, MotionAside } from '@/shared/ui'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { MotionAside } from '@/shared/ui/animations/motion'
+import { BottomSheet } from '@/shared/ui/overlays/bottom-sheet'
 
 import { sidebarStyles } from './CourseSidebar.styles'
 import { SidebarContent } from './sidebar-content'
 
 const SIDEBAR_WIDTH = 240
 
-interface CourseSidebarProps {
-  navigation: NavigationModule[]
-  open: boolean
-  courseTitle: string
-  isLoading: boolean
-}
-
-export const CourseSidebar = ({
-  navigation,
-  open,
-  courseTitle,
-  isLoading = false,
-}: CourseSidebarProps) => {
+export const CourseSidebar = () => {
   const theme = useTheme()
   const isMobile = useIsMobile()
-  // const isMobile = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md + 20))
-  const { onClose } = useSidebarContext()
 
-  const { courseId = '' } = useParams()
+  const { open, onClose } = useSidebarContext()
 
   if (isMobile) {
     return (
-      <BottomSheet open={open} onClose={() => onClose?.()}>
-        <SidebarContent
-          navigation={navigation}
-          courseId={courseId}
-          courseTitle={courseTitle}
-          isLoading={isLoading}
-        />
+      <BottomSheet open={open} onClose={() => onClose()}>
+        <SidebarContent />
       </BottomSheet>
     )
   }
@@ -66,12 +46,7 @@ export const CourseSidebar = ({
           width: SIDEBAR_WIDTH,
         }}
       >
-        <SidebarContent
-          navigation={navigation}
-          courseId={courseId}
-          courseTitle={courseTitle}
-          isLoading={isLoading}
-        />
+        <SidebarContent />
       </Box>
     </MotionAside>
   )

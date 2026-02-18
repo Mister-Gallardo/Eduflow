@@ -5,5 +5,5 @@ export const paperStyles: SxProps<Theme> = {
   pt: 3,
   borderRadius: 3,
   border: '1px solid #E5E7EB',
-  backgroundColor: '#fff',
+  backgroundColor: (theme) => theme.palette.common.white,
 }

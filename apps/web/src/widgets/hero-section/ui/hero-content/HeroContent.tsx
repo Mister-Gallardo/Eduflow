@@ -3,7 +3,8 @@ import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import { alpha, Box, Button, Typography, useTheme } from '@mui/material'
 
 import onlineLearningImg from '@/shared/assets/images/online-learning.svg'
-import { blobStyles, MotionBox } from '@/shared/ui'
+import { MotionBox } from '@/shared/ui/animations/motion'
+import { blobStyles } from '@/shared/ui/styles/blob'
 
 import {
   heroContentStyles,

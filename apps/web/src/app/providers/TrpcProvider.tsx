@@ -7,8 +7,8 @@ import { observable } from '@trpc/server/observable'
 import { useState } from 'react'
 import superjson from 'superjson'
 
-import { trpc } from '@/shared/api'
-import { paths } from '@/shared/config'
+import { trpc } from '@/shared/api/trpc'
+import { paths } from '@/shared/config/paths'
 
 let refreshPromise: Promise<void> | null = null
 
@@ -59,6 +59,7 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
         defaultOptions: {
           queries: {
             retry: false,
+            staleTime: 5 * 60 * 1000,
             refetchOnWindowFocus: false,
           },
         },

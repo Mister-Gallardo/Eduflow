@@ -4,9 +4,9 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
 import { Box, Button, Divider, IconButton } from '@mui/material'
 import { Link } from 'react-router-dom'
 
-import { paths } from '@/shared/config'
-import { useIsMobile } from '@/shared/lib'
-import { Logo } from '@/shared/ui'
+import { paths } from '@/shared/config/paths'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { Logo } from '@/shared/ui/data-display/logo'
 
 interface LearnHeaderLeftProps {
   sidebarOpen: boolean

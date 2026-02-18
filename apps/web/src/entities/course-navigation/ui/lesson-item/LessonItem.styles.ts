@@ -1,6 +1,7 @@
 import type { SxProps, Theme } from '@mui/material/styles'
 
 export const lessonStyles: SxProps<Theme> = {
+  width: '100%',
   py: 1,
   pl: 3,
   pr: 2,

@@ -3,9 +3,10 @@ import { Box } from '@mui/material'
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
-import { paths } from '@/shared/config'
-import { useIsMobile } from '@/shared/lib'
-import { Logo, PageContainer } from '@/shared/ui'
+import { paths } from '@/shared/config/paths'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { Logo } from '@/shared/ui/data-display/logo'
+import { PageContainer } from '@/shared/ui/layout/page-container'
 import {
   Header,
   HeaderActions,

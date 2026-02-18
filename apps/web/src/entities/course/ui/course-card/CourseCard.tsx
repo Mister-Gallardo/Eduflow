@@ -1,11 +1,8 @@
 import { AccessTime, TrendingUp } from '@mui/icons-material'
 import { alpha, Box, Chip, Typography, useTheme } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
 
-import { trpc } from '@/shared/api'
-import { paths } from '@/shared/config'
-import { useIsMobile } from '@/shared/lib'
-import { MotionPaper, useSnackbar } from '@/shared/ui'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { MotionPaper } from '@/shared/ui/animations/motion'
 
 import { getCategoryGradient, getCategoryImg, getLevelLabel, getLevelStyles } from '../../lib'
 import type { Course } from '../../model'
@@ -25,42 +22,18 @@ import {
 
 interface CourseCardProps {
   course: Course
+  onEnroll: (id: string) => void
 }
 
-export const CourseCard = ({ course }: CourseCardProps) => {
+export const CourseCard = ({ course, onEnroll }: CourseCardProps) => {
   const theme = useTheme()
   const isMobile = useIsMobile()
-  const navigate = useNavigate()
-  const showSnackbar = useSnackbar()
 
   const { title, description, duration, level, price, category } = course
 
   const isFree = price === 0
 
   const levelStyles = getLevelStyles(theme, level)
-
-  const enrollMutation = trpc.learning.enroll.useMutation({
-    onSuccess: (data) => {
-      void navigate(paths.learn.setup(course.id))
-
-      if (data.message !== 'Already enrolled') {
-        void showSnackbar({
-          message: 'Вы успешно записались на курс!',
-          severity: 'success',
-        })
-      }
-    },
-    onError: () => {
-      void showSnackbar({
-        message: 'Что-то пошло не так. Попробуйте еще раз.',
-        severity: 'error',
-      })
-    },
-  })
-
-  const onSubmit = () => {
-    void enrollMutation.mutateAsync({ courseId: course.id })
-  }
 
   return (
     <MotionPaper
@@ -75,7 +48,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
           boxShadow: isMobile ? 'none' : `0 16px 24px ${alpha(theme.palette.primary.main, 0.05)}`,
         },
       }}
-      onClick={onSubmit}
+      onClick={() => onEnroll(course.id)}
     >
       <Box
         sx={{
@@ -124,7 +97,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
             size="small"
             sx={{
               ...priceStyles,
-              background: isFree ? theme.palette.customColors.green : '#fff',
+              background: isFree ? theme.palette.customColors.green : theme.palette.common.white,
               color: isFree ? '#fff' : theme.palette.primary.main,
               boxShadow: isFree
                 ? '0 4px 12px rgba(16, 185, 129, 0.4)'
@@ -140,20 +113,14 @@ export const CourseCard = ({ course }: CourseCardProps) => {
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          background: '#fff',
+          background: theme.palette.common.white,
         }}
       >
         <Typography variant="subtitle1" sx={titleStyles}>
           {title}
         </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{
-            ...descriptionStyles,
-            color: theme.palette.text.secondary,
-          }}
-        >
+        <Typography variant="body2" sx={descriptionStyles}>
           {description}
         </Typography>
 

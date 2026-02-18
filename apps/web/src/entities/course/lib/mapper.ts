@@ -7,85 +7,52 @@ import programmingImg from '@/shared/assets/images/programming.svg'
 
 import type { CourseLevel } from '../model'
 
-export const getCategoryGradient = (category: string): string => {
-  switch (category.toLowerCase()) {
-    case 'development':
-      return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    case 'design':
-      return 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-    case 'analytics':
-      return 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-    case 'marketing':
-      return 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-    default:
-      return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-  }
+const CATEGORY_GRADIENTS: Record<string, string> = {
+  development: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  design: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  analytics: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+  marketing: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
 }
 
-export const getCategoryImg = (category: string): string => {
-  switch (category.toLowerCase()) {
-    case 'development':
-      return programmingImg
-    case 'design':
-      return designImg
-    case 'analytics':
-      return analyticsImg
-    case 'marketing':
-      return marketingImg
-    default:
-      return programmingImg
-  }
+export const getCategoryGradient = (category: string): string =>
+  CATEGORY_GRADIENTS[category.toLowerCase()] ?? CATEGORY_GRADIENTS.development
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  development: programmingImg,
+  design: designImg,
+  analytics: analyticsImg,
+  marketing: marketingImg,
 }
 
-export const getLevelLabel = (level: string): string => {
-  switch (level) {
-    case 'BEGINNER':
-      return 'Начальный'
-    case 'INTERMEDIATE':
-      return 'Средний'
-    case 'ADVANCED':
-      return 'Продвинутый'
-    default:
-      return level
-  }
+export const getCategoryImg = (category: string): string =>
+  CATEGORY_IMAGES[category.toLowerCase()] ?? programmingImg
+
+const LEVEL_LABELS: Record<string, string> = {
+  BEGINNER: 'Начальный',
+  INTERMEDIATE: 'Средний',
+  ADVANCED: 'Продвинутый',
+}
+
+export const getLevelLabel = (level: string): string => LEVEL_LABELS[level] ?? level
+
+const LEVEL_COLORS: Record<CourseLevel, 'green' | 'orange' | 'red'> = {
+  BEGINNER: 'green',
+  INTERMEDIATE: 'orange',
+  ADVANCED: 'red',
 }
 
 export const getLevelStyles = (theme: Theme, level: CourseLevel) => {
-  const colors = theme.palette.customColors
+  const colorKey = LEVEL_COLORS[level]
+  const color = theme.palette.customColors[colorKey]
 
-  const styles = {
-    color: '#fff',
+  return {
+    color: theme.palette.common.white,
     fontWeight: 700,
     fontSize: '11px',
     borderRadius: '12px',
     px: 1,
     opacity: 1,
-  }
-
-  switch (level) {
-    case 'BEGINNER':
-      return {
-        ...styles,
-        background: alpha(colors.green, 0.9),
-        boxShadow: `0 4px 12px ${alpha(colors.green, 0.4)}`,
-      }
-    case 'INTERMEDIATE':
-      return {
-        ...styles,
-        background: alpha(colors.orange, 0.9),
-        boxShadow: `0 4px 12px ${alpha(colors.orange, 0.4)}`,
-      }
-    case 'ADVANCED':
-      return {
-        ...styles,
-        background: alpha(colors.red, 0.9),
-        boxShadow: `0 4px 12px ${alpha(colors.red, 0.4)}`,
-      }
-    default:
-      return {
-        ...styles,
-        background: alpha(colors.indigo, 0.9),
-        boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`,
-      }
+    background: alpha(color, 0.9),
+    boxShadow: `0 4px 12px ${alpha(color, 0.4)}`,
   }
 }

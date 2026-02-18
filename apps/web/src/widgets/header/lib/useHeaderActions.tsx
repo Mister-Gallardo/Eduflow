@@ -3,7 +3,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined'
 
-import { useIsMobile } from '@/shared/lib'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
 
 interface WithMobileMenu {
   withMobileMenu: true

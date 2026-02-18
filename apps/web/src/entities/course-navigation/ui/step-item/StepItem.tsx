@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import type { NavigationStep } from '@/entities/course-navigation'
 import { getStepIcon } from '@/entities/course-navigation/lib/get-step-icon'
-import { paths } from '@/shared/config'
+import { paths } from '@/shared/config/paths'
 
 import { stepItemStyles } from './StepItem.styles'
 
@@ -20,15 +20,17 @@ export const StepItem = ({ step, isActive, courseId }: StepProps) => {
   const Icon = getStepIcon(step.type)
 
   let bgColor = alpha(theme.palette.primary.main, 0.06)
-  let borderColor = 'transparent'
+  const borderColor = isActive
+    ? isCompleted
+      ? theme.palette.customColors.green
+      : theme.palette.primary.main
+    : 'transparent'
   let iconColor = alpha(theme.palette.primary.main, 0.8)
 
   if (isCompleted) {
     bgColor = alpha(theme.palette.customColors.green, 0.18)
-    borderColor = theme.palette.customColors.green
     iconColor = darken(theme.palette.customColors.green, 0.2)
   } else if (isActive) {
-    borderColor = theme.palette.primary.main
     iconColor = alpha(theme.palette.primary.main, 1)
   }
 

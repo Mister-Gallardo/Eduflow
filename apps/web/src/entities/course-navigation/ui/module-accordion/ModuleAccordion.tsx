@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
-import { tooltipTextSecondaryStyles } from '@/shared/ui/styles'
+import { tooltipTextSecondaryStyles } from '@/shared/ui/styles/typography'
 
 import type { NavigationModule } from '../../model'
 import { useSidebarContext } from '../../model'
@@ -25,11 +25,10 @@ import {
 interface ModuleAccordionProps {
   module: NavigationModule
   index: number
-  courseId: string
   isMobile?: boolean
 }
 
-export const ModuleAccordion = ({ module, index, courseId }: ModuleAccordionProps) => {
+export const ModuleAccordion = ({ module, index }: ModuleAccordionProps) => {
   const { activeModuleId } = useSidebarContext()
   const isModuleActive = activeModuleId === module.id
   const [expanded, setExpanded] = useState(isModuleActive)
@@ -48,7 +47,7 @@ export const ModuleAccordion = ({ module, index, courseId }: ModuleAccordionProp
       onChange={handleChange}
       disableGutters
       elevation={0}
-      slotProps={{ transition: { unmountOnExit: true } }}
+      slotProps={{ transition: { unmountOnExit: true }, heading: { component: 'h2' } }}
       sx={{
         '&::before': { display: 'none' },
         backgroundColor: 'transparent',
@@ -86,7 +85,7 @@ export const ModuleAccordion = ({ module, index, courseId }: ModuleAccordionProp
       <AccordionDetails sx={{ p: 0 }}>
         <List disablePadding>
           {module.lessons.map((lesson) => (
-            <LessonItem key={lesson.id} lesson={lesson} courseId={courseId} />
+            <LessonItem key={lesson.id} lesson={lesson} />
           ))}
         </List>
       </AccordionDetails>

@@ -85,6 +85,7 @@ export const descriptionStyles: SxProps<Theme> = {
   fontSize: 14,
   lineHeight: 1.6,
   opacity: 0.8,
+  color: (theme) => theme.palette.text.secondary,
 }
 
 export const footerStyles: SxProps<Theme> = {

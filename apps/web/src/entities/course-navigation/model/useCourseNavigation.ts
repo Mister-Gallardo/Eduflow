@@ -1,43 +1,72 @@
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
 
-import { trpc } from '@/shared/api'
+import type { ApiOutputs } from '@/shared/api/trpc'
+import { trpc } from '@/shared/api/trpc'
 
 import type { LearnOutletContext } from './types'
-import { findActiveLesson, findActiveModuleId } from './utils'
+import { getCourseNavigationState } from './utils'
+
+type SessionData = ApiOutputs['learning']['initCourseSession']
 
 export const useCourseNavigation = () => {
-  const { courseId = '', stepId } = useParams()
+  const { courseId = '', stepId = '' } = useParams()
+  const location = useLocation()
 
-  const {
-    data: courseNavigationData,
-    isLoading: isCourseNavigationLoading,
-    isFetched: isCourseNavigationFetched,
-  } = trpc.learning.getCourseNavigation.useQuery({ courseId }, { enabled: !!courseId })
+  const shouldEnroll = (location.state as { enroll?: boolean } | null)?.enroll === true
 
-  const modules = courseNavigationData?.navigation ?? []
-  const activeModuleId = findActiveModuleId(modules, stepId)
-  const activeLesson = findActiveLesson(modules, stepId)
-  const courseTitle = courseNavigationData?.courseTitle ?? ''
+  const [sessionData, setSessionData] = useState<SessionData | null>(null)
 
-  const isCourseNotFound = !courseNavigationData && isCourseNavigationFetched
+  const initSession = trpc.learning.initCourseSession.useMutation({
+    onSuccess: (data) => {
+      setSessionData(data)
+    },
+  })
+
+  // Trigger initCourseSession on mount
+  useEffect(() => {
+    if (!courseId) return
+
+    initSession.mutate({ courseId, enroll: shouldEnroll || undefined })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId])
+
+  const modules = sessionData?.navigation ?? []
+  const isCourseNavigationLoading = initSession.isPending && !sessionData
+
+  const { activeModuleId, activeLesson, prevStepId, nextStepId } = getCourseNavigationState(
+    modules,
+    stepId,
+  )
+
+  const courseTitle = sessionData?.courseTitle ?? ''
+
+  const isCourseNavigationFetched = !!sessionData || initSession.isError
+  const isCourseNotFound = !sessionData && isCourseNavigationFetched
   const isLessonNotFound = !activeLesson && isCourseNavigationFetched
-  const shouldShow404 = isCourseNotFound || isLessonNotFound
+  const shouldShow404 = initSession.isError || isCourseNotFound || isLessonNotFound
 
   const outletContext: LearnOutletContext = {
     navigation: modules,
-    lastViewedStepId: courseNavigationData?.lastViewedStepId ?? '',
+    lastViewedStepId: sessionData?.lastViewedStepId ?? '',
     courseTitle,
+    courseId,
+    stepId,
+    prevStepId,
+    nextStepId,
+    isCourseNavigationLoading,
+    firstStepData: sessionData?.firstStepData,
   }
 
   return {
     state: {
-      isCourseNavigationLoading,
-      shouldShow404,
       activeModuleId,
+      shouldShow404,
       activeLesson,
+      courseId,
       courseTitle,
       stepId,
-      courseId,
+      isCourseNavigationLoading,
     },
     context: outletContext,
     navigation: modules,

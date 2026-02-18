@@ -3,9 +3,10 @@ import { AnimatePresence } from 'motion/react'
 import { useEffect, useRef } from 'react'
 
 import { CourseCard } from '@/entities/course'
+import { useEnrollCourse } from '@/features/course'
 import type { ApiOutputs } from '@/shared/api/trpc'
-import { useIsMobile } from '@/shared/lib'
-import { MotionBox } from '@/shared/ui'
+import { useIsMobile } from '@/shared/lib/useIsMobile'
+import { MotionBox } from '@/shared/ui/animations/motion'
 
 import { ViewAllMobileButton } from '../view-all-mobile-button'
 
@@ -20,6 +21,9 @@ interface CourseListProps {
 
 export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
   const isMobile = useIsMobile()
+
+  const { enroll } = useEnrollCourse()
+
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -76,7 +80,7 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
                 scrollSnapAlign: 'start',
               }}
             >
-              <CourseCard course={course} />
+              <CourseCard course={course} onEnroll={enroll} />
             </MotionBox>
           ))}
         </MotionBox>
@@ -114,7 +118,7 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
               transition: { duration: 0.2 },
             }}
           >
-            <CourseCard course={course} />
+            <CourseCard course={course} onEnroll={enroll} />
           </MotionBox>
         ))}
       </AnimatePresence>
