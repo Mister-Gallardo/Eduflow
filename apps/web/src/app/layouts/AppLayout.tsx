@@ -1,5 +1,5 @@
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 

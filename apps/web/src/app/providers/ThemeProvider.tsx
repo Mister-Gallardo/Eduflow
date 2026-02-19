@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/st
 import '@/shared/ui/styles/fonts.css'
 
 const BRAND_PRIMARY = '#2C3444'
-const BRAND_LIGHT = '#667387'
+const BRAND_LIGHT = '#58667E'
 const BRAND_DARK = '#1f2532'
 const BRAND_ACCENT = '#FFB900'
 const BRAND_ACCENT_DARK = '#e5a600'

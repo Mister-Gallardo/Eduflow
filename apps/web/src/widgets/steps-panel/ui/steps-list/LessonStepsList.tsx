@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 
 import { type NavigationStep, StepItem, StepItemSkeleton } from '@/entities/course-navigation'
 import { MotionBox } from '@/shared/ui/animations/motion'

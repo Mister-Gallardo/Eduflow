@@ -1,7 +1,9 @@
 import react from '@vitejs/plugin-react'
 import autoprefixer from 'autoprefixer'
 import path from 'path'
+import UnpluginInjectPreload from 'unplugin-inject-preload/vite'
 import { defineConfig, loadEnv } from 'vite'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -13,6 +15,31 @@ export default defineConfig(({ mode }) => {
           plugins: [['babel-plugin-react-compiler']],
         },
       }),
+
+      UnpluginInjectPreload({
+        injectTo: 'head-prepend',
+        files: [
+          {
+            outputMatch: /(Inter-(400|500|600|700)|Outfit-600).*\.woff2$/i,
+            attributes: {
+              rel: 'preload',
+              as: 'font',
+              type: 'font/woff2',
+              crossorigin: 'anonymous',
+            },
+          },
+          {
+            outputMatch: /online-learning.*\.svg$/i,
+            attributes: {
+              rel: 'preload',
+              as: 'image',
+              fetchpriority: 'high',
+            },
+          },
+        ],
+      }),
+
+      cssInjectedByJsPlugin(),
     ],
 
     resolve: {

@@ -72,7 +72,6 @@ export const titleStyles: SxProps<Theme> = {
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
   overflow: 'hidden',
-  lineHeight: 1.3,
   fontSize: 16,
 }
 
@@ -83,8 +82,7 @@ export const descriptionStyles: SxProps<Theme> = {
   WebkitBoxOrient: 'vertical',
   overflow: 'hidden',
   fontSize: 14,
-  lineHeight: 1.6,
-  opacity: 0.8,
+  fontWeight: 400,
   color: (theme) => theme.palette.text.secondary,
 }
 

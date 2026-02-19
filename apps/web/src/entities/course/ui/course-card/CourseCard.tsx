@@ -1,5 +1,5 @@
 import { AccessTime, TrendingUp } from '@mui/icons-material'
-import { alpha, Box, Chip, Typography, useTheme } from '@mui/material'
+import { alpha, Box, Chip, darken, Typography, useTheme } from '@mui/material'
 
 import { useIsMobile } from '@/shared/lib/useIsMobile'
 import { MotionPaper } from '@/shared/ui/animations/motion'
@@ -98,7 +98,9 @@ export const CourseCard = ({ course, onEnroll, isPending }: CourseCardProps) => 
             size="small"
             sx={{
               ...priceStyles,
-              background: isFree ? theme.palette.customColors.green : theme.palette.common.white,
+              background: isFree
+                ? darken(theme.palette.customColors.green, 0.3)
+                : theme.palette.common.white,
               color: isFree ? '#fff' : theme.palette.primary.main,
               boxShadow: isFree
                 ? '0 4px 12px rgba(16, 185, 129, 0.4)'
@@ -117,7 +119,7 @@ export const CourseCard = ({ course, onEnroll, isPending }: CourseCardProps) => 
           background: theme.palette.common.white,
         }}
       >
-        <Typography variant="subtitle1" sx={titleStyles}>
+        <Typography variant="body1" sx={titleStyles}>
           {title}
         </Typography>
 

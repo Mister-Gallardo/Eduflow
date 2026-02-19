@@ -110,9 +110,9 @@ export const HeroContent = () => {
       </Box>
 
       <MotionBox
-        initial={{ opacity: 0, scale: 0.95, x: 20 }}
-        animate={{ opacity: 1, scale: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+        initial={{ scale: 0.95, x: 20 }}
+        animate={{ scale: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
         sx={{
           maxWidth: { xs: '100%', sm: 450, lg: 500, xl: 600 },
           position: 'relative',
@@ -159,6 +159,7 @@ export const HeroContent = () => {
             component="img"
             sx={imageStyles}
             src={onlineLearningImg}
+            fetchPriority="high"
             loading="eager"
             alt="Онлайн-обучение"
           />
