@@ -321,42 +321,6 @@ const output = identity&lt;string&gt;("myString");</code></pre>
               },
             ],
           },
-          {
-            title: 'Utility Types',
-            steps: [
-              {
-                title: 'Partial и Required',
-                type: StepType.TABLE,
-                content: createTableContent(
-                  ['Тип', 'Описание'],
-                  [
-                    {
-                      id: 'r1',
-                      cells: [
-                        { id: 'c11', text: 'Partial<T>' },
-                        { id: 'c12', text: 'Делает все поля опциональными' },
-                      ],
-                    },
-                    {
-                      id: 'r2',
-                      cells: [
-                        { id: 'c21', text: 'Required<T>' },
-                        { id: 'c22', text: 'Делает все поля обязательными' },
-                      ],
-                    },
-                    {
-                      id: 'r3',
-                      cells: [
-                        { id: 'c31', text: 'Readonly<T>' },
-                        { id: 'c32', text: 'Только для чтения' },
-                      ],
-                    },
-                  ],
-                  ['c11', 'c12', 'c21', 'c22', 'c31', 'c32'], // Dummy "Select all" task or just reading
-                ),
-              },
-            ],
-          },
         ],
       },
       {

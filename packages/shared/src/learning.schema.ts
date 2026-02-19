@@ -13,7 +13,6 @@ export const StepTypeSchema = z.enum([
   'INPUT_NUMBER',
   'FREE_TEXT',
   'FILL_GAPS',
-  'TABLE',
 ])
 
 export type StepType = z.infer<typeof StepTypeSchema>
@@ -50,7 +49,6 @@ export type StepContent =
   | { type: 'INPUT_NUMBER'; content: any }
   | { type: 'FREE_TEXT'; content: any }
   | { type: 'FILL_GAPS'; content: any }
-  | { type: 'TABLE'; content: any }
 
 // export const VideoContent = BaseContent.extend({
 //   url: z.string(),

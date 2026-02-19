@@ -11,7 +11,6 @@ import {
   PlayCircleOutline,
   QuizOutlined,
   ShortTextOutlined,
-  TableChartOutlined,
 } from '@mui/icons-material'
 
 const STEP_ICONS: Record<StepType | 'DEFAULT', React.ElementType> = {
@@ -25,7 +24,6 @@ const STEP_ICONS: Record<StepType | 'DEFAULT', React.ElementType> = {
   INPUT_NUMBER: LooksOneOutlined,
   FREE_TEXT: CreateOutlined,
   FILL_GAPS: ShortTextOutlined,
-  TABLE: TableChartOutlined,
   DEFAULT: BrowserNotSupportedOutlined,
 } as const
 

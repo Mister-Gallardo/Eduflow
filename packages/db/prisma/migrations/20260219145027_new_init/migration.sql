@@ -1,9 +1,47 @@
 -- CreateEnum
-CREATE TYPE "StepType" AS ENUM ('TEXT', 'VIDEO', 'TEXT_IMAGE', 'TEXT_VIDEO', 'TEST_SINGLE', 'TEST_MULTIPLE', 'MATCHING', 'ORDERING', 'INPUT_TEXT', 'INPUT_NUMBER', 'FREE_TEXT', 'FILL_GAPS', 'TABLE');
+CREATE TYPE "StepType" AS ENUM ('TEXT', 'VIDEO', 'TEST_SINGLE', 'TEST_MULTIPLE', 'MATCHING', 'ORDERING', 'INPUT_TEXT', 'INPUT_NUMBER', 'FREE_TEXT', 'FILL_GAPS');
 
--- AlterTable
-ALTER TABLE "Course" ADD COLUMN     "authorId" TEXT,
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+-- CreateEnum
+CREATE TYPE "Level" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Session" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "refreshHash" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "revokedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Course" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "price" INTEGER NOT NULL,
+    "duration" TEXT NOT NULL,
+    "level" "Level" NOT NULL,
+    "category" TEXT NOT NULL,
+    "authorId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Module" (
@@ -62,6 +100,12 @@ CREATE TABLE "UserProgress" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE INDEX "Session_userId_idx" ON "Session"("userId");
+
+-- CreateIndex
 CREATE INDEX "Module_courseId_idx" ON "Module"("courseId");
 
 -- CreateIndex
@@ -87,6 +131,9 @@ CREATE INDEX "UserProgress_stepId_idx" ON "UserProgress"("stepId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserProgress_userId_stepId_key" ON "UserProgress"("userId", "stepId");
+
+-- AddForeignKey
+ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Module" ADD CONSTRAINT "Module_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;

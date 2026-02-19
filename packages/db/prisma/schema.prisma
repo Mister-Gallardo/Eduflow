@@ -98,7 +98,6 @@ enum StepType {
   INPUT_NUMBER
   FREE_TEXT 
   FILL_GAPS
-  TABLE
 }
 
 enum Level {
