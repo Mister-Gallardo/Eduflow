@@ -11,7 +11,6 @@ export const StepRenderer = ({ step }: StepRendererProps) => {
   switch (step.type) {
     case 'TEXT':
       return <TextStep content={step.content} />
-
     default:
       return (
         <Typography variant="h6" color="error">

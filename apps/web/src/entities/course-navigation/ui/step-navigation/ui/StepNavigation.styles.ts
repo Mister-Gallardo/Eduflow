@@ -10,3 +10,8 @@ export const stepNavigationStyles: SxProps<Theme> = {
   flexDirection: { xs: 'column', sm: 'row' },
   justifyContent: 'space-between',
 }
+
+export const stepNavigationButtonStyles: SxProps<Theme> = {
+  py: 1,
+  px: 4,
+}

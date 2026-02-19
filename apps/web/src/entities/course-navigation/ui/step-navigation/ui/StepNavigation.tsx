@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { paths } from '@/shared/config/paths'
 
-import { stepNavigationStyles } from './StepNavigation.styles'
+import { stepNavigationButtonStyles, stepNavigationStyles } from './StepNavigation.styles'
 
 interface StepNavigationProps {
   prevStepId: string | null
@@ -26,11 +26,8 @@ export const StepNavigation = ({ prevStepId, nextStepId, courseId }: StepNavigat
         variant="outlined"
         startIcon={<ArrowBackIcon />}
         disabled={!prevStepId}
-        onClick={() => handleNavigate(prevStepId!)}
-        sx={{
-          py: 1,
-          px: 4,
-        }}
+        onClick={() => prevStepId && handleNavigate(prevStepId)}
+        sx={stepNavigationButtonStyles}
       >
         Назад
       </Button>
@@ -40,10 +37,7 @@ export const StepNavigation = ({ prevStepId, nextStepId, courseId }: StepNavigat
         endIcon={<ArrowForwardIcon />}
         disabled={!nextStepId}
         onClick={() => nextStepId && handleNavigate(nextStepId)}
-        sx={{
-          py: 1,
-          px: 4,
-        }}
+        sx={stepNavigationButtonStyles}
       >
         Далее
       </Button>

@@ -52,11 +52,11 @@ export const LearnLayout = () => {
         >
           <SidebarContext.Provider
             value={{
-              activeModuleId: state.activeModuleId,
-              activeLessonId: state.activeLesson?.id ?? null,
               navigation: navigation,
               courseId: state.courseId,
               courseTitle: state.courseTitle,
+              activeModuleId: state.activeModuleId,
+              activeLessonId: state.activeLesson?.id ?? null,
               open: sidebarOpen,
               onClose: () => setSidebarOpen(false),
               isLoading: state.isCourseNavigationLoading,
@@ -75,9 +75,9 @@ export const LearnLayout = () => {
           >
             {(state.activeLesson?.steps.length ?? state.isCourseNavigationLoading) && (
               <StepsPanel
+                courseId={state.courseId}
                 lesson={state.activeLesson}
                 currentStepId={state.stepId}
-                courseId={state.courseId}
                 isLoading={state.isCourseNavigationLoading}
               />
             )}

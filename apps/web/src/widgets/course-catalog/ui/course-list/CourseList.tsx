@@ -22,7 +22,7 @@ interface CourseListProps {
 export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
   const isMobile = useIsMobile()
 
-  const { enroll } = useEnrollCourse()
+  const { enroll, isEnrollPending } = useEnrollCourse()
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -80,7 +80,7 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
                 scrollSnapAlign: 'start',
               }}
             >
-              <CourseCard course={course} onEnroll={enroll} />
+              <CourseCard course={course} onEnroll={enroll} isPending={isEnrollPending} />
             </MotionBox>
           ))}
         </MotionBox>
@@ -118,7 +118,7 @@ export const CourseList = ({ coursesData, listKey }: CourseListProps) => {
               transition: { duration: 0.2 },
             }}
           >
-            <CourseCard course={course} onEnroll={enroll} />
+            <CourseCard course={course} onEnroll={enroll} isPending={isEnrollPending} />
           </MotionBox>
         ))}
       </AnimatePresence>

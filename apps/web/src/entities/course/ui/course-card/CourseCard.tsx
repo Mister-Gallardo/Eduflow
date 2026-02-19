@@ -23,9 +23,10 @@ import {
 interface CourseCardProps {
   course: Course
   onEnroll: (id: string) => void
+  isPending: boolean
 }
 
-export const CourseCard = ({ course, onEnroll }: CourseCardProps) => {
+export const CourseCard = ({ course, onEnroll, isPending }: CourseCardProps) => {
   const theme = useTheme()
   const isMobile = useIsMobile()
 
@@ -48,7 +49,7 @@ export const CourseCard = ({ course, onEnroll }: CourseCardProps) => {
           boxShadow: isMobile ? 'none' : `0 16px 24px ${alpha(theme.palette.primary.main, 0.05)}`,
         },
       }}
-      onClick={() => onEnroll(course.id)}
+      onClick={() => !isPending && onEnroll(course.id)}
     >
       <Box
         sx={{

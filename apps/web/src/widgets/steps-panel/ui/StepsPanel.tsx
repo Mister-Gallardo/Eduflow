@@ -7,16 +7,16 @@ import { PanelChevron } from './panel-chevron'
 import { LessonStepsList } from './steps-list'
 
 interface LessonStepsPanelProps {
+  courseId: string
   lesson: NavigationLesson | null
   currentStepId: string | undefined
-  courseId: string
   isLoading: boolean
 }
 
 export const StepsPanel = ({
+  courseId,
   lesson,
   currentStepId,
-  courseId,
   isLoading,
 }: LessonStepsPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(true)
@@ -34,10 +34,10 @@ export const StepsPanel = ({
       }}
     >
       <LessonStepsList
-        isExpanded={isExpanded}
+        courseId={courseId}
         steps={steps}
         currentStepId={currentStepId}
-        courseId={courseId}
+        isExpanded={isExpanded}
         isLoading={isLoading}
       />
 

@@ -1,5 +1,9 @@
 import type { SxProps, Theme } from '@mui/material/styles'
+import { darken } from '@mui/material/styles'
 import { alpha } from '@mui/material/styles'
+
+const CODE_FONT_FAMILY = "'JetBrains Mono', Consolas, Monaco, monospace"
+const LINE_HEIGHT = 1.6
 
 export const textStepStyles: SxProps<Theme> = {
   '& h1': {
@@ -15,58 +19,72 @@ export const textStepStyles: SxProps<Theme> = {
     fontWeight: 600,
   },
   '& h4': {
-    typography: 'h6',
+    typography: 'subtitle1',
+    fontWeight: 600,
+  },
+  '& h5': {
+    typography: 'subtitle2',
+    fontWeight: 600,
+  },
+  '& h6': {
+    typography: 'subtitle3',
     fontWeight: 600,
   },
   '& p': {
     typography: 'body1',
-    lineHeight: 1.7,
+    lineHeight: LINE_HEIGHT,
   },
   '& ul, & ol': {
     '& li': {
       typography: 'body1',
       mb: 1,
-      lineHeight: 1.7,
+      lineHeight: LINE_HEIGHT,
     },
   },
   '& code': {
-    fontFamily: "'JetBrains Mono', Consolas, Monaco, monospace",
-    fontSize: '0.9em',
-    backgroundColor: 'rgba(44, 52, 68, 0.06)',
-    color: 'customColors.indigo',
+    fontFamily: CODE_FONT_FAMILY,
+    fontSize: 14,
+    backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),
+    color: (theme) => theme.palette.primary.main,
     px: 0.75,
     py: 0.25,
     borderRadius: '4px',
+    border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
   },
   '& pre': {
-    backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.07),
+    backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),
     borderRadius: '8px',
+    border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.08)}`,
     p: 2,
     mb: 2,
     overflow: 'auto',
     '& code': {
-      fontFamily: "'JetBrains Mono', Consolas, Monaco, monospace",
+      fontFamily: CODE_FONT_FAMILY,
       backgroundColor: 'transparent',
-      px: 0,
-      py: 0,
-      fontSize: '0.9rem',
+      p: 0,
+      border: 'none',
+      color: (theme) => theme.palette.primary.main,
+      fontSize: 14,
     },
   },
   '& blockquote': {
     borderLeft: '4px solid',
-    borderColor: 'secondary.main',
+    borderColor: (theme) => theme.palette.secondary.main,
     pl: 2,
     py: 0.5,
     my: 2,
     fontStyle: 'italic',
-    color: 'text.secondary',
+    color: (theme) => theme.palette.text.secondary,
   },
   '& a': {
-    color: 'customColors.indigo',
+    color: (theme) => theme.palette.customColors.indigo,
     textDecoration: 'underline',
+    textDecorationColor: (theme) => alpha(theme.palette.customColors.indigo, 0.2),
+    textUnderlineOffset: '4px',
     transition: 'color 0.2s',
     '&:hover': {
-      color: 'primary.main',
+      color: (theme) => darken(theme.palette.customColors.indigo, 0.2),
+      textDecorationColor: (theme) => darken(theme.palette.customColors.indigo, 0.2),
     },
   },
   '& img': {
@@ -81,7 +99,7 @@ export const textStepStyles: SxProps<Theme> = {
     borderRadius: '12px',
     border: 'none',
     my: 3,
-    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+    boxShadow: (theme) => `0 4px 20px ${alpha(theme.palette.primary.main, 0.2)}`,
   },
   '& strong': {
     fontWeight: 600,

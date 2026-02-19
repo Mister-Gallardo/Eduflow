@@ -6,18 +6,18 @@ import { MotionBox } from '@/shared/ui/animations/motion'
 import { panelStyles } from './LessonStepsList.styles'
 
 interface LessonStepsListProps {
-  isExpanded: boolean
+  courseId: string
   steps: NavigationStep[]
   currentStepId: string | undefined
-  courseId: string
+  isExpanded: boolean
   isLoading: boolean
 }
 
 export const LessonStepsList = ({
-  isExpanded,
+  courseId,
   steps,
   currentStepId,
-  courseId,
+  isExpanded,
   isLoading,
 }: LessonStepsListProps) => (
   <MotionBox

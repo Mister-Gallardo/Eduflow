@@ -130,12 +130,6 @@ export type GetCourseNavigationInput = z.infer<typeof zGetCourseNavigationInput>
 export const zGetStepDataInput = z.object({ courseId: z.string(), stepId: z.string() })
 export type GetStepDataInput = z.infer<typeof zGetStepDataInput>
 
-export const zInitCourseSessionInput = z.object({
-  courseId: z.string(),
-  enroll: z.boolean().optional(),
-})
-export type InitCourseSessionInput = z.infer<typeof zInitCourseSessionInput>
-
 // export const AnswerSchema = z.union([
 //   z.string(), // TEST_SINGLE, INPUT_TEXT
 //   z.number(), // INPUT_NUMBER

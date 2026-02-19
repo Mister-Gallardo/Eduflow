@@ -75,7 +75,7 @@ const theme = createTheme({
       red: '#fb2c37',
       green: '#00bd7d',
       orange: '#FFB900',
-      indigo: '#4f46e5',
+      indigo: '#2C66FF',
     },
     text: {
       primary: BRAND_PRIMARY,

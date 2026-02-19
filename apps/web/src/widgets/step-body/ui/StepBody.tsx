@@ -13,32 +13,14 @@ import { Result404 } from '@/shared/ui/feedback/result-404'
 export const StepBody = () => {
   const navigate = useNavigate()
 
-  const {
-    lastViewedStepId,
-    courseId,
-    stepId,
-    prevStepId,
-    nextStepId,
-    isCourseNavigationLoading,
-    firstStepData,
-  } = useOutletContext<LearnOutletContext>()
-
-  // Use firstStepData as initialData when the step matches lastViewedStepId (first load)
-  const isFirstStep = firstStepData?.step?.id === stepId
+  const { lastViewedStepId, courseId, stepId, prevStepId, nextStepId, isCourseNavigationLoading } =
+    useOutletContext<LearnOutletContext>()
 
   const {
     data: stepData,
     isLoading: isStepLoading,
     isFetched: isStepFetched,
-  } = trpc.learning.getStepData.useQuery(
-    { courseId, stepId },
-    {
-      enabled: !!stepId && !isFirstStep,
-    },
-  )
-
-  // Use pre-fetched data for the first step, otherwise use the query result
-  const resolvedStepData = isFirstStep ? firstStepData : stepData
+  } = trpc.learning.getStepData.useQuery({ courseId, stepId }, { enabled: !!stepId })
 
   useEffect(() => {
     if (stepId || !lastViewedStepId) return
@@ -46,15 +28,16 @@ export const StepBody = () => {
     void navigate(paths.learn.setup(courseId, lastViewedStepId), { replace: true })
   }, [stepId, lastViewedStepId, courseId, navigate])
 
-  if (isCourseNavigationLoading || (!isFirstStep && (isStepLoading || !isStepFetched))) {
+  if (isCourseNavigationLoading || isStepLoading || !isStepFetched) {
     return <StepContentSkeleton />
   }
 
-  if (!resolvedStepData?.step) {
+  const step = stepData?.step
+
+  if (!step) {
     return <Result404 />
   }
 
-  const { step } = resolvedStepData
   const stepContent = pick(step, ['type', 'content']) as StepContent
 
   return (

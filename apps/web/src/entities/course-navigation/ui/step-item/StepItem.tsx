@@ -35,7 +35,11 @@ export const StepItem = ({ step, isActive, courseId }: StepProps) => {
   }
 
   return (
-    <Tooltip title={step.title} placement="bottom">
+    <Tooltip
+      title={step.title}
+      slotProps={{ tooltip: { sx: { textAlign: 'center' } } }}
+      placement="bottom"
+    >
       <Box
         component={Link}
         to={paths.learn.setup(courseId, step.id)}
