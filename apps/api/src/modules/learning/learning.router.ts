@@ -1,8 +1,16 @@
-import { zEnrollCourseInput, zGetCourseNavigationInput, zGetStepDataInput } from '@eduflow/shared'
+import {
+  zCheckStepInput,
+  zCompleteStepInput,
+  zEnrollCourseInput,
+  zGetCourseNavigationInput,
+  zGetStepDataInput,
+} from '@eduflow/shared'
 
 import { protectedProcedure, router } from '../../trpc/trpc.js'
 
 import {
+  checkStepService,
+  completeStepService,
   enrollService,
   getCourseNavigationService,
   getStepDataService,
@@ -21,7 +29,11 @@ export const learningRouter = router({
     .input(zGetStepDataInput)
     .query(({ ctx, input }) => getStepDataService(ctx, input)),
 
-  // checkStep: protectedProcedure
-  //   .input(zCheckStepInput)
-  //   .mutation(({ ctx, input }) => checkStepService(ctx, input)),
+  checkStep: protectedProcedure
+    .input(zCheckStepInput)
+    .mutation(({ ctx, input }) => checkStepService(ctx, input)),
+
+  completeStep: protectedProcedure
+    .input(zCompleteStepInput)
+    .mutation(({ ctx, input }) => completeStepService(ctx, input)),
 })

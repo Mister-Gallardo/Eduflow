@@ -28,14 +28,6 @@ export default defineConfig(({ mode }) => {
               crossorigin: 'anonymous',
             },
           },
-          {
-            outputMatch: /online-learning.*\.svg$/i,
-            attributes: {
-              rel: 'preload',
-              as: 'image',
-              fetchpriority: 'high',
-            },
-          },
         ],
       }),
 

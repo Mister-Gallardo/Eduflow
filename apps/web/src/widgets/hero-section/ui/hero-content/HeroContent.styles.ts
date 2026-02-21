@@ -76,4 +76,10 @@ export const imageStyles: SxProps<Theme> = {
   width: '100%',
   height: 'auto',
   aspectRatio: '500 / 367.56',
+
+  '& svg': {
+    width: '100%',
+    height: '100%',
+    display: 'block',
+  },
 }

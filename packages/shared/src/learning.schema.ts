@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 
-// Types of steps - matching Prisma enum
+// ─── Step Types (matching Prisma enum) ───
+
 export const StepTypeSchema = z.enum([
   'TEXT',
   'VIDEO',
@@ -17,107 +17,139 @@ export const StepTypeSchema = z.enum([
 
 export type StepType = z.infer<typeof StepTypeSchema>
 
-// --- Content Schemas ---
+/** Типы шагов, не требующие проверки ответа (просто завершаются) */
+export const COMPLETABLE_STEP_TYPES: readonly StepType[] = ['TEXT', 'VIDEO', 'FREE_TEXT'] as const
 
-// Base for all content
-// const BaseContent = z.object({
-//   description: z.string().optional(),
-// })
+/** Типы шагов с автоматической проверкой ответа */
+export const CHECKABLE_STEP_TYPES: readonly StepType[] = [
+  'TEST_SINGLE',
+  'TEST_MULTIPLE',
+  'MATCHING',
+  'ORDERING',
+  'INPUT_TEXT',
+  'INPUT_NUMBER',
+  'FILL_GAPS',
+] as const
 
-// usage example:
-// BaseContent.extend({
-//   url: z.string(),
-//   provider: z.enum(['youtube', 'vimeo', 'native']),
-// })
+// ─── Content Schemas ───
 
 export const TextContentSchema = z.object({
   html: z.string(),
 })
 export type TextContent = z.infer<typeof TextContentSchema>
 
-export const VideoContentSchema = z.object({ url: z.string() })
+export const VideoContentSchema = z.object({
+  url: z.string(),
+})
 export type VideoContent = z.infer<typeof VideoContentSchema>
+
+export const TestOptionSchema = z.object({
+  id: z.string(),
+  text: z.string(),
+  isCorrect: z.boolean().optional(),
+})
+
+export const TestSingleContentSchema = z.object({
+  question: z.string(),
+  options: z.array(TestOptionSchema),
+  correctOptionId: z.string().optional(),
+})
+export type TestSingleContent = z.infer<typeof TestSingleContentSchema>
+
+export const TestMultipleContentSchema = z.object({
+  question: z.string(),
+  options: z.array(TestOptionSchema),
+  correctOptionIds: z.array(z.string()).optional(),
+})
+export type TestMultipleContent = z.infer<typeof TestMultipleContentSchema>
+
+export const MatchingItemSchema = z.object({
+  id: z.string(),
+  content: z.string(),
+})
+
+export const MatchingContentSchema = z.object({
+  left: z.array(MatchingItemSchema),
+  right: z.array(MatchingItemSchema),
+  pairs: z.array(z.object({ leftId: z.string(), rightId: z.string() })).optional(),
+})
+export type MatchingContent = z.infer<typeof MatchingContentSchema>
+
+export const OrderingItemSchema = z.object({
+  id: z.string(),
+  content: z.string(),
+})
+
+export const OrderingContentSchema = z.object({
+  items: z.array(OrderingItemSchema),
+  correctOrder: z.array(z.string()).optional(),
+})
+export type OrderingContent = z.infer<typeof OrderingContentSchema>
+
+export const InputTextContentSchema = z.object({
+  question: z.string(),
+  correctAnswers: z.array(z.string()).optional(),
+})
+export type InputTextContent = z.infer<typeof InputTextContentSchema>
+
+export const InputNumberContentSchema = z.object({
+  question: z.string(),
+  correctAnswer: z.number().optional(),
+})
+export type InputNumberContent = z.infer<typeof InputNumberContentSchema>
+
+export const FreeTextContentSchema = z.object({
+  question: z.string(),
+  minLength: z.number().optional(),
+})
+export type FreeTextContent = z.infer<typeof FreeTextContentSchema>
+
+export const GapItemSchema = z.object({
+  id: z.string(),
+  type: z.enum(['text', 'select']),
+  options: z.array(z.string()).optional(),
+  correctAnswer: z.string().optional(),
+})
+
+export const FillGapsContentSchema = z.object({
+  text: z.string(),
+  gaps: z.array(GapItemSchema),
+})
+export type FillGapsContent = z.infer<typeof FillGapsContentSchema>
+
+// ─── Discriminated Union: StepContent ───
 
 export type StepContent =
   | { type: 'TEXT'; content: TextContent }
   | { type: 'VIDEO'; content: VideoContent }
-  | { type: 'TEST_SINGLE'; content: any }
-  | { type: 'TEST_MULTIPLE'; content: any }
-  | { type: 'MATCHING'; content: any }
-  | { type: 'ORDERING'; content: any }
-  | { type: 'INPUT_TEXT'; content: any }
-  | { type: 'INPUT_NUMBER'; content: any }
-  | { type: 'FREE_TEXT'; content: any }
-  | { type: 'FILL_GAPS'; content: any }
+  | { type: 'TEST_SINGLE'; content: TestSingleContent }
+  | { type: 'TEST_MULTIPLE'; content: TestMultipleContent }
+  | { type: 'MATCHING'; content: MatchingContent }
+  | { type: 'ORDERING'; content: OrderingContent }
+  | { type: 'INPUT_TEXT'; content: InputTextContent }
+  | { type: 'INPUT_NUMBER'; content: InputNumberContent }
+  | { type: 'FREE_TEXT'; content: FreeTextContent }
+  | { type: 'FILL_GAPS'; content: FillGapsContent }
 
-// export const VideoContent = BaseContent.extend({
-//   url: z.string(),
-//   provider: z.enum(['youtube', 'vimeo', 'native']),
-// })
+// ─── Answer Types ───
 
-// export const TestOption = z.object({
-//   id: z.string(),
-//   text: z.string(),
-//   isCorrect: z.boolean().optional(),
-// })
-// export const TestSingleContent = BaseContent.extend({
-//   question: z.string(),
-//   options: z.array(TestOption),
-//   correctOptionId: z.string().optional(), // Can be stored here or via isCorrect in options
-// })
-// export const TestMultipleContent = BaseContent.extend({
-//   question: z.string(),
-//   options: z.array(TestOption),
-//   correctOptionIds: z.array(z.string()).optional(),
-// })
+/**
+ * Все возможные форматы ответов юзера:
+ * - string: TEST_SINGLE, INPUT_TEXT
+ * - number: INPUT_NUMBER
+ * - string[]: TEST_MULTIPLE, ORDERING
+ * - Record<string, string>: MATCHING (leftId→rightId), FILL_GAPS (gapId→value)
+ */
+export const StepAnswerSchema = z.union([
+  z.string(),
+  z.number(),
+  z.array(z.string()),
+  z.record(z.string(), z.string()),
+])
 
-// export const MatchingItem = z.object({ id: z.string(), content: z.string() })
-// export const MatchingContent = BaseContent.extend({
-//   left: z.array(MatchingItem),
-//   right: z.array(MatchingItem), // In DB, this is the correct pair if index matches, or we store pairs explicit via ID
-//   pairs: z.array(z.object({ leftId: z.string(), rightId: z.string() })).optional(), // Source of truth
-// })
+export type StepAnswer = z.infer<typeof StepAnswerSchema>
 
-// export const OrderingItem = z.object({ id: z.string(), content: z.string() })
-// export const OrderingContent = BaseContent.extend({
-//   items: z.array(OrderingItem),
-//   correctOrder: z.array(z.string()).optional(), // Array of IDs in correct order
-// })
-
-// export const InputTextContent = BaseContent.extend({
-//   question: z.string(),
-//   correctAnswers: z.array(z.string()).optional(), // Array of valid text answers
-// })
-// export const InputNumberContent = BaseContent.extend({
-//   question: z.string(),
-//   correctAnswer: z.number().optional(),
-// })
-// export const FreeTextContent = BaseContent.extend({
-//   question: z.string(),
-//   minLength: z.number().optional(),
-// })
-
-// export const GapItem = z.object({
-//   id: z.string(),
-//   type: z.enum(['text', 'select']), // manual or dropdown
-//   options: z.array(z.string()).optional(), // for select
-//   correctAnswer: z.string().optional(),
-// })
-// // Text with placeholders like {{id}}
-// export const FillGapsContent = BaseContent.extend({
-//   text: z.string(),
-//   gaps: z.array(GapItem),
-// })
-
-// export const TableCell = z.object({ id: z.string(), text: z.string() })
-// export const TableRow = z.object({ id: z.string(), cells: z.array(TableCell) })
-// export const TableContent = BaseContent.extend({
-//   rows: z.array(TableRow),
-//   columns: z.array(z.string()), // Headers
-//   correctCells: z.array(z.string()).optional(), // IDs of cells that should be selected
-// })
-
-// // --- Input/Output Schemas ---
+// ─── Input Schemas ───
 
 export const zEnrollCourseInput = z.object({ courseId: z.string() })
 export type EnrollCourseInput = z.infer<typeof zEnrollCourseInput>
@@ -128,16 +160,28 @@ export type GetCourseNavigationInput = z.infer<typeof zGetCourseNavigationInput>
 export const zGetStepDataInput = z.object({ courseId: z.string(), stepId: z.string() })
 export type GetStepDataInput = z.infer<typeof zGetStepDataInput>
 
-// export const AnswerSchema = z.union([
-//   z.string(), // TEST_SINGLE, INPUT_TEXT
-//   z.number(), // INPUT_NUMBER
-//   z.array(z.string()), // TEST_MULTIPLE, ORDERING, TABLE
-//   z.record(z.string(), z.string()), // MATCHING (leftId -> rightId), FILL_GAPS (gapId -> value)
-//   z.any(), // Fallback to satisfy min 2 args if needed, or better, structure it correctly.
-// ])
+export const zCheckStepInput = z.object({
+  courseId: z.string(),
+  stepId: z.string(),
+  answer: StepAnswerSchema,
+})
+export type CheckStepInput = z.infer<typeof zCheckStepInput>
 
-// export const zCheckStepInput = z.object({
-//   stepId: z.string(),
-//   answer: z.any(), // We validate strictly in service based on step type
-// })
-// export type CheckStepInput = z.infer<typeof zCheckStepInput>
+export const zCompleteStepInput = z.object({
+  courseId: z.string(),
+  stepId: z.string(),
+  answer: StepAnswerSchema.optional(),
+})
+export type CompleteStepInput = z.infer<typeof zCompleteStepInput>
+
+// ─── Output Types ───
+
+export interface CheckStepResult {
+  isCorrect: boolean
+  score: number
+  correctAnswer: StepAnswer | null
+}
+
+export interface CompleteStepResult {
+  success: true
+}

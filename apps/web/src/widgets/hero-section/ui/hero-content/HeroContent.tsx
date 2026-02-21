@@ -2,7 +2,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import { alpha, Box, Button, Typography, useTheme } from '@mui/material'
 
-import onlineLearningImg from '@/shared/assets/images/online-learning.svg'
+import onlineLearningSvg from '@/shared/assets/images/online-learning.svg?raw'
 import { MotionBox } from '@/shared/ui/animations/motion'
 import { blobStyles } from '@/shared/ui/styles/blob'
 
@@ -156,12 +156,10 @@ export const HeroContent = () => {
           />
 
           <Box
-            component="img"
             sx={imageStyles}
-            src={onlineLearningImg}
-            fetchPriority="high"
-            loading="eager"
-            alt="Онлайн-обучение"
+            role="img"
+            aria-label="Онлайн-обучение"
+            dangerouslySetInnerHTML={{ __html: onlineLearningSvg }}
           />
         </Box>
       </MotionBox>

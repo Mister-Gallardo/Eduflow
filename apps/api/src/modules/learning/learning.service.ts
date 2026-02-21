@@ -1,19 +1,318 @@
 import {
+  CHECKABLE_STEP_TYPES,
+  type CheckStepInput,
+  type CheckStepResult,
+  COMPLETABLE_STEP_TYPES,
+  type CompleteStepInput,
+  type CompleteStepResult,
   type EnrollCourseInput,
   type GetCourseNavigationInput,
   type GetStepDataInput,
   omit,
+  type StepAnswer,
+  type StepType,
 } from '@eduflow/shared'
 import { TRPCError } from '@trpc/server'
 
 import type { AuthorizedContext } from '../../trpc/context.js'
 
-export const enrollService = async (ctx: AuthorizedContext, input: EnrollCourseInput) => {
-  const user = ctx.me
+// ─── Helpers ───
 
+/**
+ * Проверяет, что юзер записан на курс. Выбрасывает FORBIDDEN если нет.
+ */
+const verifyEnrollment = async (ctx: AuthorizedContext, courseId: string) => {
+  const enrollment = await ctx.db.enrollment.findUnique({
+    where: {
+      userId_courseId: {
+        userId: ctx.me.id,
+        courseId,
+      },
+    },
+  })
+
+  if (!enrollment) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Not enrolled in this course' })
+  }
+
+  return enrollment
+}
+
+/**
+ * Получает шаг по ID с проверкой принадлежности к курсу.
+ */
+const getStepOrThrow = async (ctx: AuthorizedContext, courseId: string, stepId: string) => {
+  const step = await ctx.db.step.findUnique({
+    where: {
+      id: stepId,
+      lesson: {
+        module: {
+          courseId,
+        },
+      },
+    },
+  })
+
+  if (!step) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'Step not found' })
+  }
+
+  return step
+}
+
+// ─── Strip Answers (безопасная выдача контента) ───
+
+/**
+ * Удаляет правильные ответы из контента шага перед отправкой клиенту.
+ * Для ORDERING — перемешивает элементы.
+ * Для MATCHING — перемешивает правую колонку и удаляет pairs.
+ */
+const stripAnswers = (
+  content: Record<string, unknown>,
+  type: StepType,
+): Record<string, unknown> => {
+  // Deep clone — не мутируем оригинал
+  const safe = structuredClone(content)
+
+  switch (type) {
+    case 'TEXT':
+    case 'VIDEO':
+    case 'FREE_TEXT':
+      // Нечего скрывать
+      return safe
+
+    case 'TEST_SINGLE': {
+      const options = safe.options as Record<string, unknown>[] | undefined
+      if (options) {
+        for (const opt of options) {
+          delete opt.isCorrect
+        }
+      }
+      delete safe.correctOptionId
+      return safe
+    }
+
+    case 'TEST_MULTIPLE': {
+      const options = safe.options as Record<string, unknown>[] | undefined
+      if (options) {
+        for (const opt of options) {
+          delete opt.isCorrect
+        }
+      }
+      delete safe.correctOptionIds
+      return safe
+    }
+
+    case 'MATCHING': {
+      // Перемешиваем правую сторону, удаляем пары
+      const right = safe.right as Record<string, unknown>[] | undefined
+      if (right) {
+        safe.right = shuffleArray(right)
+      }
+      delete safe.pairs
+      return safe
+    }
+
+    case 'ORDERING': {
+      // Перемешиваем элементы, удаляем правильный порядок
+      const items = safe.items as Record<string, unknown>[] | undefined
+      if (items) {
+        safe.items = shuffleArray(items)
+      }
+      delete safe.correctOrder
+      return safe
+    }
+
+    case 'INPUT_TEXT': {
+      delete safe.correctAnswers
+      return safe
+    }
+
+    case 'INPUT_NUMBER': {
+      delete safe.correctAnswer
+      return safe
+    }
+
+    case 'FILL_GAPS': {
+      const gaps = safe.gaps as Record<string, unknown>[] | undefined
+      if (gaps) {
+        for (const gap of gaps) {
+          delete gap.correctAnswer
+        }
+      }
+      return safe
+    }
+
+    default:
+      return safe
+  }
+}
+
+/**
+ * Fisher-Yates shuffle — честное перемешивание массива.
+ */
+const shuffleArray = <T>(array: T[]): T[] => {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+// ─── Validate Answer ───
+
+interface ValidationResult {
+  isCorrect: boolean
+  score: number
+}
+
+/**
+ * Проверяет ответ юзера по оригинальному контенту из БД.
+ */
+const validateAnswer = (
+  content: Record<string, unknown>,
+  type: StepType,
+  userAnswer: StepAnswer,
+): ValidationResult => {
+  switch (type) {
+    case 'TEST_SINGLE': {
+      const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
+      const correctOption = options?.find((o) => o.isCorrect)
+      const correctId = correctOption?.id ?? (content.correctOptionId as string | undefined)
+      const isCorrect = typeof userAnswer === 'string' && correctId === userAnswer
+      return { isCorrect, score: isCorrect ? 100 : 0 }
+    }
+
+    case 'TEST_MULTIPLE': {
+      const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
+      const correctIds = new Set(
+        options?.filter((o) => o.isCorrect).map((o) => o.id) ??
+          (content.correctOptionIds as string[] | undefined) ??
+          [],
+      )
+      const userIds = new Set(Array.isArray(userAnswer) ? userAnswer.map(String) : [])
+
+      if (correctIds.size !== userIds.size) {
+        return { isCorrect: false, score: 0 }
+      }
+
+      const isCorrect = [...userIds].every((id) => correctIds.has(id))
+      return { isCorrect, score: isCorrect ? 100 : 0 }
+    }
+
+    case 'MATCHING': {
+      const correctPairs = (content.pairs as { leftId: string; rightId: string }[]) ?? []
+      const userMap = typeof userAnswer === 'object' && !Array.isArray(userAnswer) ? userAnswer : {}
+
+      const isCorrect =
+        correctPairs.length === Object.keys(userMap).length &&
+        correctPairs.every((p) => userMap[p.leftId] === p.rightId)
+
+      return { isCorrect, score: isCorrect ? 100 : 0 }
+    }
+
+    case 'ORDERING': {
+      const correctOrder =
+        (content.correctOrder as string[]) ??
+        ((content.items as { id: string }[]) ?? []).map((i) => i.id)
+
+      const userOrder = Array.isArray(userAnswer) ? userAnswer : []
+      const isCorrect = JSON.stringify(correctOrder) === JSON.stringify(userOrder)
+      return { isCorrect, score: isCorrect ? 100 : 0 }
+    }
+
+    case 'INPUT_TEXT': {
+      const validAnswers = (content.correctAnswers as string[]) ?? []
+      if (typeof userAnswer !== 'string') {
+        return { isCorrect: false, score: 0 }
+      }
+
+      const userText = userAnswer.trim().toLowerCase()
+
+      const isCorrect = validAnswers.some((ans) => ans.trim().toLowerCase() === userText)
+      return { isCorrect, score: isCorrect ? 100 : 0 }
+    }
+
+    case 'INPUT_NUMBER': {
+      const correctAnswer = content.correctAnswer as number | undefined
+      const isCorrect = correctAnswer !== undefined && Number(userAnswer) === correctAnswer
+      return { isCorrect, score: isCorrect ? 100 : 0 }
+    }
+
+    case 'FILL_GAPS': {
+      const gaps = (content.gaps as { id: string; correctAnswer: string }[]) ?? []
+      const userMap = typeof userAnswer === 'object' && !Array.isArray(userAnswer) ? userAnswer : {}
+
+      const isCorrect = gaps.every((gap) => {
+        const userVal = String(userMap[gap.id] ?? '')
+          .trim()
+          .toLowerCase()
+        const correctVal = String(gap.correctAnswer).trim().toLowerCase()
+        return userVal === correctVal
+      })
+
+      return { isCorrect, score: isCorrect ? 100 : 0 }
+    }
+
+    default:
+      return { isCorrect: false, score: 0 }
+  }
+}
+
+// ─── Get Correct Answer (для ответа фронту после проверки) ───
+
+/**
+ * Извлекает правильный ответ из контента для отправки клиенту после проверки.
+ */
+const getCorrectAnswer = (content: Record<string, unknown>, type: StepType): StepAnswer | null => {
+  switch (type) {
+    case 'TEST_SINGLE': {
+      const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
+      return options?.find((o) => o.isCorrect)?.id ?? (content.correctOptionId as string) ?? null
+    }
+
+    case 'TEST_MULTIPLE': {
+      const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
+      return (
+        options?.filter((o) => o.isCorrect).map((o) => o.id) ??
+        (content.correctOptionIds as string[]) ??
+        []
+      )
+    }
+
+    case 'MATCHING': {
+      const pairs = (content.pairs as { leftId: string; rightId: string }[]) ?? []
+      return Object.fromEntries(pairs.map((p) => [p.leftId, p.rightId]))
+    }
+
+    case 'ORDERING':
+      return (
+        (content.correctOrder as string[]) ??
+        ((content.items as { id: string }[]) ?? []).map((i) => i.id)
+      )
+
+    case 'INPUT_TEXT':
+      return (content.correctAnswers as string[]) ?? []
+
+    case 'INPUT_NUMBER':
+      return (content.correctAnswer as number) ?? null
+
+    case 'FILL_GAPS': {
+      const gaps = (content.gaps as { id: string; correctAnswer: string }[]) ?? []
+      return Object.fromEntries(gaps.map((g) => [g.id, g.correctAnswer]))
+    }
+
+    default:
+      return null
+  }
+}
+
+// ─── Services ───
+
+export const enrollService = async (ctx: AuthorizedContext, input: EnrollCourseInput) => {
   const { courseId } = input
 
-  // Check if course exists
   const course = await ctx.db.course.findUnique({
     where: { id: courseId },
   })
@@ -22,11 +321,10 @@ export const enrollService = async (ctx: AuthorizedContext, input: EnrollCourseI
     throw new TRPCError({ code: 'NOT_FOUND', message: 'Course not found' })
   }
 
-  // Check if user already enrolled
   const existingEnrollment = await ctx.db.enrollment.findUnique({
     where: {
       userId_courseId: {
-        userId: user.id,
+        userId: ctx.me.id,
         courseId,
       },
     },
@@ -38,7 +336,7 @@ export const enrollService = async (ctx: AuthorizedContext, input: EnrollCourseI
 
   await ctx.db.enrollment.create({
     data: {
-      userId: user.id,
+      userId: ctx.me.id,
       courseId,
     },
   })
@@ -50,23 +348,18 @@ export const getCourseNavigationService = async (
   ctx: AuthorizedContext,
   input: GetCourseNavigationInput,
 ) => {
-  const user = ctx.me
-
   const { courseId } = input
 
-  // Check enrollment
   const enrollment = await ctx.db.enrollment.findUnique({
     where: {
       userId_courseId: {
-        userId: user.id,
+        userId: ctx.me.id,
         courseId,
       },
     },
     include: {
       course: {
-        select: {
-          title: true,
-        },
+        select: { title: true },
       },
     },
   })
@@ -89,7 +382,6 @@ export const getCourseNavigationService = async (
               title: true,
               type: true,
               order: true,
-              // We don't select content here to keep it lightweight and secure
             },
           },
         },
@@ -97,15 +389,12 @@ export const getCourseNavigationService = async (
     },
   })
 
-  // Get user progress
   const progress = await ctx.db.userProgress.findMany({
     where: {
-      userId: user.id,
+      userId: ctx.me.id,
       step: {
         lesson: {
-          module: {
-            courseId,
-          },
+          module: { courseId },
         },
       },
     },
@@ -119,8 +408,6 @@ export const getCourseNavigationService = async (
 
   const progressMap = new Map(progress.map((p) => [p.stepId, p.isCompleted]))
 
-  // Find last viewed step (most recently updated progress)
-  // If no progress, default to the first step of the first lesson of the first module.
   let lastViewedStepId = progress[0]?.stepId
 
   if (!lastViewedStepId && modules.length > 0) {
@@ -133,7 +420,6 @@ export const getCourseNavigationService = async (
     }
   }
 
-  // Transform to navigation tree with progress
   const navigation = modules.map((module) => ({
     id: module.id,
     title: module.title,
@@ -153,286 +439,135 @@ export const getCourseNavigationService = async (
 }
 
 export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepDataInput) => {
-  const user = ctx.me
-
   const { courseId, stepId } = input
 
-  const step = await ctx.db.step.findUnique({
+  const [step] = await Promise.all([
+    getStepOrThrow(ctx, courseId, stepId),
+    verifyEnrollment(ctx, courseId),
+  ])
+
+  // Получаем прогресс юзера по этому шагу
+  const userProgress = await ctx.db.userProgress.findUnique({
     where: {
-      id: stepId,
-      lesson: {
-        module: {
-          courseId: courseId,
-        },
+      userId_stepId: {
+        userId: ctx.me.id,
+        stepId,
       },
     },
-    include: {
-      lesson: {
-        include: {
-          module: true,
-        },
-      },
+    select: {
+      isCompleted: true,
+      score: true,
+      answer: true,
     },
   })
 
-  if (!step) {
-    throw new TRPCError({ code: 'NOT_FOUND', message: 'Step not found' })
-  }
-
-  const enrollment = await ctx.db.enrollment.findUnique({
-    where: {
-      userId_courseId: {
-        userId: user.id,
-        courseId: step.lesson.module.courseId,
-      },
-    },
-  })
-
-  if (!enrollment) {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Not enrolled in this course' })
-  }
-
-  // Remove sensitive data (answers) from content
-  // Assuming content is a flexible JSON, we need a strategy to strip answers.
-  // This depends on how we structure the JSON.
-  // detailed parsing logic should be here.
-  // const safeContent = stripAnswers(step.content, step.type)
-
-  // return {
-  //   ...step,
-  //   content: safeContent,
-  // }
+  // Фильтруем ответы из контента
+  const safeContent = stripAnswers(step.content as Record<string, unknown>, step.type as StepType)
 
   return {
-    step: omit(step, ['lesson', 'lessonId']),
+    step: {
+      ...omit(step, ['lessonId']),
+      content: safeContent,
+    },
+    userProgress,
   }
 }
 
-// const stripAnswers = (content: any, type: string) => {
-//   // Deep copy to avoid mutating original
-//   const safe = JSON.parse(JSON.stringify(content))
+export const checkStepService = async (
+  ctx: AuthorizedContext,
+  input: CheckStepInput,
+): Promise<CheckStepResult> => {
+  const { courseId, stepId, answer } = input
 
-//   switch (type) {
-//     case 'TEST_SINGLE':
-//       if (safe.options && Array.isArray(safe.options)) {
-//         safe.options.forEach((opt: any) => delete opt.isCorrect)
-//       }
-//       delete safe.correctOptionId
-//       break
+  const [step] = await Promise.all([
+    getStepOrThrow(ctx, courseId, stepId),
+    verifyEnrollment(ctx, courseId),
+  ])
 
-//     case 'TEST_MULTIPLE':
-//       if (safe.options && Array.isArray(safe.options)) {
-//         safe.options.forEach((opt: any) => delete opt.isCorrect)
-//       }
-//       delete safe.correctOptionIds
-//       break
+  const stepType = step.type as StepType
 
-//     case 'MATCHING':
-//       // content: { left: [], right: [], pairs: [{leftId, rightId}] }
-//       // Remove pairs which is the key.
-//       delete safe.pairs
-//       // Ensure left and right sides are just items
-//       // (Right side might need shuffling in frontend, or here if we want to be super safe)
-//       break
+  // Валидация: только checkable типы
+  if (!CHECKABLE_STEP_TYPES.includes(stepType)) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: `Step type "${stepType}" does not support answer checking. Use completeStep instead.`,
+    })
+  }
 
-//     case 'ORDERING':
-//       // content: { items: [{id, content}] }
-//       // Remove correctOrder if present (it might be implicit in items order in DB)
-//       // We should shuffle items here so frontend receives them random?
-//       // Requirement says: "Перемешивай исходный массив элементов и удаляй correctOrder"
-//       if (safe.items && Array.isArray(safe.items)) {
-//         safe.items = safe.items
-//           .map((value: any) => ({ value, sort: Math.random() }))
-//           .sort((a: any, b: any) => a.sort - b.sort)
-//           .map(({ value }: any) => value)
-//       }
-//       delete safe.correctOrder
-//       break
+  const content = step.content as Record<string, unknown>
+  const { isCorrect, score } = validateAnswer(content, stepType, answer)
+  const correctAnswer = getCorrectAnswer(content, stepType)
 
-//     case 'FILL_GAPS':
-//       // content: { text: "...", gaps: [{id, type, options, correctAnswer}] }
-//       if (safe.gaps && Array.isArray(safe.gaps)) {
-//         safe.gaps.forEach((gap: any) => delete gap.correctAnswer)
-//       }
-//       break
+  await ctx.db.$transaction(async (tx) => {
+    const currentProgress = await tx.userProgress.findUnique({
+      where: { userId_stepId: { userId: ctx.me.id, stepId } },
+    })
 
-//     case 'INPUT_TEXT':
-//       delete safe.correctAnswers
-//       break
+    const shouldUpdateStatus = !currentProgress?.isCompleted || isCorrect
 
-//     case 'INPUT_NUMBER':
-//       delete safe.correctAnswer
-//       break
+    await tx.userProgress.upsert({
+      where: { userId_stepId: { userId: ctx.me.id, stepId } },
+      update: {
+        isCompleted: currentProgress?.isCompleted ? true : isCorrect,
+        answer: shouldUpdateStatus ? (answer as object) : (currentProgress?.answer as object),
+        score: shouldUpdateStatus ? score : currentProgress?.score,
+        updatedAt: new Date(),
+      },
+      create: {
+        userId: ctx.me.id,
+        stepId,
+        isCompleted: isCorrect,
+        score,
+        answer: answer as object,
+      },
+    })
+  })
 
-//     case 'TABLE':
-//       delete safe.correctCells
-//       break
+  return { isCorrect, score, correctAnswer }
+}
 
-//     case 'TEXT':
-//     case 'VIDEO':
-//     case 'TEXT_IMAGE':
-//     case 'TEXT_VIDEO':
-//       // No sensitive data
-//       break
+export const completeStepService = async (
+  ctx: AuthorizedContext,
+  input: CompleteStepInput,
+): Promise<CompleteStepResult> => {
+  const { courseId, stepId, answer } = input
 
-//     case 'FREE_TEXT':
-//       // No automatic correct answer to hide
-//       break
-//   }
+  const [step] = await Promise.all([
+    getStepOrThrow(ctx, courseId, stepId),
+    verifyEnrollment(ctx, courseId),
+  ])
 
-//   return safe
-// }
+  const stepType = step.type as StepType
 
-// export const checkStepService = async (ctx: Context, input: CheckStepInput) => {
-//   const { user } = ctx
-//   if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' })
+  // Валидация: только completable типы
+  if (!COMPLETABLE_STEP_TYPES.includes(stepType)) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: `Step type "${stepType}" requires answer checking. Use checkStep instead.`,
+    })
+  }
 
-//   const { stepId, answer } = input
+  await ctx.db.userProgress.upsert({
+    where: {
+      userId_stepId: {
+        userId: ctx.me.id,
+        stepId,
+      },
+    },
+    update: {
+      isCompleted: true,
+      score: stepType === 'FREE_TEXT' ? null : 100,
+      answer: answer != null ? (answer as object) : undefined,
+      updatedAt: new Date(),
+    },
+    create: {
+      userId: ctx.me.id,
+      stepId,
+      isCompleted: true,
+      score: stepType === 'FREE_TEXT' ? null : 100,
+      answer: answer != null ? (answer as object) : undefined,
+    },
+  })
 
-//   const step = await ctx.db.step.findUnique({
-//     where: { id: stepId },
-//   })
-
-//   if (!step) {
-//     throw new TRPCError({ code: 'NOT_FOUND', message: 'Step not found' })
-//   }
-
-//   // Validate answer logic
-//   const { isCorrect, score } = validateAnswer(step.content, step.type, answer)
-
-//   // Update progress
-//   await ctx.db.userProgress.upsert({
-//     where: {
-//       userId_stepId: {
-//         userId: user.id,
-//         stepId,
-//       },
-//     },
-//     update: {
-//       isCompleted: isCorrect, // For Free Text this will be true (pending review)
-//       score,
-//       answer, // Save user's answer
-//       updatedAt: new Date(),
-//     },
-//     create: {
-//       userId: user.id,
-//       stepId,
-//       isCompleted: isCorrect,
-//       score,
-//       answer,
-//     },
-//   })
-
-//   return { isCorrect, score }
-// }
-
-// const validateAnswer = (
-//   content: any,
-//   type: string,
-//   userAnswer: any,
-// ): { isCorrect: boolean; score: number | null } => {
-//   if (!content) return { isCorrect: false, score: 0 }
-
-//   switch (type) {
-//     case 'TEST_SINGLE': {
-//       // User sends optionId
-//       const correctOption = content.options?.find((o: any) => o.isCorrect)
-//       // Fallback: check correctOptionId
-//       const correctId = correctOption?.id || content.correctOptionId
-//       const isCorrect = String(correctId) === String(userAnswer)
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'TEST_MULTIPLE': {
-//       // User sends array of optionIds. Order doesn't matter.
-//       const correctIds = new Set(
-//         content.options?.filter((o: any) => o.isCorrect).map((o: any) => o.id) ||
-//           content.correctOptionIds ||
-//           [],
-//       )
-//       const userIds = new Set(Array.isArray(userAnswer) ? userAnswer : [])
-
-//       if (correctIds.size !== userIds.size) return { isCorrect: false, score: 0 }
-
-//       const isCorrect = [...userIds].every((id) => correctIds.has(String(id)))
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'MATCHING': {
-//       // User sends object { leftId: rightId }
-//       // Content has pairs: [{leftId, rightId}]
-//       const correctPairs = content.pairs || []
-//       const userMap = userAnswer || {}
-
-//       // Check if every correct pair exists in user map
-//       const isCorrect =
-//         correctPairs.every((p: any) => userMap[p.leftId] === p.rightId) &&
-//         Object.keys(userMap).length === correctPairs.length
-
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'ORDERING': {
-//       // User sends array of IDs in order
-//       const correctOrder = content.correctOrder || content.items?.map((i: any) => i.id)
-
-//       const isCorrect = JSON.stringify(correctOrder) === JSON.stringify(userAnswer)
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'INPUT_TEXT': {
-//       const validAnswers = content.correctAnswers || []
-//       const userText = String(userAnswer).trim().toLowerCase()
-
-//       const isCorrect = validAnswers.some((ans: string) => ans.trim().toLowerCase() === userText)
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'INPUT_NUMBER': {
-//       const validAnswer = content.correctAnswer
-//       const isCorrect = Number(userAnswer) === Number(validAnswer)
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'FILL_GAPS': {
-//       // User sends { gapId: value }
-//       const gaps = content.gaps || []
-//       const userMap = userAnswer || {}
-
-//       const isCorrect = gaps.every((gap: any) => {
-//         const userVal = String(userMap[gap.id] || '')
-//           .trim()
-//           .toLowerCase()
-//         const correctVal = String(gap.correctAnswer).trim().toLowerCase()
-//         return userVal === correctVal
-//       })
-
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'TABLE': {
-//       // User sends array of cellIds that are selected (for simple selection table)
-//       // Or logic could be more complex. Assuming selection for now.
-//       const correctCells = new Set(content.correctCells || [])
-//       const userCells = new Set(Array.isArray(userAnswer) ? userAnswer : [])
-
-//       if (correctCells.size !== userCells.size) return { isCorrect: false, score: 0 }
-//       const isCorrect = [...userCells].every((id) => correctCells.has(String(id)))
-
-//       return { isCorrect, score: isCorrect ? 100 : 0 }
-//     }
-
-//     case 'FREE_TEXT':
-//       // Always allow passing, but marks as pending review logic (handled by isCompleted=true for now per requirement)
-//       return { isCorrect: true, score: null }
-
-//     case 'TEXT':
-//     case 'VIDEO':
-//     case 'TEXT_IMAGE':
-//     case 'TEXT_VIDEO':
-//       return { isCorrect: true, score: 100 }
-
-//     default:
-//       return { isCorrect: false, score: 0 }
-//   }
-// }
+  return { success: true }
+}

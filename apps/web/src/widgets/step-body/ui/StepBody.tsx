@@ -41,10 +41,16 @@ export const StepBody = () => {
   const stepContent = pick(step, ['type', 'content']) as StepContent
 
   return (
-    <Box sx={{ py: 4 }}>
-      <Typography sx={{ fontSize: 34, fontWeight: 700 }}>{step.title}</Typography>
+    <Box sx={{ py: 3 }}>
+      <Typography sx={{ fontSize: 18, fontWeight: 700 }}>{step.title}</Typography>
 
-      <StepRenderer step={stepContent} />
+      <StepRenderer
+        step={stepContent}
+        courseId={courseId}
+        stepId={stepId}
+        isCompleted={stepData.userProgress?.isCompleted}
+        savedAnswer={stepData.userProgress?.answer}
+      />
 
       <StepNavigation prevStepId={prevStepId} nextStepId={nextStepId} courseId={courseId} />
     </Box>
