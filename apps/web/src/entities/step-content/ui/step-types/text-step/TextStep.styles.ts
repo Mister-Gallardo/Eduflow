@@ -2,6 +2,8 @@ import type { SxProps, Theme } from '@mui/material/styles'
 import { darken } from '@mui/material/styles'
 import { alpha } from '@mui/material/styles'
 
+import { iframeStyles } from '@/shared/ui/styles/iframe'
+
 const CODE_FONT_FAMILY = "'JetBrains Mono', Consolas, Monaco, monospace"
 const LINE_HEIGHT = 1.6
 
@@ -93,13 +95,11 @@ export const textStepStyles: SxProps<Theme> = {
     borderRadius: '8px',
     my: 2,
   },
-  '& iframe': {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+  '& iframe': iframeStyles as any,
+  '& video': {
     width: '100%',
-    aspectRatio: '16 / 9',
-    borderRadius: '12px',
-    border: 'none',
-    my: 3,
-    boxShadow: (theme) => `0 4px 20px ${alpha(theme.palette.primary.main, 0.2)}`,
+    borderRadius: '8px',
   },
   '& strong': {
     fontWeight: 600,

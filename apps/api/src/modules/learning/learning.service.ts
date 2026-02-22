@@ -447,7 +447,7 @@ export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepD
   ])
 
   // Получаем прогресс юзера по этому шагу
-  const userProgress = await ctx.db.userProgress.findUnique({
+  let userProgress = await ctx.db.userProgress.findUnique({
     where: {
       userId_stepId: {
         userId: ctx.me.id,
@@ -460,6 +460,31 @@ export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepD
       answer: true,
     },
   })
+
+  const isInformationalStep = step.type === 'TEXT' || step.type === 'VIDEO'
+
+  if (isInformationalStep && !userProgress?.isCompleted) {
+    const updatedProgress = await ctx.db.userProgress.upsert({
+      where: { userId_stepId: { userId: ctx.me.id, stepId } },
+      update: {
+        isCompleted: true,
+        score: 100,
+        updatedAt: new Date(),
+      },
+      create: {
+        userId: ctx.me.id,
+        stepId,
+        isCompleted: true,
+        score: 100,
+      },
+    })
+
+    userProgress = {
+      isCompleted: updatedProgress.isCompleted,
+      score: updatedProgress.score,
+      answer: updatedProgress.answer,
+    }
+  }
 
   // Фильтруем ответы из контента
   const safeContent = stripAnswers(step.content as Record<string, unknown>, step.type as StepType)

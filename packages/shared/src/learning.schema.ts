@@ -119,7 +119,7 @@ export type FillGapsContent = z.infer<typeof FillGapsContentSchema>
 
 // ─── Discriminated Union: StepContent ───
 
-export type StepContent =
+export type Step =
   | { type: 'TEXT'; content: TextContent }
   | { type: 'VIDEO'; content: VideoContent }
   | { type: 'TEST_SINGLE'; content: TestSingleContent }

@@ -12,6 +12,7 @@
     "types": "tsc -b"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
     "@eduflow/api": "workspace:*",
     "@eduflow/shared": "workspace:*",
     "@emotion/react": "^11.14.0",

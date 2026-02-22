@@ -1,7 +1,7 @@
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined'
-import { Box, Button, CircularProgress, IconButton } from '@mui/material'
+import { Box, Button, IconButton } from '@mui/material'
 
 import {
   actionsContainerStyles,
@@ -10,7 +10,6 @@ import {
 } from './StepCheckActions.styles'
 
 interface StepCheckActionsProps {
-  /** Все пары/опции выбраны — кнопка Проверить активна */
   canCheck: boolean
   isPending?: boolean
   isChecked: boolean
@@ -36,7 +35,6 @@ export const StepCheckActions = ({
           variant="contained"
           onClick={onCheck}
           disabled={!canCheck || isPending}
-          startIcon={isPending && <CircularProgress size={18} color="inherit" />}
           sx={{ px: 4, py: 1 }}
         >
           {checkLabel}
