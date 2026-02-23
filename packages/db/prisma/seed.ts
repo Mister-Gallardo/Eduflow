@@ -52,8 +52,9 @@ const createInputNumberContent = (question: string, correctAnswer: number) => ({
 })
 
 // 9. FREE_TEXT
-const createFreeTextContent = (question: string) => ({
+const createFreeTextContent = (question: string, minLength: number = 0) => ({
   question,
+  minLength,
 })
 
 // --- Data Definitions ---
@@ -154,7 +155,7 @@ function generateStepContent(type: StepType, stepIndex: number) {
     case StepType.INPUT_NUMBER:
       return createInputNumberContent(`Сколько будет ${stepIndex} + 2?`, stepIndex + 2)
     case StepType.FREE_TEXT:
-      return createFreeTextContent('Напиши эссе на тему этого урока (минимум 50 слов).')
+      return createFreeTextContent('Напиши эссе на тему этого урока (минимум 50 слов).', 10)
     default:
       return createTextContent('<p>Fallback content</p>')
   }

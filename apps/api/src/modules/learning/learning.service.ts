@@ -1,3 +1,4 @@
+import { StepStatus } from '@eduflow/db'
 import {
   CHECKABLE_STEP_TYPES,
   type CheckStepInput,
@@ -9,6 +10,7 @@ import {
   type GetCourseNavigationInput,
   type GetStepDataInput,
   omit,
+  REVIEWABLE_STEP_TYPES,
   type StepAnswer,
   type StepType,
 } from '@eduflow/shared'
@@ -164,7 +166,6 @@ const shuffleArray = <T>(array: T[]): T[] => {
 
 interface ValidationResult {
   isCorrect: boolean
-  score: number
 }
 
 /**
@@ -181,7 +182,7 @@ const validateAnswer = (
       const correctOption = options?.find((o) => o.isCorrect)
       const correctId = correctOption?.id ?? (content.correctOptionId as string | undefined)
       const isCorrect = typeof userAnswer === 'string' && correctId === userAnswer
-      return { isCorrect, score: isCorrect ? 100 : 0 }
+      return { isCorrect }
     }
 
     case 'TEST_MULTIPLE': {
@@ -194,11 +195,11 @@ const validateAnswer = (
       const userIds = new Set(Array.isArray(userAnswer) ? userAnswer.map(String) : [])
 
       if (correctIds.size !== userIds.size) {
-        return { isCorrect: false, score: 0 }
+        return { isCorrect: false }
       }
 
       const isCorrect = [...userIds].every((id) => correctIds.has(id))
-      return { isCorrect, score: isCorrect ? 100 : 0 }
+      return { isCorrect }
     }
 
     case 'MATCHING': {
@@ -209,7 +210,7 @@ const validateAnswer = (
         correctPairs.length === Object.keys(userMap).length &&
         correctPairs.every((p) => userMap[p.leftId] === p.rightId)
 
-      return { isCorrect, score: isCorrect ? 100 : 0 }
+      return { isCorrect }
     }
 
     case 'ORDERING': {
@@ -219,25 +220,25 @@ const validateAnswer = (
 
       const userOrder = Array.isArray(userAnswer) ? userAnswer : []
       const isCorrect = JSON.stringify(correctOrder) === JSON.stringify(userOrder)
-      return { isCorrect, score: isCorrect ? 100 : 0 }
+      return { isCorrect }
     }
 
     case 'INPUT_TEXT': {
       const validAnswers = (content.correctAnswers as string[]) ?? []
       if (typeof userAnswer !== 'string') {
-        return { isCorrect: false, score: 0 }
+        return { isCorrect: false }
       }
 
       const userText = userAnswer.trim().toLowerCase()
 
       const isCorrect = validAnswers.some((ans) => ans.trim().toLowerCase() === userText)
-      return { isCorrect, score: isCorrect ? 100 : 0 }
+      return { isCorrect }
     }
 
     case 'INPUT_NUMBER': {
       const correctAnswer = content.correctAnswer as number | undefined
       const isCorrect = correctAnswer !== undefined && Number(userAnswer) === correctAnswer
-      return { isCorrect, score: isCorrect ? 100 : 0 }
+      return { isCorrect }
     }
 
     case 'FILL_GAPS': {
@@ -252,11 +253,11 @@ const validateAnswer = (
         return userVal === correctVal
       })
 
-      return { isCorrect, score: isCorrect ? 100 : 0 }
+      return { isCorrect }
     }
 
     default:
-      return { isCorrect: false, score: 0 }
+      return { isCorrect: false }
   }
 }
 
@@ -265,48 +266,48 @@ const validateAnswer = (
 /**
  * Извлекает правильный ответ из контента для отправки клиенту после проверки.
  */
-const getCorrectAnswer = (content: Record<string, unknown>, type: StepType): StepAnswer | null => {
-  switch (type) {
-    case 'TEST_SINGLE': {
-      const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
-      return options?.find((o) => o.isCorrect)?.id ?? (content.correctOptionId as string) ?? null
-    }
+// const getCorrectAnswer = (content: Record<string, unknown>, type: StepType): StepAnswer | null => {
+//   switch (type) {
+//     case 'TEST_SINGLE': {
+//       const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
+//       return options?.find((o) => o.isCorrect)?.id ?? (content.correctOptionId as string) ?? null
+//     }
 
-    case 'TEST_MULTIPLE': {
-      const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
-      return (
-        options?.filter((o) => o.isCorrect).map((o) => o.id) ??
-        (content.correctOptionIds as string[]) ??
-        []
-      )
-    }
+//     case 'TEST_MULTIPLE': {
+//       const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
+//       return (
+//         options?.filter((o) => o.isCorrect).map((o) => o.id) ??
+//         (content.correctOptionIds as string[]) ??
+//         []
+//       )
+//     }
 
-    case 'MATCHING': {
-      const pairs = (content.pairs as { leftId: string; rightId: string }[]) ?? []
-      return Object.fromEntries(pairs.map((p) => [p.leftId, p.rightId]))
-    }
+//     case 'MATCHING': {
+//       const pairs = (content.pairs as { leftId: string; rightId: string }[]) ?? []
+//       return Object.fromEntries(pairs.map((p) => [p.leftId, p.rightId]))
+//     }
 
-    case 'ORDERING':
-      return (
-        (content.correctOrder as string[]) ??
-        ((content.items as { id: string }[]) ?? []).map((i) => i.id)
-      )
+//     case 'ORDERING':
+//       return (
+//         (content.correctOrder as string[]) ??
+//         ((content.items as { id: string }[]) ?? []).map((i) => i.id)
+//       )
 
-    case 'INPUT_TEXT':
-      return (content.correctAnswers as string[]) ?? []
+//     case 'INPUT_TEXT':
+//       return (content.correctAnswers as string[]) ?? []
 
-    case 'INPUT_NUMBER':
-      return (content.correctAnswer as number) ?? null
+//     case 'INPUT_NUMBER':
+//       return (content.correctAnswer as number) ?? null
 
-    case 'FILL_GAPS': {
-      const gaps = (content.gaps as { id: string; correctAnswer: string }[]) ?? []
-      return Object.fromEntries(gaps.map((g) => [g.id, g.correctAnswer]))
-    }
+//     case 'FILL_GAPS': {
+//       const gaps = (content.gaps as { id: string; correctAnswer: string }[]) ?? []
+//       return Object.fromEntries(gaps.map((g) => [g.id, g.correctAnswer]))
+//     }
 
-    default:
-      return null
-  }
-}
+//     default:
+//       return null
+//   }
+// }
 
 // ─── Services ───
 
@@ -400,13 +401,13 @@ export const getCourseNavigationService = async (
     },
     select: {
       stepId: true,
-      isCompleted: true,
+      status: true,
       updatedAt: true,
     },
     orderBy: { updatedAt: 'desc' },
   })
 
-  const progressMap = new Map(progress.map((p) => [p.stepId, p.isCompleted]))
+  const progressMap = new Map(progress.map((p) => [p.stepId, p.status]))
 
   let lastViewedStepId = progress[0]?.stepId
 
@@ -430,7 +431,7 @@ export const getCourseNavigationService = async (
         id: step.id,
         title: step.title,
         type: step.type,
-        isCompleted: progressMap.get(step.id) ?? false,
+        status: progressMap.get(step.id) ?? 'NOT_STARTED',
       })),
     })),
   }))
@@ -448,42 +449,19 @@ export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepD
 
   // Получаем прогресс юзера по этому шагу
   let userProgress = await ctx.db.userProgress.findUnique({
-    where: {
-      userId_stepId: {
-        userId: ctx.me.id,
-        stepId,
-      },
-    },
-    select: {
-      isCompleted: true,
-      score: true,
-      answer: true,
-    },
+    where: { userId_stepId: { userId: ctx.me.id, stepId } },
+    select: { status: true, answer: true },
   })
 
-  const isInformationalStep = step.type === 'TEXT' || step.type === 'VIDEO'
+  const isCompletableStep = COMPLETABLE_STEP_TYPES.includes(step.type)
 
-  if (isInformationalStep && !userProgress?.isCompleted) {
-    const updatedProgress = await ctx.db.userProgress.upsert({
+  if (isCompletableStep && userProgress?.status !== StepStatus.APPROVED) {
+    userProgress = await ctx.db.userProgress.upsert({
       where: { userId_stepId: { userId: ctx.me.id, stepId } },
-      update: {
-        isCompleted: true,
-        score: 100,
-        updatedAt: new Date(),
-      },
-      create: {
-        userId: ctx.me.id,
-        stepId,
-        isCompleted: true,
-        score: 100,
-      },
+      update: { status: StepStatus.APPROVED, updatedAt: new Date() },
+      create: { userId: ctx.me.id, stepId, status: StepStatus.APPROVED },
+      select: { status: true, answer: true },
     })
-
-    userProgress = {
-      isCompleted: updatedProgress.isCompleted,
-      score: updatedProgress.score,
-      answer: updatedProgress.answer,
-    }
   }
 
   // Фильтруем ответы из контента
@@ -520,38 +498,36 @@ export const checkStepService = async (
   }
 
   const content = step.content as Record<string, unknown>
-  const { isCorrect, score } = validateAnswer(content, stepType, answer)
-  const correctAnswer = getCorrectAnswer(content, stepType)
+  const { isCorrect } = validateAnswer(content, stepType, answer)
+  const status = isCorrect ? StepStatus.APPROVED : StepStatus.FAILED
 
-  await ctx.db.$transaction(async (tx) => {
-    const currentProgress = await tx.userProgress.findUnique({
-      where: { userId_stepId: { userId: ctx.me.id, stepId } },
-    })
-
-    const shouldUpdateStatus = !currentProgress?.isCompleted || isCorrect
-
-    await tx.userProgress.upsert({
-      where: { userId_stepId: { userId: ctx.me.id, stepId } },
-      update: {
-        isCompleted: currentProgress?.isCompleted ? true : isCorrect,
-        answer: shouldUpdateStatus ? (answer as object) : (currentProgress?.answer as object),
-        score: shouldUpdateStatus ? score : currentProgress?.score,
-        updatedAt: new Date(),
-      },
-      create: {
-        userId: ctx.me.id,
-        stepId,
-        isCompleted: isCorrect,
-        score,
-        answer: answer as object,
-      },
-    })
+  const currentProgress = await ctx.db.userProgress.findUnique({
+    where: { userId_stepId: { userId: ctx.me.id, stepId } },
   })
 
-  return { isCorrect, score, correctAnswer }
+  const shouldUpdate = currentProgress?.status !== StepStatus.APPROVED || isCorrect
+
+  if (!shouldUpdate) return { isCorrect }
+
+  await ctx.db.userProgress.upsert({
+    where: { userId_stepId: { userId: ctx.me.id, stepId } },
+    update: {
+      status: status,
+      answer: answer,
+      updatedAt: new Date(),
+    },
+    create: {
+      userId: ctx.me.id,
+      stepId,
+      status,
+      answer: answer,
+    },
+  })
+
+  return { isCorrect }
 }
 
-export const completeStepService = async (
+export const submitStepService = async (
   ctx: AuthorizedContext,
   input: CompleteStepInput,
 ): Promise<CompleteStepResult> => {
@@ -564,8 +540,7 @@ export const completeStepService = async (
 
   const stepType = step.type as StepType
 
-  // Валидация: только completable типы
-  if (!COMPLETABLE_STEP_TYPES.includes(stepType)) {
+  if (!REVIEWABLE_STEP_TYPES.includes(stepType)) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: `Step type "${stepType}" requires answer checking. Use checkStep instead.`,
@@ -580,16 +555,14 @@ export const completeStepService = async (
       },
     },
     update: {
-      isCompleted: true,
-      score: stepType === 'FREE_TEXT' ? null : 100,
+      status: StepStatus.PENDING,
       answer: answer != null ? (answer as object) : undefined,
       updatedAt: new Date(),
     },
     create: {
       userId: ctx.me.id,
       stepId,
-      isCompleted: true,
-      score: stepType === 'FREE_TEXT' ? null : 100,
+      status: StepStatus.PENDING,
       answer: answer != null ? (answer as object) : undefined,
     },
   })

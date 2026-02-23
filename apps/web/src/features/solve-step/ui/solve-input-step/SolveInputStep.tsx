@@ -9,11 +9,11 @@ export const SolveInputStep = ({
   stepType,
   courseId,
   stepId,
-  isCompleted,
+  status,
   savedAnswer,
 }: SolveInputStepProps) => {
-  const { value, isChecked, isCorrect, isPending, canCheck, onChange, onCheck, onRetry } =
-    useInputStep({ content, stepType, courseId, stepId, isCompleted, savedAnswer })
+  const { value, isSubmitted, isCorrect, isPending, canCheck, onChange, onCheck, onRetry } =
+    useInputStep({ content, stepType, courseId, stepId, status, savedAnswer })
 
   return (
     <>
@@ -21,14 +21,14 @@ export const SolveInputStep = ({
         content={content}
         stepType={stepType}
         value={value}
-        isChecked={isChecked}
+        isChecked={isSubmitted}
         isCorrect={isCorrect}
         onChange={onChange}
       />
       <StepCheckActions
         canCheck={canCheck}
         isPending={isPending}
-        isChecked={isChecked}
+        isSubmitted={isSubmitted}
         isCorrect={isCorrect}
         onCheck={onCheck}
         onRetry={onRetry}

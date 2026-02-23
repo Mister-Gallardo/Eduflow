@@ -1,8 +1,8 @@
-import type { Step } from '@eduflow/shared'
+import type { Step, StepStatus } from '@eduflow/shared'
 import { Typography } from '@mui/material'
 import { lazy, Suspense } from 'react'
 
-import { SolveInputStep, SolveTextStep } from '@/features/solve-step'
+import { SolveFreeTextStep, SolveInputStep, SolveTextStep } from '@/features/solve-step'
 import { SolveTestStep } from '@/features/solve-step'
 
 import { StepContentSkeleton } from './step-content-skeleton'
@@ -35,7 +35,7 @@ interface StepRendererViewProps {
   mode?: 'view'
   courseId: string
   stepId: string
-  isCompleted?: boolean
+  status?: StepStatus
   savedAnswer?: unknown
 }
 
@@ -52,16 +52,11 @@ interface StepRendererEditProps {
 
 export type StepRendererProps = StepRendererViewProps | StepRendererEditProps
 
-/**
- * Диспетчер режима отображения шага.
- * mode='view' (default) → features/solve-step: умные контейнеры для студента.
- * mode='edit'           → features/edit-step: формы создания/редактирования для преподавателя.
- */
 export const StepRenderer = (props: StepRendererProps) => {
   const { step, mode = 'view' } = props
 
   if (mode === 'view') {
-    const { courseId, stepId, isCompleted, savedAnswer } = props as StepRendererViewProps
+    const { courseId, stepId, status, savedAnswer } = props as StepRendererViewProps
 
     switch (step.type) {
       case 'TEXT':
@@ -79,7 +74,7 @@ export const StepRenderer = (props: StepRendererProps) => {
             testType={step.type}
             courseId={courseId}
             stepId={stepId}
-            isCompleted={isCompleted}
+            status={status}
             savedAnswer={savedAnswer as string | string[] | null | undefined}
           />
         )
@@ -91,7 +86,7 @@ export const StepRenderer = (props: StepRendererProps) => {
               content={step.content}
               courseId={courseId}
               stepId={stepId}
-              isCompleted={isCompleted}
+              status={status}
               savedAnswer={savedAnswer as Record<string, string> | null | undefined}
             />
           </Suspense>
@@ -106,8 +101,20 @@ export const StepRenderer = (props: StepRendererProps) => {
             stepType={step.type}
             courseId={courseId}
             stepId={stepId}
-            isCompleted={isCompleted}
+            status={status}
             savedAnswer={savedAnswer as string | number | null | undefined}
+          />
+        )
+
+      case 'FREE_TEXT':
+        return (
+          <SolveFreeTextStep
+            key={stepId}
+            content={step.content}
+            courseId={courseId}
+            stepId={stepId}
+            status={status}
+            savedAnswer={savedAnswer as string | null | undefined}
           />
         )
 

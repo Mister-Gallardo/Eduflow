@@ -18,7 +18,7 @@ export const StepTypeSchema = z.enum([
 export type StepType = z.infer<typeof StepTypeSchema>
 
 /** Типы шагов, не требующие проверки ответа (просто завершаются) */
-export const COMPLETABLE_STEP_TYPES: readonly StepType[] = ['TEXT', 'VIDEO', 'FREE_TEXT'] as const
+export const COMPLETABLE_STEP_TYPES: readonly StepType[] = ['TEXT', 'VIDEO'] as const
 
 /** Типы шагов с автоматической проверкой ответа */
 export const CHECKABLE_STEP_TYPES: readonly StepType[] = [
@@ -30,6 +30,9 @@ export const CHECKABLE_STEP_TYPES: readonly StepType[] = [
   'INPUT_NUMBER',
   'FILL_GAPS',
 ] as const
+
+/** Ручная проверка: преподаватель должен посмотреть ответ */
+export const REVIEWABLE_STEP_TYPES: readonly StepType[] = ['FREE_TEXT'] as const
 
 // ─── Content Schemas ───
 
@@ -131,6 +134,10 @@ export type Step =
   | { type: 'FREE_TEXT'; content: FreeTextContent }
   | { type: 'FILL_GAPS'; content: FillGapsContent }
 
+export const StepStatusSchema = z.enum(['NOT_STARTED', 'PENDING', 'FAILED', 'APPROVED'])
+
+export type StepStatus = z.infer<typeof StepStatusSchema>
+
 // ─── Answer Types ───
 
 /**
@@ -178,8 +185,6 @@ export type CompleteStepInput = z.infer<typeof zCompleteStepInput>
 
 export interface CheckStepResult {
   isCorrect: boolean
-  score: number
-  correctAnswer: StepAnswer | null
 }
 
 export interface CompleteStepResult {

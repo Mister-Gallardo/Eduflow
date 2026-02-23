@@ -26,7 +26,7 @@ export const StepBody = () => {
 
   useEffect(() => {
     if (
-      stepData?.userProgress?.isCompleted &&
+      stepData?.userProgress?.status === 'APPROVED' &&
       (stepData.step.type === 'TEXT' || stepData.step.type === 'VIDEO')
     ) {
       utils.learning.getCourseNavigation.setData({ courseId }, (oldData) => {
@@ -39,7 +39,7 @@ export const StepBody = () => {
             lessons: module.lessons.map((lesson) => ({
               ...lesson,
               steps: lesson.steps.map((s) =>
-                s.id === stepId && !s.isCompleted ? { ...s, isCompleted: true } : s,
+                s.id === stepId && s.status !== 'APPROVED' ? { ...s, status: 'APPROVED' } : s,
               ),
             })),
           })),
@@ -74,7 +74,7 @@ export const StepBody = () => {
         step={stepContent}
         courseId={courseId}
         stepId={stepId}
-        isCompleted={stepData.userProgress?.isCompleted}
+        status={stepData.userProgress?.status}
         savedAnswer={stepData.userProgress?.answer}
       />
 

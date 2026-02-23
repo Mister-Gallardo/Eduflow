@@ -1,3 +1,4 @@
+export * from './free-text-step'
 export * from './input-step/InputStep'
 export * from './matching-step'
 export * from './test-step'

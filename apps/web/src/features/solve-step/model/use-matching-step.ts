@@ -2,7 +2,7 @@ import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
 import { useState } from 'react'
 
 import type { SolveMatchingStepProps } from './types'
-import { useCheckStep } from './use-check-step'
+import { useStepAction } from './use-step-action'
 
 const isRecordAnswer = (value: unknown): value is Record<string, string> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -11,7 +11,7 @@ export const useMatchingStep = ({
   content,
   courseId,
   stepId,
-  isCompleted = false,
+  status,
   savedAnswer,
 }: SolveMatchingStepProps) => {
   const initialPairs = isRecordAnswer(savedAnswer) ? savedAnswer : {}
@@ -20,14 +20,17 @@ export const useMatchingStep = ({
   const [pairs, setPairs] = useState<Record<string, string>>(initialPairs)
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
 
-  const { isChecked, isCorrect, isPending, mutate, setIsChecked, setIsCorrect } = useCheckStep({
-    courseId,
-    stepId,
-    isCompleted,
-    onSuccess: () => {
-      setSelectedLeftId(null)
+  const { isSubmitted, isCorrect, isPending, mutate, setIsSubmitted, setIsCorrect } = useStepAction(
+    {
+      courseId,
+      stepId,
+      status,
+      mode: 'auto',
+      onSuccess: () => {
+        setSelectedLeftId(null)
+      },
     },
-  })
+  )
 
   const applyDrop = (rightId: string, targetId: string) => {
     setPairs((prev) => {
@@ -67,24 +70,19 @@ export const useMatchingStep = ({
   }
 
   const handleLeftClick = (leftId: string) => {
-    if (isChecked) return
-
+    if (isSubmitted) return
     setSelectedLeftId((prev) => (prev === leftId ? null : leftId))
   }
 
   const handlePoolChipClick = (rightId: string) => {
-    if (isChecked || !selectedLeftId) return
-
+    if (isSubmitted || !selectedLeftId) return
     applyDrop(rightId, selectedLeftId)
-
     setSelectedLeftId(null)
   }
 
   const handleSlotChipClick = (_leftId: string, rightId: string) => {
-    if (isChecked) return
-
+    if (isSubmitted) return
     applyDrop(rightId, 'pool')
-
     setSelectedLeftId(null)
   }
 
@@ -92,14 +90,13 @@ export const useMatchingStep = ({
 
   const handleCheck = () => {
     if (!isAllPaired || isPending) return
-
     mutate({ courseId, stepId, answer: pairs })
   }
 
   const handleRetry = () => {
     setPairs({})
     setSelectedLeftId(null)
-    setIsChecked(false)
+    setIsSubmitted(false)
     setIsCorrect(false)
   }
 
@@ -107,7 +104,7 @@ export const useMatchingStep = ({
     displayContent: content,
     pairs,
     selectedLeftId,
-    isChecked,
+    isSubmitted,
     isCorrect,
     isPending,
     canCheck: isAllPaired,

@@ -1,3 +1,4 @@
+import type { StepStatus } from '@eduflow/shared'
 import { alpha, type SxProps, type Theme } from '@mui/material/styles'
 
 import { INDICATOR_SIZE, ROW_MIN_HEIGHT } from './constants'
@@ -286,3 +287,68 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
     },
   },
 })
+
+export interface FreeTextStylesParams {
+  status?: StepStatus
+}
+
+export const getFreeTextStyles = ({ status }: FreeTextStylesParams): SxProps<Theme> => {
+  const isApproved = status === 'APPROVED'
+  const isFailed = status === 'FAILED'
+  const isPending = status === 'PENDING'
+
+  return {
+    '& .MuiOutlinedInput-root': {
+      transition: 'all 0.2s',
+      backgroundColor: (theme) => {
+        if (isApproved) return alpha(theme.palette.customColors.green, 0.04)
+        if (isFailed) return alpha(theme.palette.customColors.red, 0.04)
+        if (isPending) return alpha(theme.palette.customColors.orange, 0.04)
+        return 'transparent'
+      },
+
+      '& .MuiOutlinedInput-notchedOutline': {
+        transition: 'all 0.2s',
+        borderWidth: '2px',
+        borderColor: (theme) => {
+          if (isApproved) return `${theme.palette.customColors.green} !important`
+          if (isFailed) return `${theme.palette.customColors.red} !important`
+          if (isPending) return `${theme.palette.customColors.orange} !important`
+          return `${alpha(theme.palette.primary.main, 0.08)} !important`
+        },
+      },
+
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: (theme) => {
+          if (isApproved) return `${theme.palette.customColors.green} !important`
+          if (isFailed) return `${theme.palette.customColors.red} !important`
+          if (isPending) return `${theme.palette.customColors.orange} !important`
+          return `${theme.palette.primary.main} !important`
+        },
+      },
+
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: (theme) => {
+          if (isApproved) return `${theme.palette.customColors.green} !important`
+          if (isFailed) return `${theme.palette.customColors.red} !important`
+          if (isPending) return `${theme.palette.customColors.orange} !important`
+          return `${theme.palette.primary.main} !important`
+        },
+      },
+
+      '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+        borderColor: (theme) => {
+          if (isApproved) return `${theme.palette.customColors.green} !important`
+          if (isFailed) return `${theme.palette.customColors.red} !important`
+          if (isPending) return `${theme.palette.customColors.orange} !important`
+          return `${alpha(theme.palette.primary.main, 0.08)} !important`
+        },
+      },
+
+      '& textarea': {
+        lineHeight: 1.7,
+        fontSize: 14,
+      },
+    },
+  }
+}

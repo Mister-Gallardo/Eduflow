@@ -8,12 +8,12 @@ import {
   actionsContainerStyles,
   getResultBadgeStyles,
   retryButtonStyles,
-} from './StepCheckActions.styles'
+} from './StepResultActions.styles'
 
 interface StepCheckActionsProps {
   canCheck: boolean
   isPending?: boolean
-  isChecked: boolean
+  isSubmitted: boolean
   isCorrect?: boolean
   onCheck: () => void
   onRetry: () => void
@@ -23,13 +23,29 @@ interface StepCheckActionsProps {
 export const StepCheckActions = ({
   canCheck,
   isPending = false,
-  isChecked,
+  isSubmitted,
   isCorrect = false,
   onCheck,
   onRetry,
-  checkLabel = 'Проверить',
 }: StepCheckActionsProps) => {
-  if (!isChecked) {
+  if (isSubmitted) {
+    return (
+      <Box sx={actionsContainerStyles}>
+        <Box sx={getResultBadgeStyles(isCorrect)}>
+          {isCorrect ? (
+            <CheckCircleOutlinedIcon sx={{ fontSize: 20 }} />
+          ) : (
+            <CancelOutlinedIcon sx={{ fontSize: 20 }} />
+          )}
+          {isCorrect ? 'Правильно!' : 'Неправильно'}
+        </Box>
+
+        <IconButton onClick={onRetry} sx={retryButtonStyles} aria-label="Повторить попытку">
+          <ReplayOutlinedIcon sx={{ fontSize: 20 }} />
+        </IconButton>
+      </Box>
+    )
+  } else {
     return (
       <Box sx={actionsContainerStyles}>
         <Button
@@ -45,26 +61,9 @@ export const StepCheckActions = ({
             },
           }}
         >
-          {checkLabel}
+          {isPending ? 'Отправляем...' : 'Проверить'}
         </Button>
       </Box>
     )
   }
-
-  return (
-    <Box sx={actionsContainerStyles}>
-      <Box sx={getResultBadgeStyles(isCorrect)}>
-        {isCorrect ? (
-          <CheckCircleOutlinedIcon sx={{ fontSize: 20 }} />
-        ) : (
-          <CancelOutlinedIcon sx={{ fontSize: 20 }} />
-        )}
-        {isCorrect ? 'Правильно!' : 'Неправильно'}
-      </Box>
-
-      <IconButton onClick={onRetry} sx={retryButtonStyles} aria-label="Повторить попытку">
-        <ReplayOutlinedIcon sx={{ fontSize: 20 }} />
-      </IconButton>
-    </Box>
-  )
 }

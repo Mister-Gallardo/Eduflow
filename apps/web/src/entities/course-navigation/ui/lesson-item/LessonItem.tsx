@@ -28,14 +28,14 @@ export const LessonItem = ({ lesson }: LessonItemProps) => {
   const { onClose, activeLessonId, courseId } = useSidebarContext()
 
   const totalSteps = lesson.steps.length
-  const completedSteps = lesson.steps.filter((s) => s.isCompleted).length
+  const completedSteps = lesson.steps.filter((s) => s.status === 'APPROVED').length
   const isFullyCompleted = totalSteps > 0 && completedSteps === totalSteps
   const hasProgress = completedSteps > 0
 
   const isActive = activeLessonId === lesson.id
 
   const firstStepId = lesson.steps[0]?.id
-  const firstUnfinishedStep = lesson.steps.find((s) => !s.isCompleted)
+  const firstUnfinishedStep = lesson.steps.find((s) => s.status !== 'APPROVED')
   const targetStepId = firstUnfinishedStep?.id ?? firstStepId
   const lessonPath = paths.learn.setup(courseId, targetStepId)
 

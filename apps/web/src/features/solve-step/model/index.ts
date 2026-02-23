@@ -1,4 +1,6 @@
 export * from './types'
+export * from './use-free-text-step'
 export * from './use-input-step'
 export * from './use-matching-step'
+export * from './use-step-action'
 export * from './use-test-step'

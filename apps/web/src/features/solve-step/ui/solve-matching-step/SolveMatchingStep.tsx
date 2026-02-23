@@ -11,7 +11,7 @@ export const SolveMatchingStep = ({
   content,
   courseId,
   stepId,
-  isCompleted,
+  status,
   savedAnswer,
 }: SolveMatchingStepProps) => {
   const sensors = useSensors(
@@ -27,7 +27,7 @@ export const SolveMatchingStep = ({
     displayContent,
     pairs,
     selectedLeftId,
-    isChecked,
+    isSubmitted,
     isCorrect,
     isPending,
     canCheck,
@@ -35,7 +35,7 @@ export const SolveMatchingStep = ({
     callbacks,
     onCheck,
     onRetry,
-  } = useMatchingStep({ content, courseId, stepId, isCompleted, savedAnswer })
+  } = useMatchingStep({ content, courseId, stepId, status, savedAnswer })
 
   const activeOverlayContent = activeDragId
     ? displayContent.right.find((r) => r.id === activeDragId)?.content
@@ -52,8 +52,8 @@ export const SolveMatchingStep = ({
         content={displayContent}
         pairs={pairs}
         selectedLeftId={selectedLeftId}
-        isChecked={isChecked}
-        pairStatus={isChecked ? isCorrect : undefined}
+        isChecked={isSubmitted}
+        pairStatus={isSubmitted ? isCorrect : undefined}
         activeDragId={activeDragId}
         callbacks={callbacks}
       />
@@ -61,7 +61,7 @@ export const SolveMatchingStep = ({
       <StepCheckActions
         canCheck={canCheck}
         isPending={isPending}
-        isChecked={isChecked}
+        isSubmitted={isSubmitted}
         isCorrect={isCorrect}
         onCheck={onCheck}
         onRetry={onRetry}

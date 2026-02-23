@@ -10,10 +10,10 @@ import { protectedProcedure, router } from '../../trpc/trpc.js'
 
 import {
   checkStepService,
-  completeStepService,
   enrollService,
   getCourseNavigationService,
   getStepDataService,
+  submitStepService,
 } from './learning.service.js'
 
 export const learningRouter = router({
@@ -35,5 +35,5 @@ export const learningRouter = router({
 
   completeStep: protectedProcedure
     .input(zCompleteStepInput)
-    .mutation(({ ctx, input }) => completeStepService(ctx, input)),
+    .mutation(({ ctx, input }) => submitStepService(ctx, input)),
 })

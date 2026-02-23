@@ -1,13 +1,13 @@
 import { useState } from 'react'
 
 import type { SolveTestStepProps } from './types'
-import { useCheckStep } from './use-check-step'
+import { useStepAction } from './use-step-action'
 
 export const useTestStep = ({
   testType,
   courseId,
   stepId,
-  isCompleted = false,
+  status,
   savedAnswer,
 }: SolveTestStepProps) => {
   const isMultiple = testType === 'TEST_MULTIPLE'
@@ -20,14 +20,17 @@ export const useTestStep = ({
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(initialSelection))
 
-  const { isChecked, isCorrect, isPending, mutate, setIsChecked, setIsCorrect } = useCheckStep({
-    courseId,
-    stepId,
-    isCompleted,
-  })
+  const { isSubmitted, isCorrect, isPending, mutate, setIsSubmitted, setIsCorrect } = useStepAction(
+    {
+      courseId,
+      stepId,
+      status,
+      mode: 'auto',
+    },
+  )
 
   const handleSelectOption = (optionId: string) => {
-    if (isChecked) return
+    if (isSubmitted) return
 
     setSelectedIds((prev) => {
       const next = new Set(prev)
@@ -45,19 +48,21 @@ export const useTestStep = ({
 
   const handleCheck = () => {
     if (selectedIds.size === 0 || isPending) return
+
     const answer = isMultiple ? [...selectedIds] : [...selectedIds][0]
+
     mutate({ courseId, stepId, answer })
   }
 
   const handleRetry = () => {
     setSelectedIds(new Set())
-    setIsChecked(false)
+    setIsSubmitted(false)
     setIsCorrect(false)
   }
 
   return {
     selectedIds,
-    isChecked,
+    isSubmitted,
     isCorrect,
     isPending,
     canCheck: selectedIds.size > 0,

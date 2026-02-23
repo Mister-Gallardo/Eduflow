@@ -1,5 +1,5 @@
 export { MatchingDragOverlay } from './matching-drag-overlay'
 export { StepContentSkeleton } from './step-content-skeleton'
 export type { InputContent } from './step-types'
-export { InputStep, TestStep, textStepStyles } from './step-types'
+export { FreeTextStep, InputStep, TestStep, textStepStyles } from './step-types'
 export { StepRenderer } from './StepRenderer'

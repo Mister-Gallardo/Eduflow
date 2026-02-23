@@ -9,19 +9,19 @@ export const SolveTestStep = ({
   testType,
   courseId,
   stepId,
-  isCompleted,
+  status,
   savedAnswer,
 }: SolveTestStepProps) => {
   const {
     selectedIds,
-    isChecked,
+    isSubmitted,
     isCorrect,
     isPending,
     canCheck,
     onSelectOption,
     onCheck,
     onRetry,
-  } = useTestStep({ content, testType, courseId, stepId, isCompleted, savedAnswer })
+  } = useTestStep({ content, testType, courseId, stepId, status, savedAnswer })
 
   return (
     <>
@@ -29,14 +29,14 @@ export const SolveTestStep = ({
         content={content}
         testType={testType}
         selectedIds={selectedIds}
-        isChecked={isChecked}
+        isChecked={isSubmitted}
         isCorrect={isCorrect}
         onSelectOption={onSelectOption}
       />
       <StepCheckActions
         canCheck={canCheck}
         isPending={isPending}
-        isChecked={isChecked}
+        isSubmitted={isSubmitted}
         isCorrect={isCorrect}
         onCheck={onCheck}
         onRetry={onRetry}

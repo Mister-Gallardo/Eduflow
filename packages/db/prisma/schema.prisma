@@ -41,7 +41,7 @@ model Course {
   duration    String
   level       Level
   category    String
-  authorId    String? 
+  authorId    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
 
@@ -78,7 +78,7 @@ model Step {
   title    String
   order    Int      @default(0)
   type     StepType
-  content  Json 
+  content  Json
   lessonId String
 
   lesson       Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -96,7 +96,7 @@ enum StepType {
   ORDERING
   INPUT_TEXT
   INPUT_NUMBER
-  FREE_TEXT 
+  FREE_TEXT
   FILL_GAPS
 }
 
@@ -121,14 +121,13 @@ model Enrollment {
 }
 
 model UserProgress {
-  id        String   @id @default(cuid())
-  userId    String
-  stepId    String
-  isCompleted Boolean @default(false)
-  score     Int?     // For tests
-  answer    Json?    // User's answer
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String     @id @default(cuid())
+  userId      String
+  stepId      String
+  status      StepStatus @default(NOT_STARTED)
+  answer      Json?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   step Step @relation(fields: [stepId], references: [id], onDelete: Cascade)
@@ -136,4 +135,11 @@ model UserProgress {
   @@unique([userId, stepId])
   @@index([userId])
   @@index([stepId])
+}
+
+enum StepStatus {
+  NOT_STARTED
+  FAILED
+  PENDING
+  APPROVED
 }

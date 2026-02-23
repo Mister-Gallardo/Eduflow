@@ -16,20 +16,28 @@ interface StepProps {
 export const StepItem = ({ step, isActive, courseId }: StepProps) => {
   const theme = useTheme()
 
-  const isCompleted = step.isCompleted
+  const status = step.status
+
   const Icon = getStepIcon(step.type)
 
   let bgColor = alpha(theme.palette.primary.main, 0.06)
+
   const borderColor = isActive
-    ? isCompleted
+    ? status === 'APPROVED'
       ? theme.palette.customColors.green
-      : theme.palette.primary.main
+      : status === 'PENDING'
+        ? theme.palette.customColors.orange
+        : theme.palette.primary.main
     : 'transparent'
+
   let iconColor = alpha(theme.palette.primary.main, 0.8)
 
-  if (isCompleted) {
+  if (status === 'APPROVED') {
     bgColor = alpha(theme.palette.customColors.green, 0.18)
     iconColor = darken(theme.palette.customColors.green, 0.2)
+  } else if (status === 'PENDING') {
+    bgColor = alpha(theme.palette.customColors.orange, 0.18)
+    iconColor = darken(theme.palette.customColors.orange, 0.2)
   } else if (isActive) {
     iconColor = alpha(theme.palette.primary.main, 1)
   }
@@ -50,9 +58,11 @@ export const StepItem = ({ step, isActive, courseId }: StepProps) => {
           '&:hover': {
             borderColor: isActive
               ? borderColor
-              : isCompleted
+              : status === 'APPROVED'
                 ? alpha(theme.palette.customColors.green, 0.25)
-                : alpha(theme.palette.primary.main, 0.25),
+                : status === 'PENDING'
+                  ? alpha(theme.palette.customColors.orange, 0.25)
+                  : alpha(theme.palette.primary.main, 0.25),
           },
         }}
       >
