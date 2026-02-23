@@ -509,7 +509,7 @@ export const checkStepService = async (
     verifyEnrollment(ctx, courseId),
   ])
 
-  const stepType = step.type as StepType
+  const stepType = step.type
 
   // Валидация: только checkable типы
   if (!CHECKABLE_STEP_TYPES.includes(stepType)) {

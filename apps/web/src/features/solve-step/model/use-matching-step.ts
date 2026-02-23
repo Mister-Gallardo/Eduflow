@@ -1,11 +1,8 @@
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
 import { useState } from 'react'
 
-import { trpc } from '@/shared/api/trpc'
-import { messages } from '@/shared/config/messages'
-import { useSnackbar } from '@/shared/ui/feedback/snackbar'
-
 import type { SolveMatchingStepProps } from './types'
+import { useCheckStep } from './use-check-step'
 
 const isRecordAnswer = (value: unknown): value is Record<string, string> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -17,32 +14,18 @@ export const useMatchingStep = ({
   isCompleted = false,
   savedAnswer,
 }: SolveMatchingStepProps) => {
-  const showSnackbar = useSnackbar()
-
   const initialPairs = isRecordAnswer(savedAnswer) ? savedAnswer : {}
 
   const [selectedLeftId, setSelectedLeftId] = useState<string | null>(null)
   const [pairs, setPairs] = useState<Record<string, string>>(initialPairs)
-  const [isChecked, setIsChecked] = useState(isCompleted)
-  const [isCorrect, setIsCorrect] = useState(isCompleted)
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
 
-  const utils = trpc.useUtils()
-
-  const checkStepMutation = trpc.learning.checkStep.useMutation({
-    onSuccess: (data) => {
-      setIsChecked(true)
-      setIsCorrect(data.isCorrect)
+  const { isChecked, isCorrect, isPending, mutate, setIsChecked, setIsCorrect } = useCheckStep({
+    courseId,
+    stepId,
+    isCompleted,
+    onSuccess: () => {
       setSelectedLeftId(null)
-      if (data.isCorrect) {
-        void utils.learning.getCourseNavigation.invalidate({ courseId })
-      }
-    },
-    onError: () => {
-      void showSnackbar({
-        message: messages.genericError,
-        severity: 'error',
-      })
     },
   })
 
@@ -108,9 +91,9 @@ export const useMatchingStep = ({
   const isAllPaired = content.left.every((item) => item.id in pairs)
 
   const handleCheck = () => {
-    if (!isAllPaired || checkStepMutation.isPending) return
+    if (!isAllPaired || isPending) return
 
-    checkStepMutation.mutate({ courseId, stepId, answer: pairs })
+    mutate({ courseId, stepId, answer: pairs })
   }
 
   const handleRetry = () => {
@@ -126,7 +109,7 @@ export const useMatchingStep = ({
     selectedLeftId,
     isChecked,
     isCorrect,
-    isPending: checkStepMutation.isPending,
+    isPending,
     canCheck: isAllPaired,
     activeDragId,
 

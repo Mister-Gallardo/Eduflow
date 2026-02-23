@@ -7,3 +7,9 @@ export const tooltipTextSecondaryStyles: SxProps<Theme> = {
   fontSize: 12,
   fontWeight: 400,
 }
+
+export const stepQuestionStyles: SxProps<Theme> = {
+  fontSize: 16,
+  fontWeight: 500,
+  mb: 2,
+}

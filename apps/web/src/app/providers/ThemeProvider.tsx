@@ -129,7 +129,7 @@ const theme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: { borderRadius: 8 },
+        root: { borderRadius: 12 },
       },
     },
     MuiButton: {

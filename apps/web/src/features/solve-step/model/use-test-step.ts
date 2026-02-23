@@ -1,10 +1,7 @@
 import { useState } from 'react'
 
-import { trpc } from '@/shared/api/trpc'
-import { messages } from '@/shared/config/messages'
-import { useSnackbar } from '@/shared/ui/feedback/snackbar'
-
 import type { SolveTestStepProps } from './types'
+import { useCheckStep } from './use-check-step'
 
 export const useTestStep = ({
   testType,
@@ -13,8 +10,6 @@ export const useTestStep = ({
   isCompleted = false,
   savedAnswer,
 }: SolveTestStepProps) => {
-  const showSnackbar = useSnackbar()
-
   const isMultiple = testType === 'TEST_MULTIPLE'
 
   const initialSelection = Array.isArray(savedAnswer)
@@ -24,25 +19,11 @@ export const useTestStep = ({
       : []
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(initialSelection))
-  const [isChecked, setIsChecked] = useState(isCompleted)
-  const [isCorrect, setIsCorrect] = useState(isCompleted)
 
-  const utils = trpc.useUtils()
-
-  const checkStepMutation = trpc.learning.checkStep.useMutation({
-    onSuccess: (data) => {
-      setIsChecked(true)
-      setIsCorrect(data.isCorrect)
-      if (data.isCorrect) {
-        void utils.learning.getCourseNavigation.invalidate({ courseId })
-      }
-    },
-    onError: () => {
-      void showSnackbar({
-        message: messages.genericError,
-        severity: 'error',
-      })
-    },
+  const { isChecked, isCorrect, isPending, mutate, setIsChecked, setIsCorrect } = useCheckStep({
+    courseId,
+    stepId,
+    isCompleted,
   })
 
   const handleSelectOption = (optionId: string) => {
@@ -63,9 +44,9 @@ export const useTestStep = ({
   }
 
   const handleCheck = () => {
-    if (selectedIds.size === 0 || checkStepMutation.isPending) return
+    if (selectedIds.size === 0 || isPending) return
     const answer = isMultiple ? [...selectedIds] : [...selectedIds][0]
-    checkStepMutation.mutate({ courseId, stepId, answer })
+    mutate({ courseId, stepId, answer })
   }
 
   const handleRetry = () => {
@@ -78,7 +59,7 @@ export const useTestStep = ({
     selectedIds,
     isChecked,
     isCorrect,
-    isPending: checkStepMutation.isPending,
+    isPending,
     canCheck: selectedIds.size > 0,
     onSelectOption: handleSelectOption,
     onCheck: handleCheck,

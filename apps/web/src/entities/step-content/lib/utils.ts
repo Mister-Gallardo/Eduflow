@@ -234,3 +234,55 @@ export const getMatchingChipStyles = (
     return theme.palette.primary.main
   },
 })
+
+interface InputStylesParams {
+  isChecked: boolean
+  isCorrect?: boolean
+}
+
+export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxProps<Theme> => ({
+  '& .MuiOutlinedInput-root': {
+    transition: 'all 0.2s',
+
+    backgroundColor: (theme) => {
+      if (isChecked) {
+        if (isCorrect === true) return alpha(theme.palette.customColors.green, 0.06)
+        if (isCorrect === false) return alpha(theme.palette.customColors.red, 0.06)
+      }
+      return 'transparent'
+    },
+
+    '& .MuiOutlinedInput-notchedOutline': {
+      transition: 'all 0.2s',
+      borderWidth: '2px',
+      borderColor: (theme) => {
+        if (isChecked) {
+          if (isCorrect === true) return `${theme.palette.customColors.green} !important`
+          if (isCorrect === false) return `${theme.palette.customColors.red} !important`
+        }
+        return `${alpha(theme.palette.primary.main, 0.08)} !important`
+      },
+    },
+
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (theme) => {
+        if (isChecked) {
+          if (isCorrect === true) return `${theme.palette.customColors.green} !important`
+          if (isCorrect === false) return `${theme.palette.customColors.red} !important`
+          return `${alpha(theme.palette.primary.main, 0.08)} !important`
+        }
+        return `${theme.palette.primary.main} !important`
+      },
+    },
+
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (theme) => {
+        if (isChecked) {
+          if (isCorrect === true) return `${theme.palette.customColors.green} !important`
+          if (isCorrect === false) return `${theme.palette.customColors.red} !important`
+        }
+        return `${theme.palette.primary.main} !important`
+      },
+    },
+  },
+})

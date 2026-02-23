@@ -2,7 +2,7 @@ import type { Step } from '@eduflow/shared'
 import { Typography } from '@mui/material'
 import { lazy, Suspense } from 'react'
 
-import { SolveTextStep } from '@/features/solve-step'
+import { SolveInputStep, SolveTextStep } from '@/features/solve-step'
 import { SolveTestStep } from '@/features/solve-step'
 
 import { StepContentSkeleton } from './step-content-skeleton'
@@ -22,6 +22,7 @@ const SolveVideoStep = lazy(() =>
 const EditTextStep = lazy(() =>
   import('@/features/edit-step/ui/EditTextStep').then((m) => ({ default: m.EditTextStep })),
 )
+
 // const EditTestStep = lazy(() =>
 //   import('@/features/edit-step/ui/EditTestStep').then((m) => ({ default: m.EditTestStep })),
 // )
@@ -96,6 +97,20 @@ export const StepRenderer = (props: StepRendererProps) => {
           </Suspense>
         )
 
+      case 'INPUT_TEXT':
+      case 'INPUT_NUMBER':
+        return (
+          <SolveInputStep
+            key={stepId}
+            content={step.content}
+            stepType={step.type}
+            courseId={courseId}
+            stepId={stepId}
+            isCompleted={isCompleted}
+            savedAnswer={savedAnswer as string | number | null | undefined}
+          />
+        )
+
       default:
         return (
           <Typography variant="h6" color="error">
@@ -134,6 +149,16 @@ export const StepRenderer = (props: StepRendererProps) => {
         <Suspense fallback={<StepContentSkeleton />}>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2, fontStyle: 'italic' }}>
             Для редактирования шага используйте useMatchingStepForm из features/edit-step.
+          </Typography>
+        </Suspense>
+      )
+
+    case 'INPUT_TEXT':
+    case 'INPUT_NUMBER':
+      return (
+        <Suspense fallback={<StepContentSkeleton />}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, fontStyle: 'italic' }}>
+            Для редактирования шага используйте форму для инпутов из features/edit-step.
           </Typography>
         </Suspense>
       )

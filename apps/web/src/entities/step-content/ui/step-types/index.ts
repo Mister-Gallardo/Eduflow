@@ -1,3 +1,5 @@
+export * from './input-step/InputStep'
 export * from './matching-step'
 export * from './test-step'
 export * from './text-step'
+export * from './video-step'

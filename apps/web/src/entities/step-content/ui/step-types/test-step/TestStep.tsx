@@ -2,11 +2,12 @@ import type { TestMultipleContent, TestSingleContent } from '@eduflow/shared'
 import { Box, Typography } from '@mui/material'
 
 import { getOptionLetter } from '@/shared/lib/getOptionLetter'
+import { stepQuestionStyles } from '@/shared/ui/styles/typography'
 
 import { getIndicatorStyles, getOptionStyles } from '../../../lib'
 import { StepOptionIndicator } from '../../step-option-indicator'
 
-import { optionsContainerStyles, optionTextStyles, questionStyles } from './TestStep.styles'
+import { optionsContainerStyles, optionTextStyles } from './TestStep.styles'
 
 export type TestContent = TestSingleContent | TestMultipleContent
 
@@ -31,7 +32,7 @@ export const TestStep = ({
 
   return (
     <Box>
-      <Typography sx={questionStyles}>{content.question}</Typography>
+      <Typography sx={stepQuestionStyles}>{content.question}</Typography>
 
       <Box sx={optionsContainerStyles}>
         {content.options.map((option, index) => {

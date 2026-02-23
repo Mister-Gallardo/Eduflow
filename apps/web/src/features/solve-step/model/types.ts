@@ -18,3 +18,12 @@ export interface SolveMatchingStepProps {
   isCompleted?: boolean
   savedAnswer?: Record<string, string> | null
 }
+
+export interface SolveInputStepProps {
+  content: { question: string }
+  stepType: 'INPUT_TEXT' | 'INPUT_NUMBER'
+  courseId: string
+  stepId: string
+  isCompleted?: boolean
+  savedAnswer?: string | number | null
+}
