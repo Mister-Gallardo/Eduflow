@@ -1,34 +1,32 @@
 import type { StepType } from '@eduflow/shared'
 import {
-  BrowserNotSupportedOutlined,
+  ArticleOutlined,
+  CheckBoxOutlined,
   CompareArrowsOutlined,
-  CreateOutlined,
-  DescriptionOutlined,
-  EditOutlined,
-  FactCheckOutlined,
-  FormatListNumberedOutlined,
-  LooksOneOutlined,
+  EditNoteOutlined,
+  HelpOutline,
+  PinOutlined,
   PlayCircleOutline,
-  QuizOutlined,
-  ShortTextOutlined,
+  RadioButtonCheckedOutlined,
+  ReorderOutlined,
+  SpaceBarOutlined,
+  TextFieldsOutlined,
 } from '@mui/icons-material'
 
 const STEP_ICONS: Record<StepType | 'DEFAULT', React.ElementType> = {
-  TEXT: DescriptionOutlined,
+  TEXT: ArticleOutlined,
   VIDEO: PlayCircleOutline,
-  TEST_SINGLE: QuizOutlined,
-  TEST_MULTIPLE: FactCheckOutlined,
+  TEST_SINGLE: RadioButtonCheckedOutlined,
+  TEST_MULTIPLE: CheckBoxOutlined,
   MATCHING: CompareArrowsOutlined,
-  ORDERING: FormatListNumberedOutlined,
-  INPUT_TEXT: EditOutlined,
-  INPUT_NUMBER: LooksOneOutlined,
-  FREE_TEXT: CreateOutlined,
-  FILL_GAPS: ShortTextOutlined,
-  DEFAULT: BrowserNotSupportedOutlined,
+  ORDERING: ReorderOutlined,
+  INPUT_TEXT: TextFieldsOutlined,
+  INPUT_NUMBER: PinOutlined,
+  FREE_TEXT: EditNoteOutlined,
+  FILL_GAPS: SpaceBarOutlined,
+  DEFAULT: HelpOutline,
 } as const
 
 export const getStepIcon = (stepType: StepType) => {
-  const StepIcon = STEP_ICONS[stepType] || STEP_ICONS.DEFAULT
-
-  return StepIcon
+  return STEP_ICONS[stepType] || STEP_ICONS.DEFAULT
 }
