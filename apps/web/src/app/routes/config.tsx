@@ -46,8 +46,8 @@ export const routeConfig = createBrowserRouter([
           {
             path: paths.learn.root(),
             lazy: async () => {
-              const { LearnPage } = await import('@/pages/learn')
-              return { Component: LearnPage }
+              const { LearningPage } = await import('@/pages/learning')
+              return { Component: LearningPage }
             },
             // handle: { header: { title: 'Обучение' } },
           },
