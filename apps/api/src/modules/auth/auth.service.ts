@@ -3,12 +3,12 @@ import type { LoginInput, RegisterInput } from '@eduflow/shared'
 import { TRPCError } from '@trpc/server'
 
 import { ExpectedError } from '../../lib/error.js'
-import { signAccessToken } from '../../lib/jwt.js'
-import { hashPassword, verifyPassword } from '../../lib/password.js'
-import { generateRefreshToken, hashRefreshToken, verifyRefreshToken } from '../../lib/refresh.js'
 import type { Context } from '../../trpc/context.js'
 
-import { clearAuthCookies, readRefreshCookie, setAuthCookies } from './auth.cookies.js'
+import { clearAuthCookies, readRefreshCookie, setAuthCookies } from './lib/cookies.js'
+import { signAccessToken } from './lib/jwt.js'
+import { hashPassword, verifyPassword } from './lib/password.js'
+import { generateRefreshToken, hashRefreshToken, verifyRefreshToken } from './lib/refresh.js'
 import { sessionRepository } from './session.repository.js'
 
 export async function registerService(

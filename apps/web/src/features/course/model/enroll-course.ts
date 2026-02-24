@@ -10,7 +10,7 @@ export const useEnrollCourse = () => {
 
   const showSnackbar = useSnackbar()
 
-  const enrollMutation = trpc.learning.enroll.useMutation({
+  const enrollMutation = trpc.enrollment.enroll.useMutation({
     onSuccess: (data, variables) => {
       void navigate(paths.learn.setup(variables.courseId))
 

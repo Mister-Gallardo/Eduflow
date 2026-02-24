@@ -1,8 +1,8 @@
-import { env } from '../../lib/env.js'
+import { env } from '../../../lib/env.js'
 
 import type { Request, Response } from 'express'
 
-import type { AuthCookies } from './auth.types.js'
+import type { AuthCookies } from '../auth.types.js'
 
 const ACCESS_MAX_AGE = 15 * 60 * 1000
 const REFRESH_MAX_AGE = 30 * 24 * 60 * 60 * 1000
