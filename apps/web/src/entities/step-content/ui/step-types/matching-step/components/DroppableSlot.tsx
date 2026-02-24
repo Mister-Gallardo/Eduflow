@@ -18,7 +18,7 @@ export const DroppableSlot = ({ leftId, isMatched, isChecked, children }: Droppa
   })
 
   return (
-    <Box ref={setNodeRef} sx={getMatchingSlotStyles(isMatched, isOver, isChecked)}>
+    <Box ref={setNodeRef} sx={getMatchingSlotStyles(isMatched, isOver)}>
       {children}
     </Box>
   )

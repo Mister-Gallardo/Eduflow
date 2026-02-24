@@ -2,12 +2,13 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined'
 import { Box, Button, IconButton } from '@mui/material'
-import { darken } from '@mui/material/styles'
+
+import { getResultBadgeStyles } from '../../lib'
 
 import {
   actionsContainerStyles,
-  getResultBadgeStyles,
   retryButtonStyles,
+  submitButtonStyles,
 } from './StepResultActions.styles'
 
 interface StepCheckActionsProps {
@@ -31,7 +32,7 @@ export const StepCheckActions = ({
   if (isSubmitted) {
     return (
       <Box sx={actionsContainerStyles}>
-        <Box sx={getResultBadgeStyles(isCorrect)}>
+        <Box sx={getResultBadgeStyles(isCorrect ? 'APPROVED' : 'FAILED')}>
           {isCorrect ? (
             <CheckCircleOutlinedIcon sx={{ fontSize: 20 }} />
           ) : (
@@ -52,16 +53,9 @@ export const StepCheckActions = ({
           variant="contained"
           onClick={onCheck}
           disabled={!canCheck || isPending}
-          sx={{
-            px: 4,
-            py: 1,
-            bgcolor: (theme) => theme.palette.customColors.indigo,
-            '&:hover': {
-              bgcolor: (theme) => darken(theme.palette.customColors.indigo, 0.1),
-            },
-          }}
+          sx={submitButtonStyles}
         >
-          {isPending ? 'Отправляем...' : 'Проверить'}
+          {isPending ? 'Проверяем...' : 'Проверить'}
         </Button>
       </Box>
     )

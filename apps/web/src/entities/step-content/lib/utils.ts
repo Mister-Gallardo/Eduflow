@@ -1,5 +1,5 @@
 import type { StepStatus } from '@eduflow/shared'
-import { alpha, type SxProps, type Theme } from '@mui/material/styles'
+import { alpha, darken, type SxProps, type Theme } from '@mui/material/styles'
 
 import { INDICATOR_SIZE, ROW_MIN_HEIGHT } from './constants'
 
@@ -16,6 +16,38 @@ interface BaseOptionStylesParams {
   isActive?: boolean
   isSubtle?: boolean
 }
+
+interface OptionStylesParams {
+  isSelected: boolean
+  isChecked: boolean
+  isCorrect?: boolean
+}
+
+interface InputStylesParams {
+  isChecked: boolean
+  isCorrect?: boolean
+}
+
+/** Возвращает базовый цвет (зеленый/красный) в зависимости от правильности ответа */
+const getCorrectnessColor = (theme: Theme, isCorrect?: boolean) => {
+  if (isCorrect === true) return theme.palette.customColors.green
+  if (isCorrect === false) return theme.palette.customColors.red
+  return null
+}
+
+/** Возвращает цвет на основе статуса шага (для Free Text и Badge) */
+const getStatusColor = (theme: Theme, status?: StepStatus) => {
+  if (status === 'APPROVED') return theme.palette.customColors.green
+  if (status === 'FAILED') return theme.palette.customColors.red
+  if (status === 'PENDING') return theme.palette.customColors.orange
+  return null
+}
+
+export interface FreeTextStylesParams {
+  status?: StepStatus
+}
+
+// ─── Стили компонентов ───
 
 export const getBaseOptionStyles = ({
   isChecked,
@@ -39,9 +71,8 @@ export const getBaseOptionStyles = ({
 
   borderColor: (theme) => {
     if (isChecked) {
-      if (isCorrect === true) return theme.palette.customColors.green
-      if (isCorrect === false) return theme.palette.customColors.red
-      return alpha(theme.palette.primary.main, 0.08)
+      const color = getCorrectnessColor(theme, isCorrect)
+      return color ?? alpha(theme.palette.primary.main, 0.08)
     }
     if (isSubtle) return alpha(theme.palette.primary.main, 0.2)
     return isActive ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.08)
@@ -49,23 +80,21 @@ export const getBaseOptionStyles = ({
 
   backgroundColor: (theme) => {
     if (isChecked) {
-      if (isCorrect === true) return alpha(theme.palette.customColors.green, 0.06)
-      if (isCorrect === false) return alpha(theme.palette.customColors.red, 0.06)
-      return 'transparent'
+      const color = getCorrectnessColor(theme, isCorrect)
+      return color ? alpha(color, 0.06) : 'transparent'
     }
     if (isSubtle) return 'transparent'
     return isActive ? alpha(theme.palette.primary.main, 0.03) : 'transparent'
   },
 
   boxShadow: (theme) => {
-    if (isChecked && isCorrect === true)
+    if (isChecked && isCorrect === true) {
       return `0 2px 12px ${alpha(theme.palette.customColors.green, 0.12)}`
-
+    }
     if (!isChecked && !isSubtle) {
       if (isActive) return `0 2px 8px ${alpha(theme.palette.primary.main, 0.08)}`
       return `0 2px 6px ${alpha(theme.palette.primary.main, 0.1)}`
     }
-
     return 'none'
   },
 
@@ -84,12 +113,6 @@ export const getBaseOptionStyles = ({
       },
 })
 
-interface OptionStylesParams {
-  isSelected: boolean
-  isChecked: boolean
-  isCorrect?: boolean
-}
-
 export const getOptionStyles = ({
   isSelected,
   isChecked,
@@ -99,9 +122,12 @@ export const getOptionStyles = ({
   display: 'flex',
 
   boxShadow: (theme) => {
-    if (isChecked && isCorrect === true)
+    if (isChecked && isCorrect === true) {
       return `0 2px 12px ${alpha(theme.palette.customColors.green, 0.12)}`
-    if (isSelected && !isChecked) return `0 2px 8px ${alpha(theme.palette.primary.main, 0.08)}`
+    }
+    if (isSelected && !isChecked) {
+      return `0 2px 8px ${alpha(theme.palette.primary.main, 0.08)}`
+    }
     return 'none'
   },
 
@@ -134,18 +160,16 @@ export const getIndicatorStyles = ({
 
   borderColor: (theme) => {
     if (isChecked) {
-      if (isCorrect === true) return theme.palette.customColors.green
-      if (isCorrect === false) return theme.palette.customColors.red
-      return alpha(theme.palette.primary.main, 0.15)
+      const color = getCorrectnessColor(theme, isCorrect)
+      return color ?? alpha(theme.palette.primary.main, 0.15)
     }
     return isSelected ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.2)
   },
 
   backgroundColor: (theme) => {
     if (isChecked) {
-      if (isCorrect === true) return theme.palette.customColors.green
-      if (isCorrect === false) return theme.palette.customColors.red
-      return 'transparent'
+      const color = getCorrectnessColor(theme, isCorrect)
+      return color ?? 'transparent'
     }
     return isSelected ? theme.palette.primary.main : 'transparent'
   },
@@ -190,11 +214,7 @@ export const getMatchingLeftCardStyles = (
       },
 })
 
-export const getMatchingSlotStyles = (
-  isMatched: boolean,
-  isDragOver: boolean,
-  isChecked: boolean,
-): SxProps<Theme> => ({
+export const getMatchingSlotStyles = (isMatched: boolean, isDragOver: boolean): SxProps<Theme> => ({
   minHeight: ROW_MIN_HEIGHT,
   borderRadius: '12px',
   border: isMatched ? 'none' : '2px dashed',
@@ -213,7 +233,7 @@ export const getMatchingSlotStyles = (
   display: 'flex',
   alignItems: 'center',
   transition: 'all 0.15s',
-  cursor: isChecked ? 'default' : 'default',
+  userSelect: 'none',
 })
 
 export const getMatchingChipStyles = (
@@ -227,19 +247,13 @@ export const getMatchingChipStyles = (
 
   borderColor: (theme) => {
     if (isChecked) {
-      if (isCorrect === true) return theme.palette.customColors.green
-      if (isCorrect === false) return theme.palette.customColors.red
-      return alpha(theme.palette.primary.main, 0.08)
+      const color = getCorrectnessColor(theme, isCorrect)
+      return color ?? alpha(theme.palette.primary.main, 0.08)
     }
     if (isInPool) return alpha(theme.palette.primary.main, 0.2)
     return theme.palette.primary.main
   },
 })
-
-interface InputStylesParams {
-  isChecked: boolean
-  isCorrect?: boolean
-}
 
 export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxProps<Theme> => ({
   '& .MuiOutlinedInput-root': {
@@ -247,8 +261,8 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
 
     backgroundColor: (theme) => {
       if (isChecked) {
-        if (isCorrect === true) return alpha(theme.palette.customColors.green, 0.06)
-        if (isCorrect === false) return alpha(theme.palette.customColors.red, 0.06)
+        const color = getCorrectnessColor(theme, isCorrect)
+        return color ? alpha(color, 0.06) : 'transparent'
       }
       return 'transparent'
     },
@@ -258,8 +272,8 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
       borderWidth: '2px',
       borderColor: (theme) => {
         if (isChecked) {
-          if (isCorrect === true) return `${theme.palette.customColors.green} !important`
-          if (isCorrect === false) return `${theme.palette.customColors.red} !important`
+          const color = getCorrectnessColor(theme, isCorrect)
+          if (color) return `${color} !important`
         }
         return `${alpha(theme.palette.primary.main, 0.08)} !important`
       },
@@ -268,8 +282,8 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
     '&:hover .MuiOutlinedInput-notchedOutline': {
       borderColor: (theme) => {
         if (isChecked) {
-          if (isCorrect === true) return `${theme.palette.customColors.green} !important`
-          if (isCorrect === false) return `${theme.palette.customColors.red} !important`
+          const color = getCorrectnessColor(theme, isCorrect)
+          if (color) return `${color} !important`
           return `${alpha(theme.palette.primary.main, 0.08)} !important`
         }
         return `${theme.palette.primary.main} !important`
@@ -279,8 +293,8 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
       borderColor: (theme) => {
         if (isChecked) {
-          if (isCorrect === true) return `${theme.palette.customColors.green} !important`
-          if (isCorrect === false) return `${theme.palette.customColors.red} !important`
+          const color = getCorrectnessColor(theme, isCorrect)
+          if (color) return `${color} !important`
         }
         return `${theme.palette.primary.main} !important`
       },
@@ -288,60 +302,46 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
   },
 })
 
-export interface FreeTextStylesParams {
-  status?: StepStatus
-}
-
 export const getFreeTextStyles = ({ status }: FreeTextStylesParams): SxProps<Theme> => {
-  const isApproved = status === 'APPROVED'
-  const isFailed = status === 'FAILED'
-  const isPending = status === 'PENDING'
-
   return {
     '& .MuiOutlinedInput-root': {
       transition: 'all 0.2s',
       backgroundColor: (theme) => {
-        if (isApproved) return alpha(theme.palette.customColors.green, 0.04)
-        if (isFailed) return alpha(theme.palette.customColors.red, 0.04)
-        if (isPending) return alpha(theme.palette.customColors.orange, 0.04)
-        return 'transparent'
+        const color = getStatusColor(theme, status)
+        return color ? alpha(color, 0.04) : 'transparent'
       },
 
       '& .MuiOutlinedInput-notchedOutline': {
         transition: 'all 0.2s',
         borderWidth: '2px',
         borderColor: (theme) => {
-          if (isApproved) return `${theme.palette.customColors.green} !important`
-          if (isFailed) return `${theme.palette.customColors.red} !important`
-          if (isPending) return `${theme.palette.customColors.orange} !important`
-          return `${alpha(theme.palette.primary.main, 0.08)} !important`
+          const color = getStatusColor(theme, status)
+          return color
+            ? `${color} !important`
+            : `${alpha(theme.palette.primary.main, 0.08)} !important`
         },
       },
 
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: (theme) => {
-          if (isApproved) return `${theme.palette.customColors.green} !important`
-          if (isFailed) return `${theme.palette.customColors.red} !important`
-          if (isPending) return `${theme.palette.customColors.orange} !important`
-          return `${theme.palette.primary.main} !important`
+          const color = getStatusColor(theme, status)
+          return color ? `${color} !important` : `${theme.palette.primary.main} !important`
         },
       },
 
       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: (theme) => {
-          if (isApproved) return `${theme.palette.customColors.green} !important`
-          if (isFailed) return `${theme.palette.customColors.red} !important`
-          if (isPending) return `${theme.palette.customColors.orange} !important`
-          return `${theme.palette.primary.main} !important`
+          const color = getStatusColor(theme, status)
+          return color ? `${color} !important` : `${theme.palette.primary.main} !important`
         },
       },
 
       '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
         borderColor: (theme) => {
-          if (isApproved) return `${theme.palette.customColors.green} !important`
-          if (isFailed) return `${theme.palette.customColors.red} !important`
-          if (isPending) return `${theme.palette.customColors.orange} !important`
-          return `${alpha(theme.palette.primary.main, 0.08)} !important`
+          const color = getStatusColor(theme, status)
+          return color
+            ? `${color} !important`
+            : `${alpha(theme.palette.primary.main, 0.08)} !important`
         },
       },
 
@@ -352,3 +352,24 @@ export const getFreeTextStyles = ({ status }: FreeTextStylesParams): SxProps<The
     },
   }
 }
+
+export const getResultBadgeStyles = (state: 'APPROVED' | 'PENDING' | 'FAILED'): SxProps<Theme> => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 1,
+  px: 2.5,
+  py: 1.25,
+  borderRadius: '10px',
+  fontSize: 14,
+  fontWeight: 600,
+  lineHeight: 1,
+  backgroundColor: (theme) => {
+    const color = getStatusColor(theme, state)
+    return color ? alpha(color, 0.1) : 'transparent'
+  },
+  color: (theme) => {
+    const color = getStatusColor(theme, state as StepStatus)
+    if (state === 'FAILED' && color) return darken(color, 0.1)
+    return color ? darken(color, 0.2) : 'inherit'
+  },
+})

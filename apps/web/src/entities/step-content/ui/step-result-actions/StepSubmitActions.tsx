@@ -4,12 +4,13 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined'
 import { Box, Button, IconButton } from '@mui/material'
-import { alpha, darken } from '@mui/material/styles'
+
+import { getResultBadgeStyles } from '../../lib'
 
 import {
   actionsContainerStyles,
-  getResultBadgeStyles,
   retryButtonStyles,
+  submitButtonStyles,
 } from './StepResultActions.styles'
 
 interface StepSubmitActionsProps {
@@ -33,21 +34,7 @@ export const StepSubmitActions = ({
     if (status === 'PENDING') {
       return (
         <Box sx={actionsContainerStyles}>
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 1,
-              px: 2.5,
-              py: 1.25,
-              borderRadius: '10px',
-              fontSize: 14,
-              fontWeight: 600,
-              lineHeight: 1,
-              backgroundColor: (theme) => alpha(theme.palette.customColors.orange, 0.18),
-              color: (theme) => darken(theme.palette.customColors.orange, 0.2),
-            }}
-          >
+          <Box sx={getResultBadgeStyles(status)}>
             <AccessTimeOutlinedIcon sx={{ fontSize: 18 }} />
             На проверке
           </Box>
@@ -59,7 +46,7 @@ export const StepSubmitActions = ({
     if (status === 'APPROVED') {
       return (
         <Box sx={actionsContainerStyles}>
-          <Box sx={getResultBadgeStyles(true)}>
+          <Box sx={getResultBadgeStyles(status)}>
             <CheckCircleOutlinedIcon sx={{ fontSize: 20 }} />
             Ответ принят!
           </Box>
@@ -71,7 +58,7 @@ export const StepSubmitActions = ({
     if (status === 'FAILED') {
       return (
         <Box sx={actionsContainerStyles}>
-          <Box sx={getResultBadgeStyles(false)}>
+          <Box sx={getResultBadgeStyles(status)}>
             <CancelOutlinedIcon sx={{ fontSize: 20 }} />
             Ответ отклонён
           </Box>
@@ -89,14 +76,7 @@ export const StepSubmitActions = ({
           variant="contained"
           disabled={!canSubmit || isPending}
           onClick={onSubmit}
-          sx={{
-            px: 4,
-            py: 1,
-            bgcolor: (theme) => theme.palette.customColors.indigo,
-            '&:hover': {
-              bgcolor: (theme) => darken(theme.palette.customColors.indigo, 0.1),
-            },
-          }}
+          sx={submitButtonStyles}
         >
           {isPending ? 'Отправляем...' : 'Отправить на проверку'}
         </Button>

@@ -1,4 +1,4 @@
-import { alpha, type SxProps, type Theme } from '@mui/material/styles'
+import { darken, type SxProps, type Theme } from '@mui/material/styles'
 
 export const actionsContainerStyles: SxProps<Theme> = {
   display: 'flex',
@@ -7,20 +7,14 @@ export const actionsContainerStyles: SxProps<Theme> = {
   mt: 4,
 }
 
-export const getResultBadgeStyles = (isCorrect: boolean): SxProps<Theme> => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 1,
-  px: 2.5,
-  py: 1.25,
-  borderRadius: '10px',
-  fontSize: 14,
-  fontWeight: 600,
-  lineHeight: 1,
-  backgroundColor: (theme) =>
-    alpha(isCorrect ? theme.palette.customColors.green : theme.palette.customColors.red, 0.1),
-  color: (theme) => (isCorrect ? theme.palette.customColors.green : theme.palette.customColors.red),
-})
+export const submitButtonStyles: SxProps<Theme> = {
+  px: 4,
+  py: 1,
+  bgcolor: (theme) => theme.palette.customColors.indigo,
+  '&:hover': {
+    bgcolor: (theme) => darken(theme.palette.customColors.indigo, 0.1),
+  },
+}
 
 export const retryButtonStyles: SxProps<Theme> = {
   p: 1,

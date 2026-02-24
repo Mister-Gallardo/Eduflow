@@ -37,13 +37,12 @@ export const useStepAction = ({
         severity: 'error',
       })
     },
-    onSettled: () => {
-      void utils.learning.getStepData.invalidate({ courseId, stepId })
-    },
   }
 
   const checkMutation = trpc.learning.checkStep.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await utils.learning.getStepData.invalidate({ courseId, stepId })
+
       setIsSubmitted(true)
       setIsCorrect(data.isCorrect)
 
@@ -56,7 +55,9 @@ export const useStepAction = ({
   })
 
   const submitMutation = trpc.learning.completeStep.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await utils.learning.getStepData.invalidate({ courseId, stepId })
+
       setIsSubmitted(true)
 
       void utils.learning.getCourseNavigation.invalidate({ courseId })
