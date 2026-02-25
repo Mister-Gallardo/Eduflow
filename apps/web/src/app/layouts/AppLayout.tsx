@@ -22,12 +22,12 @@ const navigationItems = [
   },
   {
     label: 'Моё обучение',
-    to: paths.learn.root(),
+    to: paths.learn(),
   },
   {
     label: 'Преподавание',
     icon: <SchoolOutlinedIcon fontSize="small" />,
-    to: paths.teach.root(),
+    to: paths.teach(),
   },
 ]
 

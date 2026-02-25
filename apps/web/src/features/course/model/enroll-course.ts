@@ -12,7 +12,7 @@ export const useEnrollCourse = () => {
 
   const enrollMutation = trpc.enrollment.enroll.useMutation({
     onSuccess: (data, variables) => {
-      void navigate(paths.learn.setup(variables.courseId))
+      void navigate(paths.course.view(variables.courseId))
 
       if (data.message !== 'Already enrolled') {
         void showSnackbar({

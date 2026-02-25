@@ -1,4 +1,4 @@
 export { AppLayout } from './AppLayout'
 export { AuthLayout } from './AuthLayout'
-export { LearnLayout } from './LearnLayout'
+export { CourseLayout } from './CourseLayout'
 export { RootLayout } from './RootLayout'

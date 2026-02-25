@@ -50,7 +50,7 @@ export const StepItem = ({ step, isActive, courseId }: StepProps) => {
     >
       <Box
         component={Link}
-        to={paths.learn.setup(courseId, step.id)}
+        to={paths.course.view(courseId, step.id)}
         sx={{
           ...stepItemStyles,
           bgcolor: bgColor,

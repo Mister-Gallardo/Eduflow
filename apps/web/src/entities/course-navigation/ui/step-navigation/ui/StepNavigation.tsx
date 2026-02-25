@@ -17,7 +17,7 @@ export const StepNavigation = ({ prevStepId, nextStepId, courseId }: StepNavigat
   const navigate = useNavigate()
 
   const handleNavigate = (stepId: string) => {
-    void navigate(paths.learn.setup(courseId, stepId))
+    void navigate(paths.course.view(courseId, stepId))
   }
 
   return (

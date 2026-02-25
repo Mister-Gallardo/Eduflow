@@ -3,16 +3,16 @@ export const paths = {
 
   auth: () => '/auth',
 
-  learn: {
-    root: () => '/learn/course/:courseId/step?/:stepId?',
+  learn: () => '/learn',
 
-    setup: (courseId: string, stepId?: string) =>
-      stepId ? `/learn/course/${courseId}/step/${stepId}` : `/learn/course/${courseId}`,
-  },
+  teach: () => '/teach',
 
-  teach: {
-    root: () => '/teach',
-    courses: () => '/teach/courses',
-    editCourse: (id: string) => `/teach/courses/${id}/edit`,
+  course: {
+    path: () => '/course/:courseId/step?/:stepId?',
+
+    view: (courseId: string, stepId?: string) =>
+      stepId ? `/course/${courseId}/step/${stepId}` : `/course/${courseId}`,
+
+    edit: (courseId: string, stepId?: string) => `${paths.course.view(courseId, stepId)}/edit`,
   },
 } as const

@@ -37,7 +37,7 @@ export const LessonItem = ({ lesson }: LessonItemProps) => {
   const firstStepId = lesson.steps[0]?.id
   const firstUnfinishedStep = lesson.steps.find((s) => s.status !== 'APPROVED')
   const targetStepId = firstUnfinishedStep?.id ?? firstStepId
-  const lessonPath = paths.learn.setup(courseId, targetStepId)
+  const lessonPath = paths.course.view(courseId, targetStepId)
 
   const progressText = isFullyCompleted
     ? 'Выполнено'

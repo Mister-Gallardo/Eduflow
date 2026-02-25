@@ -51,7 +51,7 @@ export const StepBody = () => {
   useEffect(() => {
     if (stepId || !lastViewedStepId) return
 
-    void navigate(paths.learn.setup(courseId, lastViewedStepId), { replace: true })
+    void navigate(paths.course.view(courseId, lastViewedStepId), { replace: true })
   }, [stepId, lastViewedStepId, courseId, navigate])
 
   if (isCourseNavigationLoading || isStepLoading || !isStepFetched) {
