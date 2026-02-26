@@ -1,15 +1,14 @@
 import { Box, Typography } from '@mui/material'
 import { useMemo, useState } from 'react'
 
-import { CategoryTabs, SearchInput } from '@/features/course'
+import { CatalogSearchInput, CatalogTabs } from '@/features/catalog-filter'
 import { trpc } from '@/shared/api/trpc'
 import { useDebounce } from '@/shared/lib/useDebounce'
 import { EmptyState } from '@/shared/ui/feedback/empty-state'
 
-import { CourseList } from './course-list'
-import { courseCatalogStyles, courseFiltersStyles } from './CourseCatalog.styles'
-import { LoadingSkeleton } from './loading-skeleton'
-import { ViewAllDesktopButton } from './view-all-desktop-button'
+import { CatalogList } from './catalog-list'
+import { CatalogSkeleton } from './catalog-skeleton'
+import { catalogContainerStyles, catalogFiltersStyles } from './CourseCatalog.styles'
 
 export const CourseCatalog = () => {
   const [selectedCategory, setSelectedCategory] = useState('popular')
@@ -39,7 +38,7 @@ export const CourseCatalog = () => {
   )
 
   return (
-    <Box id="course-catalog" component="section" sx={courseCatalogStyles}>
+    <Box id="course-catalog" component="section" sx={catalogContainerStyles}>
       <Typography
         variant="h2"
         align="center"
@@ -53,21 +52,19 @@ export const CourseCatalog = () => {
         Найдите программу <br /> для быстрого старта
       </Typography>
 
-      <Box sx={courseFiltersStyles}>
-        <SearchInput searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+      <Box sx={catalogFiltersStyles}>
+        <CatalogSearchInput searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
-        <CategoryTabs selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
+        <CatalogTabs selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
       </Box>
 
       {isCoursesLoading ? (
-        <LoadingSkeleton />
+        <CatalogSkeleton />
       ) : coursesData.length > 0 ? (
-        <CourseList coursesData={coursesData} listKey={selectedCategory} />
+        <CatalogList coursesData={coursesData} listKey={selectedCategory} />
       ) : (
         <EmptyState />
       )}
-
-      <ViewAllDesktopButton length={coursesData.length} isLoading={isCoursesLoading} />
     </Box>
   )
 }

@@ -1,4 +1,4 @@
-import { Outlet, useNavigation } from 'react-router-dom'
+import { Outlet, ScrollRestoration, useNavigation } from 'react-router-dom'
 
 import { GlobalLoader } from '@/shared/ui/feedback/global-loader'
 
@@ -10,6 +10,8 @@ export const RootLayout = () => {
     <>
       {isLoading && <GlobalLoader />}
       <Outlet />
+
+      <ScrollRestoration />
     </>
   )
 }

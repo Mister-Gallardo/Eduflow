@@ -91,10 +91,6 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        html: {
-          scrollBehavior: 'smooth',
-        },
-
         body: {
           WebkitTapHighlightColor: 'transparent',
           fontFamily: 'Inter, sans-serif',
@@ -113,6 +109,11 @@ const theme = createTheme({
         root: {
           fontSize: 16,
           fontWeight: 500,
+        },
+        input: {
+          '&::placeholder': {
+            fontSize: 14,
+          },
         },
       },
     },

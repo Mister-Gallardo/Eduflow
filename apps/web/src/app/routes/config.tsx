@@ -32,6 +32,14 @@ export const routeConfig = createBrowserRouter([
           },
 
           {
+            path: paths.learn(),
+            lazy: async () => {
+              const { LearnPage } = await import('@/pages/learn')
+              return { Component: LearnPage }
+            },
+          },
+
+          {
             path: '*',
             lazy: async () => {
               const { NotFoundPage } = await import('@/pages/not-found')

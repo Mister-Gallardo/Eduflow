@@ -24,6 +24,13 @@ export const StepBody = () => {
     isFetched: isStepFetched,
   } = trpc.learning.getStepData.useQuery({ courseId, stepId }, { enabled: !!stepId })
 
+  // Инвалидируем данные об обучении юзера
+  useEffect(() => {
+    return () => {
+      void utils.enrollment.getEnrolledCourses.invalidate()
+    }
+  }, [utils])
+
   useEffect(() => {
     if (
       stepData?.userProgress?.status === 'APPROVED' &&

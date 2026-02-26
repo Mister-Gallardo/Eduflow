@@ -17,6 +17,13 @@ import {
 export const HeroContent = () => {
   const theme = useTheme()
 
+  const handleScrollToCatalog = () => {
+    const element = document.getElementById('course-catalog')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
   return (
     <Box sx={heroContentStyles}>
       <Box
@@ -91,11 +98,10 @@ export const HeroContent = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Button
-            component="a"
-            href="#course-catalog"
             variant="contained"
             size="large"
             endIcon={<ArrowForwardIcon />}
+            onClick={handleScrollToCatalog}
             sx={{
               width: { xs: '100%', md: 'auto' },
               px: 5,

@@ -1,0 +1,1 @@
+export { CoursePreviewCard } from './CoursePreviewCard'

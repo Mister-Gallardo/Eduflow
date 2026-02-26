@@ -1,0 +1,1 @@
+export { CourseImage } from './CourseImage'

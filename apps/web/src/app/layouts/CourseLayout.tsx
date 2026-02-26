@@ -1,6 +1,6 @@
 import { Box, useTheme } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
 
 import { SidebarContext, useCourseNavigation } from '@/entities/course-navigation'
 import { useIsMobile } from '@/shared/lib/useIsMobile'
@@ -14,19 +14,11 @@ export const CourseLayout = () => {
   const theme = useTheme()
   const isMobile = useIsMobile()
 
-  const { pathname } = useLocation()
-
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(!isMobile)
 
   const { state, context, navigation } = useCourseNavigation()
 
   const headerActions = useHeaderActions({ withMobileMenu: false })
-
-  const mainContentRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    mainContentRef.current?.scrollTo(0, 0)
-  }, [pathname])
 
   return (
     <>
@@ -84,7 +76,6 @@ export const CourseLayout = () => {
 
             <Box
               component="main"
-              ref={mainContentRef}
               sx={{
                 flex: 1,
                 overflowY: 'auto',
