@@ -16,6 +16,8 @@ export const LoginForm = () => {
   const navigate = useNavigate()
   const showSnackbar = useSnackbar()
 
+  const utils = trpc.useUtils()
+
   const [authError, setAuthError] = useState<string | null>(null)
 
   const {
@@ -30,7 +32,9 @@ export const LoginForm = () => {
   })
 
   const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await utils.auth.me.invalidate()
+
       void navigate(paths.home())
     },
     onError: (error) => {

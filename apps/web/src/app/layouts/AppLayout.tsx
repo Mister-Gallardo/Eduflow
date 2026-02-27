@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
+import { useMe } from '@/entities/user'
 import { paths } from '@/shared/config/paths'
 import { useIsMobile } from '@/shared/lib/useIsMobile'
 import { Logo } from '@/shared/ui/data-display/logo'
@@ -34,6 +35,8 @@ const navigationItems = [
 export const AppLayout = () => {
   const isMobile = useIsMobile()
 
+  const { userData, isUserLoading } = useMe()
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const headerActions = useHeaderActions({
@@ -47,7 +50,14 @@ export const AppLayout = () => {
       <Header
         leftSlot={<Logo size="small" isClickable={true} isAnimated={false} showText={!isMobile} />}
         centerSlot={<HeaderNavigation items={navigationItems} />}
-        rightSlot={<HeaderActions actions={headerActions} edgeToEnd={true} />}
+        rightSlot={
+          <HeaderActions
+            actions={headerActions}
+            edgeToEnd={true}
+            showAuthButton={!userData}
+            isUserLoading={isUserLoading}
+          />
+        }
         containerVariant="fixed"
       />
 
@@ -61,6 +71,7 @@ export const AppLayout = () => {
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         items={navigationItems}
+        isAuthenticated={!!userData && !isUserLoading}
       />
     </>
   )

@@ -1,20 +1,11 @@
 import { Box, Container, Typography } from '@mui/material'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 
-import { useMe } from '@/entities/user'
-import { paths } from '@/shared/config/paths'
 import { Logo } from '@/shared/ui/data-display/logo'
-import { FullPageLoader } from '@/shared/ui/feedback/full-page-loader'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
 export const AuthLayout = () => {
-  const { data: meData, isLoading: meIsLoading } = useMe()
-
-  if (meIsLoading) return <FullPageLoader />
-
-  if (meData) return <Navigate to={paths.home()} replace />
-
   return (
     <Box
       component="main"

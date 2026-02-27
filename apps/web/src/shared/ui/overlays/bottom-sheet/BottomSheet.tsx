@@ -38,7 +38,6 @@ export const BottomSheet = ({ open, onClose, children }: BottomSheetProps) => {
               height: 4,
               borderRadius: 5,
               backgroundColor: 'divider',
-              // margin: '8px auto 16px'
             }}
             aria-hidden
           />

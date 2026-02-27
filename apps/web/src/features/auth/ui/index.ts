@@ -1,3 +1,5 @@
+export * from './auth-guard'
 export * from './auth-tabs'
 export * from './login-form'
+export * from './login-prompt'
 export * from './register-form'

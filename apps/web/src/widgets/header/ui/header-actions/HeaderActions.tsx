@@ -1,5 +1,7 @@
 import { Box, IconButton } from '@mui/material'
 
+import { LoginPrompt } from '@/features/auth'
+
 import { actionButtonStyles, headerActionsStyles } from './HeaderActions.styles'
 
 interface HeaderAction {
@@ -11,31 +13,46 @@ interface HeaderAction {
 interface HeaderActionsProps {
   actions: HeaderAction[]
   edgeToEnd?: boolean
+  showAuthButton?: boolean
+  isUserLoading?: boolean
 }
 
 const ActionButton = ({ icon, onClick, 'aria-label': ariaLabel }: HeaderAction) => {
   return (
-    <IconButton onClick={onClick} aria-label={ariaLabel} size="medium" sx={actionButtonStyles}>
+    <IconButton
+      className="icon-button"
+      onClick={onClick}
+      aria-label={ariaLabel}
+      size="medium"
+      sx={actionButtonStyles}
+    >
       {icon}
     </IconButton>
   )
 }
 
-export const HeaderActions = ({ actions, edgeToEnd = false }: HeaderActionsProps) => {
+export const HeaderActions = ({
+  actions,
+  edgeToEnd = false,
+  showAuthButton,
+  isUserLoading,
+}: HeaderActionsProps) => {
   return (
     <Box
       sx={{
         ...headerActionsStyles,
         ...(edgeToEnd && {
-          '& > :last-child': {
+          '& > .icon-button:last-child': {
             mr: '-10px',
           },
         }),
       }}
     >
-      {actions.map((action, index) => (
-        <ActionButton key={index} {...action} />
-      ))}
+      {isUserLoading ? null : showAuthButton ? (
+        <LoginPrompt />
+      ) : (
+        actions.map((action, index) => <ActionButton key={index} {...action} />)
+      )}
     </Box>
   )
 }

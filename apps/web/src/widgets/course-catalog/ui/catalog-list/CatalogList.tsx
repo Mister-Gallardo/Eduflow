@@ -4,10 +4,13 @@ import { AnimatePresence } from 'motion/react'
 import { useEffect, useRef } from 'react'
 
 import { CoursePreviewCard } from '@/entities/course'
+import { useMe } from '@/entities/user'
 import { useEnrollCourse } from '@/features/catalog-filter'
 import type { ApiOutputs } from '@/shared/api/trpc'
+import { messages } from '@/shared/config/messages'
 import { useIsMobile } from '@/shared/lib/useIsMobile'
 import { MotionBox } from '@/shared/ui/animations/motion'
+import { useSnackbar } from '@/shared/ui/feedback/snackbar'
 
 import {
   desktopListContainerStyles,
@@ -28,6 +31,10 @@ interface CatalogListProps {
 export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
   const isMobile = useIsMobile()
 
+  const showSnackbar = useSnackbar()
+
+  const { userData, isUserLoading } = useMe()
+
   const { enroll, isEnrollPending } = useEnrollCourse()
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -37,6 +44,24 @@ export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
       scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' })
     }
   }, [listKey])
+
+  const handleEnroll = (courseId: string) => {
+    if (isUserLoading) {
+      return showSnackbar({
+        severity: 'info',
+        message: messages.loading,
+      })
+    }
+
+    if (!userData) {
+      return showSnackbar({
+        severity: 'warning',
+        message: messages.authRequired,
+      })
+    }
+
+    enroll(courseId)
+  }
 
   const mobileContainerVariants = {
     hidden: { opacity: 0 },
@@ -86,7 +111,11 @@ export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
                 scrollSnapAlign: 'start',
               }}
             >
-              <CoursePreviewCard course={course} onEnroll={enroll} isPending={isEnrollPending} />
+              <CoursePreviewCard
+                course={course}
+                onEnroll={handleEnroll}
+                isPending={isEnrollPending}
+              />
             </MotionBox>
           ))}
         </MotionBox>
@@ -147,7 +176,11 @@ export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
                 transition: { duration: 0.2 },
               }}
             >
-              <CoursePreviewCard course={course} onEnroll={enroll} isPending={isEnrollPending} />
+              <CoursePreviewCard
+                course={course}
+                onEnroll={handleEnroll}
+                isPending={isEnrollPending}
+              />
             </MotionBox>
           ))}
         </AnimatePresence>

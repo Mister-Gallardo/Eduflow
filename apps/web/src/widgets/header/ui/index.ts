@@ -1,4 +1,4 @@
-export { Header } from './header'
+export { Header } from './Header'
 export { HeaderActions } from './header-actions'
 export { HeaderNavigation } from './header-navigation'
 export { LearnHeaderLeft } from './learn-header-left'

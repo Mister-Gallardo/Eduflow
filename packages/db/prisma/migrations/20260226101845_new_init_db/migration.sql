@@ -1,8 +1,11 @@
 -- CreateEnum
+CREATE TYPE "Level" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
+
+-- CreateEnum
 CREATE TYPE "StepType" AS ENUM ('TEXT', 'VIDEO', 'TEST_SINGLE', 'TEST_MULTIPLE', 'MATCHING', 'ORDERING', 'INPUT_TEXT', 'INPUT_NUMBER', 'FREE_TEXT', 'FILL_GAPS');
 
 -- CreateEnum
-CREATE TYPE "Level" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
+CREATE TYPE "StepStatus" AS ENUM ('NOT_STARTED', 'FAILED', 'PENDING', 'APPROVED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -36,9 +39,9 @@ CREATE TABLE "Course" (
     "duration" TEXT NOT NULL,
     "level" "Level" NOT NULL,
     "category" TEXT NOT NULL,
-    "authorId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "authorId" TEXT NOT NULL,
 
     CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
 );
@@ -90,8 +93,7 @@ CREATE TABLE "UserProgress" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "stepId" TEXT NOT NULL,
-    "isCompleted" BOOLEAN NOT NULL DEFAULT false,
-    "score" INTEGER,
+    "status" "StepStatus" NOT NULL DEFAULT 'NOT_STARTED',
     "answer" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -104,6 +106,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE INDEX "Session_userId_idx" ON "Session"("userId");
+
+-- CreateIndex
+CREATE INDEX "Course_authorId_idx" ON "Course"("authorId");
 
 -- CreateIndex
 CREATE INDEX "Module_courseId_idx" ON "Module"("courseId");
@@ -134,6 +139,9 @@ CREATE UNIQUE INDEX "UserProgress_userId_stepId_key" ON "UserProgress"("userId",
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Course" ADD CONSTRAINT "Course_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Module" ADD CONSTRAINT "Module_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;

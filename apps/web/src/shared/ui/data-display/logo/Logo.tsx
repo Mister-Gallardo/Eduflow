@@ -24,14 +24,14 @@ export const Logo = ({
     extraSmall: 32,
     small: 40,
     medium: 45,
-    large: 55,
+    large: 60,
   }[size]
 
   const fontSize = {
     extraSmall: 20,
     small: 24,
     medium: 28,
-    large: 36,
+    large: 38,
   }[size]
 
   return (

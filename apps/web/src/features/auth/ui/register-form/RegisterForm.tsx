@@ -18,8 +18,12 @@ export const RegisterForm = () => {
   const navigate = useNavigate()
   const showSnackbar = useSnackbar()
 
+  const utils = trpc.useUtils()
+
   const registerMutation = trpc.auth.register.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await utils.auth.me.invalidate()
+
       void navigate(paths.home())
     },
     onError: (error) => {

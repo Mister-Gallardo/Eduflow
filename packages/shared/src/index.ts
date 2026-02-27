@@ -1,4 +1,5 @@
 export * from './auth.schema.js'
 export * from './courses.schema.js'
 export * from './learning.schema.js'
+export * from './teach.schema.js'
 export * from './utils.js'

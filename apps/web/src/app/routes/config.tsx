@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 
+import { AuthGuard } from '@/features/auth'
 import { HomePage } from '@/pages/home'
 import { paths } from '@/shared/config/paths'
 import { GlobalLoader } from '@/shared/ui/feedback/global-loader'
@@ -12,7 +13,27 @@ export const routeConfig = createBrowserRouter([
     hydrateFallbackElement: <GlobalLoader />,
     children: [
       {
-        element: <AuthLayout />,
+        element: <AppLayout />,
+        children: [
+          {
+            path: paths.home(),
+            element: <HomePage />,
+          },
+          {
+            path: '*',
+            lazy: async () => {
+              const { NotFoundPage } = await import('@/pages/not-found')
+              return { Component: NotFoundPage }
+            },
+          },
+        ],
+      },
+      {
+        element: (
+          <AuthGuard mode="guest-only">
+            <AuthLayout />
+          </AuthGuard>
+        ),
         children: [
           {
             path: paths.auth(),
@@ -24,32 +45,28 @@ export const routeConfig = createBrowserRouter([
         ],
       },
       {
-        element: <AppLayout />,
+        element: (
+          <AuthGuard mode="private">
+            <AppLayout />
+          </AuthGuard>
+        ),
         children: [
           {
-            path: paths.home(),
-            element: <HomePage />,
-          },
-
-          {
             path: paths.learn(),
+            handle: { authRequired: true },
             lazy: async () => {
               const { LearnPage } = await import('@/pages/learn')
               return { Component: LearnPage }
             },
           },
-
-          {
-            path: '*',
-            lazy: async () => {
-              const { NotFoundPage } = await import('@/pages/not-found')
-              return { Component: NotFoundPage }
-            },
-          },
         ],
       },
       {
-        element: <CourseLayout />,
+        element: (
+          <AuthGuard mode="private">
+            <CourseLayout />
+          </AuthGuard>
+        ),
         children: [
           {
             path: paths.course.path(),
@@ -57,7 +74,6 @@ export const routeConfig = createBrowserRouter([
               const { CoursePage } = await import('@/pages/course')
               return { Component: CoursePage }
             },
-            // handle: { header: { title: 'Обучение' } },
           },
         ],
       },

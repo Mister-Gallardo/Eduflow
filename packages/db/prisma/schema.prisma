@@ -15,9 +15,13 @@ model User {
 
   createdAt DateTime @default(now())
 
-  sessions    Session[]
+  sessions Session[]
+
   enrollments Enrollment[]
-  progress    UserProgress[]
+
+  createdCourses Course[] @relation("CourseAuthor")
+
+  progress UserProgress[]
 }
 
 model Session {
@@ -41,12 +45,16 @@ model Course {
   duration    String
   level       Level
   category    String
-  authorId    String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  updatedAt   DateTime @updatedAt
+
+  authorId String
+  author   User   @relation("CourseAuthor", fields: [authorId], references: [id])
 
   modules     Module[]
   enrollments Enrollment[]
+
+  @@index([authorId])
 }
 
 model Module {
@@ -55,7 +63,8 @@ model Module {
   order    Int    @default(0)
   courseId String
 
-  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
   lessons Lesson[]
 
   @@index([courseId])
@@ -68,7 +77,8 @@ model Lesson {
   moduleId String
 
   module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  steps  Step[]
+
+  steps Step[]
 
   @@index([moduleId])
 }
@@ -81,29 +91,11 @@ model Step {
   content  Json
   lessonId String
 
-  lesson       Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
   userProgress UserProgress[]
 
   @@index([lessonId])
-}
-
-enum StepType {
-  TEXT
-  VIDEO
-  TEST_SINGLE
-  TEST_MULTIPLE
-  MATCHING
-  ORDERING
-  INPUT_TEXT
-  INPUT_NUMBER
-  FREE_TEXT
-  FILL_GAPS
-}
-
-enum Level {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
 }
 
 model Enrollment {
@@ -121,13 +113,13 @@ model Enrollment {
 }
 
 model UserProgress {
-  id          String     @id @default(cuid())
-  userId      String
-  stepId      String
-  status      StepStatus @default(NOT_STARTED)
-  answer      Json?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        String     @id @default(cuid())
+  userId    String
+  stepId    String
+  status    StepStatus @default(NOT_STARTED)
+  answer    Json?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   step Step @relation(fields: [stepId], references: [id], onDelete: Cascade)
@@ -135,6 +127,25 @@ model UserProgress {
   @@unique([userId, stepId])
   @@index([userId])
   @@index([stepId])
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum StepType {
+  TEXT
+  VIDEO
+  TEST_SINGLE
+  TEST_MULTIPLE
+  MATCHING
+  ORDERING
+  INPUT_TEXT
+  INPUT_NUMBER
+  FREE_TEXT
+  FILL_GAPS
 }
 
 enum StepStatus {

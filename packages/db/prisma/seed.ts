@@ -172,6 +172,11 @@ async function main() {
   await db.module.deleteMany()
   await db.course.deleteMany()
 
+  const testUserId = await db.user.findUnique({
+    where: { email: 'name1@mail.ru' },
+    select: { id: true },
+  })
+
   // 4 категории
   for (const cat of categories) {
     const topics = categoryTopics[cat]
@@ -187,6 +192,7 @@ async function main() {
           duration: `${Math.floor(Math.random() * 40) + 10} часов`,
           level: getRandomItem(levels),
           category: cat,
+          authorId: testUserId!.id,
         },
       })
 
