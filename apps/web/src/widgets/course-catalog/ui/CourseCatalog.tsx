@@ -30,7 +30,7 @@ export const CourseCatalog = () => {
     }
   }, [debouncedSearch, selectedCategory])
 
-  const { data: coursesData = [], isLoading: isCoursesLoading } = trpc.courses.getCourses.useQuery(
+  const { data: courses = [], isLoading: isCoursesLoading } = trpc.courses.getCourses.useQuery(
     queryParams,
     {
       placeholderData: (previousData) => previousData,
@@ -60,8 +60,8 @@ export const CourseCatalog = () => {
 
       {isCoursesLoading ? (
         <CatalogSkeleton />
-      ) : coursesData.length > 0 ? (
-        <CatalogList coursesData={coursesData} listKey={selectedCategory} />
+      ) : courses.length > 0 ? (
+        <CatalogList courses={courses} listKey={selectedCategory} />
       ) : (
         <EmptyState />
       )}

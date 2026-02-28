@@ -1,0 +1,1 @@
+export { CourseTeach } from './CourseTeach'

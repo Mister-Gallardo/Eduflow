@@ -111,7 +111,7 @@ export async function loginService(ctx: Context, input: LoginInput): Promise<{ u
   })
 }
 
-export async function refreshService(ctx: Context): Promise<{ ok: true }> {
+export async function refreshService(ctx: Context): Promise<{ ok: true; userId: string }> {
   const raw = readRefreshCookie(ctx.req)
 
   if (!raw) {
@@ -163,7 +163,7 @@ export async function refreshService(ctx: Context): Promise<{ ok: true }> {
       refresh: refreshValue,
     })
 
-    return { ok: true }
+    return { ok: true, userId: session.userId }
   })
 }
 
@@ -182,12 +182,15 @@ export async function logoutService(ctx: Context): Promise<{ ok: true }> {
   return { ok: true }
 }
 
-export function me(ctx: Context): { id: string } | null {
-  if (!ctx.me) {
-    return null
+export async function getMeService(ctx: Context): Promise<{ id: string } | null> {
+  if (ctx.me) {
+    return { id: ctx.me.id }
   }
 
-  return {
-    id: ctx.me.id,
+  try {
+    const { userId } = await refreshService(ctx)
+    return { id: userId }
+  } catch {
+    return null
   }
 }

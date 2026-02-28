@@ -1,0 +1,1 @@
+export { TeachPage } from './TeachPage'

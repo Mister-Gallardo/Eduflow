@@ -25,6 +25,7 @@ export interface TeachStats {
 export interface TeachCourse {
   id: string
   title: string
+  category: string
   updatedAt: Date
   studentsCount: number
   pendingReviewCount: number

@@ -1,1 +1,1 @@
-export { useMe } from './useMe'
+export { useGetMe } from './useGetMe'

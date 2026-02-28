@@ -1,13 +1,13 @@
 import { trpc } from '@/shared/api/trpc'
 
-export function useMe(enabled = true) {
-  const { data, isLoading, isFetched } = trpc.auth.me.useQuery(undefined, {
+export function useGetMe(enabled = true) {
+  const { data, isLoading, isFetched } = trpc.auth.getMe.useQuery(undefined, {
     enabled,
     refetchOnWindowFocus: true,
   })
 
   return {
-    userData: data,
+    user: data ?? null,
     isUserLoading: isLoading,
     isUserFetched: isFetched,
   }

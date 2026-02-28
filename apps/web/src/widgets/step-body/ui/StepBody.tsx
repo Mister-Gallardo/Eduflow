@@ -19,7 +19,7 @@ export const StepBody = () => {
     useOutletContext<LearnOutletContext>()
 
   const {
-    data: stepData,
+    data: step,
     isLoading: isStepLoading,
     isFetched: isStepFetched,
   } = trpc.learning.getStepData.useQuery({ courseId, stepId }, { enabled: !!stepId })
@@ -33,8 +33,8 @@ export const StepBody = () => {
 
   useEffect(() => {
     if (
-      stepData?.userProgress?.status === 'APPROVED' &&
-      (stepData.step.type === 'TEXT' || stepData.step.type === 'VIDEO')
+      step?.userProgress?.status === 'APPROVED' &&
+      (step.step.type === 'TEXT' || step.step.type === 'VIDEO')
     ) {
       utils.learning.getCourseNavigation.setData({ courseId }, (oldData) => {
         if (!oldData) return oldData
@@ -53,7 +53,7 @@ export const StepBody = () => {
         }
       })
     }
-  }, [stepData, stepId, courseId, utils])
+  }, [step, stepId, courseId, utils])
 
   useEffect(() => {
     if (stepId || !lastViewedStepId) return
@@ -65,24 +65,22 @@ export const StepBody = () => {
     return <StepContentSkeleton />
   }
 
-  const step = stepData?.step
-
   if (!step) {
     return <Result404 />
   }
 
-  const stepContent = pick(step, ['type', 'content']) as Step
+  const stepContent = pick(step.step, ['type', 'content']) as Step
 
   return (
     <Box sx={{ py: 3 }}>
-      <Typography sx={{ mb: 3, fontSize: 18, fontWeight: 700 }}>{step.title}</Typography>
+      <Typography sx={{ mb: 3, fontSize: 18, fontWeight: 700 }}>{step.step.title}</Typography>
 
       <StepRenderer
         step={stepContent}
         courseId={courseId}
         stepId={stepId}
-        status={stepData.userProgress?.status}
-        savedAnswer={stepData.userProgress?.answer}
+        status={step.userProgress?.status}
+        savedAnswer={step.userProgress?.answer}
       />
 
       <StepNavigation prevStepId={prevStepId} nextStepId={nextStepId} courseId={courseId} />

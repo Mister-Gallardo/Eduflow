@@ -2,7 +2,13 @@ import { zLoginInput, zRegisterInput } from '@eduflow/shared'
 
 import { publicProcedure, router } from '../../trpc/trpc.js'
 
-import { loginService, logoutService, me, refreshService, registerService } from './auth.service.js'
+import {
+  getMeService,
+  loginService,
+  logoutService,
+  refreshService,
+  registerService,
+} from './auth.service.js'
 
 export const authRouter = router({
   register: publicProcedure.input(zRegisterInput).mutation(({ ctx, input }) => {
@@ -21,7 +27,7 @@ export const authRouter = router({
     return logoutService(ctx)
   }),
 
-  me: publicProcedure.query(({ ctx }) => {
-    return me(ctx)
+  getMe: publicProcedure.query(({ ctx }) => {
+    return getMeService(ctx)
   }),
 })

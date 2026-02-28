@@ -51,6 +51,7 @@ export async function getTeachCoursesService(ctx: AuthorizedContext): Promise<Te
     select: {
       id: true,
       title: true,
+      category: true,
       updatedAt: true,
       _count: {
         select: {
@@ -78,6 +79,7 @@ export async function getTeachCoursesService(ctx: AuthorizedContext): Promise<Te
     return courses.map((c) => ({
       id: c.id,
       title: c.title,
+      category: c.category,
       updatedAt: c.updatedAt,
       studentsCount: c._count.enrollments,
       pendingReviewCount: 0,
@@ -109,6 +111,7 @@ export async function getTeachCoursesService(ctx: AuthorizedContext): Promise<Te
   return courses.map((c) => ({
     id: c.id,
     title: c.title,
+    category: c.category,
     updatedAt: c.updatedAt,
     studentsCount: c._count.enrollments,
     pendingReviewCount: pendingMap.get(c.id) ?? 0,

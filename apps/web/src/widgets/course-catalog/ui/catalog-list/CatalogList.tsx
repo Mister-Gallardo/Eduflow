@@ -4,7 +4,7 @@ import { AnimatePresence } from 'motion/react'
 import { useEffect, useRef } from 'react'
 
 import { CoursePreviewCard } from '@/entities/course'
-import { useMe } from '@/entities/user'
+import { useGetMe } from '@/entities/user'
 import { useEnrollCourse } from '@/features/catalog-filter'
 import type { ApiOutputs } from '@/shared/api/trpc'
 import { messages } from '@/shared/config/messages'
@@ -24,16 +24,16 @@ import {
 type CoursesData = ApiOutputs['courses']['getCourses']
 
 interface CatalogListProps {
-  coursesData: CoursesData
+  courses: CoursesData
   listKey?: string
 }
 
-export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
+export const CatalogList = ({ courses, listKey }: CatalogListProps) => {
   const isMobile = useIsMobile()
 
   const showSnackbar = useSnackbar()
 
-  const { userData, isUserLoading } = useMe()
+  const { user, isUserLoading } = useGetMe()
 
   const { enroll, isEnrollPending } = useEnrollCourse()
 
@@ -53,7 +53,7 @@ export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
       })
     }
 
-    if (!userData) {
+    if (!user) {
       return showSnackbar({
         severity: 'warning',
         message: messages.authRequired,
@@ -91,7 +91,7 @@ export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
     <Box sx={mobileListContainerStyles} ref={scrollContainerRef}>
       <AnimatePresence mode="wait" initial={false}>
         <MotionBox
-          key={`${listKey}-${coursesData.map((c) => c.id).join('')}`}
+          key={`${listKey}-${courses.map((c) => c.id).join('')}`}
           variants={mobileContainerVariants}
           initial="hidden"
           animate="visible"
@@ -101,7 +101,7 @@ export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
             gap: 2.5,
           }}
         >
-          {coursesData.map((course) => (
+          {courses.map((course) => (
             <MotionBox
               key={course.id}
               variants={mobileItemVariants}
@@ -155,7 +155,7 @@ export const CatalogList = ({ coursesData, listKey }: CatalogListProps) => {
         }}
       >
         <AnimatePresence mode="popLayout" initial={true}>
-          {coursesData.map((course, index) => (
+          {courses.map((course, index) => (
             <MotionBox
               key={course.id}
               layout

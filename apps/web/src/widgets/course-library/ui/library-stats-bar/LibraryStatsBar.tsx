@@ -4,7 +4,7 @@ import TrackChangesOutlinedIcon from '@mui/icons-material/TrackChangesOutlined'
 import { Box, Typography, useTheme } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 
-import { statCardStyles, statsBarContainerStyles } from './LibraryStatsBar.styles'
+import { statCardStyles } from './LibraryStatsBar.styles'
 
 interface LibraryStatsBarProps {
   inProgress: number
@@ -41,7 +41,7 @@ export const LibraryStatsBar = ({
   ]
 
   return (
-    <Box sx={statsBarContainerStyles}>
+    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
       {stats.map((stat) => (
         <Box
           key={stat.label}

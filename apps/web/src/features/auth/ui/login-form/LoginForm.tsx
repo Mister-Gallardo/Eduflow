@@ -33,7 +33,7 @@ export const LoginForm = () => {
 
   const loginMutation = trpc.auth.login.useMutation({
     onSuccess: async () => {
-      await utils.auth.me.invalidate()
+      await utils.auth.getMe.invalidate()
 
       void navigate(paths.home())
     },

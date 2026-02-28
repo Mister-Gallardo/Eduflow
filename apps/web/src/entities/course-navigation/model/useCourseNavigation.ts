@@ -9,19 +9,19 @@ export const useCourseNavigation = () => {
   const { courseId = '', stepId = '' } = useParams()
 
   const {
-    data: courseNavigationData,
+    data: courseNavigation,
     isLoading: isCourseNavigationLoading,
     isFetched: isCourseNavigationFetched,
   } = trpc.learning.getCourseNavigation.useQuery({ courseId }, { enabled: !!courseId })
 
-  const modules = courseNavigationData?.navigation ?? []
+  const modules = courseNavigation?.navigation ?? []
 
   const { activeModuleId, activeLesson, prevStepId, nextStepId } = getCourseNavigationState(
     modules,
     stepId,
   )
 
-  const courseTitle = courseNavigationData?.courseTitle ?? ''
+  const courseTitle = courseNavigation?.courseTitle ?? ''
 
   const isCourseNavigationReady = !isCourseNavigationLoading && isCourseNavigationFetched
   const isModuleNotFound = !activeModuleId && isCourseNavigationReady
@@ -33,7 +33,7 @@ export const useCourseNavigation = () => {
     courseId,
     courseTitle,
     stepId,
-    lastViewedStepId: courseNavigationData?.lastViewedStepId ?? '',
+    lastViewedStepId: courseNavigation?.lastViewedStepId ?? '',
     prevStepId,
     nextStepId,
     isCourseNavigationLoading,

@@ -64,6 +64,23 @@ export const routeConfig = createBrowserRouter([
       {
         element: (
           <AuthGuard mode="private">
+            <AppLayout />
+          </AuthGuard>
+        ),
+        children: [
+          {
+            path: paths.teach(),
+            handle: { authRequired: true },
+            lazy: async () => {
+              const { TeachPage } = await import('@/pages/teach')
+              return { Component: TeachPage }
+            },
+          },
+        ],
+      },
+      {
+        element: (
+          <AuthGuard mode="private">
             <CourseLayout />
           </AuthGuard>
         ),

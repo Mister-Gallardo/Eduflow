@@ -37,6 +37,8 @@ export const HeaderActions = ({
   showAuthButton,
   isUserLoading,
 }: HeaderActionsProps) => {
+  if (isUserLoading) return null
+
   return (
     <Box
       sx={{
@@ -48,7 +50,7 @@ export const HeaderActions = ({
         }),
       }}
     >
-      {isUserLoading ? null : showAuthButton ? (
+      {showAuthButton ? (
         <LoginPrompt />
       ) : (
         actions.map((action, index) => <ActionButton key={index} {...action} />)
