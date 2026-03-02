@@ -111,7 +111,7 @@ export async function loginService(ctx: Context, input: LoginInput): Promise<{ u
   })
 }
 
-export async function refreshService(ctx: Context): Promise<{ ok: true; userId: string }> {
+export async function refreshService(ctx: Context): Promise<{ ok: true }> {
   const raw = readRefreshCookie(ctx.req)
 
   if (!raw) {
@@ -163,7 +163,7 @@ export async function refreshService(ctx: Context): Promise<{ ok: true; userId: 
       refresh: refreshValue,
     })
 
-    return { ok: true, userId: session.userId }
+    return { ok: true }
   })
 }
 
@@ -182,15 +182,16 @@ export async function logoutService(ctx: Context): Promise<{ ok: true }> {
   return { ok: true }
 }
 
-export async function getMeService(ctx: Context): Promise<{ id: string } | null> {
-  if (ctx.me) {
-    return { id: ctx.me.id }
+export function getMeService(ctx: Context): { id: string } | null {
+  if (ctx.isTokenExpired) {
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Access token expired.' })
   }
 
-  try {
-    const { userId } = await refreshService(ctx)
-    return { id: userId }
-  } catch {
+  if (!ctx.me) {
     return null
+  }
+
+  return {
+    id: ctx.me.id,
   }
 }

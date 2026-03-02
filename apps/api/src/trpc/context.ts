@@ -9,20 +9,23 @@ import { verifyAccessToken } from '../modules/auth/lib/jwt.js'
 export async function createContext(opts: { req: Request; res: Response }) {
   const { req, res } = opts
   const cookies = req.cookies as AuthCookies | undefined
-  const token = cookies?.access
+  const access = cookies?.access
+  const refresh = cookies?.refresh
 
   let me: { id: string; sessionId: string } | null = null
+  let isTokenExpired = !!refresh
 
-  if (token) {
+  if (access) {
     try {
-      const payload = verifyAccessToken(token)
+      const payload = verifyAccessToken(access)
       me = { id: payload.sub, sessionId: payload.sessionId }
+      isTokenExpired = false
     } catch {
       logger.info('Invalid access token provided in cookies', 'CTX')
     }
   }
 
-  return { me, db, req, res }
+  return { me, isTokenExpired, db, req, res }
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>

@@ -26,7 +26,6 @@ export const CourseLibrary = () => {
   const { data: enrolledCourses = [], isLoading: isEnrolledCoursesLoading } =
     trpc.enrollment.getEnrolledCourses.useQuery(undefined, {
       placeholderData: (prev) => prev,
-      staleTime: 0,
     })
 
   const counts = (() => {
