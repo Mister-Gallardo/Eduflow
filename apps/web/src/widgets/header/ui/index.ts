@@ -1,5 +1,5 @@
 export { Header } from './Header'
-export { HeaderActions } from './header-actions'
-export { HeaderNavigation } from './header-navigation'
-export { LearnHeaderLeft } from './learn-header-left'
+export * from './header-actions/HeaderActions'
+export * from './header-navigation/HeaderNavigation'
+export * from './learn-header-left/LearnHeaderLeft'
 export { MobileNavigation } from './mobile-navigation'

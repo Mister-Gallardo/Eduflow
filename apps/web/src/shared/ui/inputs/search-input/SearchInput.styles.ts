@@ -7,7 +7,7 @@ export const searchInputStyles: SxProps<Theme> = {
     borderRadius: 3,
     bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
     '& fieldset': {
-      border: 'none',
+      // Использовать стандартный бордер MUI
     },
     '&:hover': {
       bgcolor: (theme) => alpha(theme.palette.primary.main, 0.06),

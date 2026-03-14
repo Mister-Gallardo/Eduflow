@@ -19,7 +19,7 @@ export const AuthLayout = () => {
     >
       <Container maxWidth="sm">
         <Box mb={4} textAlign="center">
-          <Logo size="medium" isAnimated />
+          <Logo size="medium" isAnimated isClickable={true} />
         </Box>
 
         <Outlet />

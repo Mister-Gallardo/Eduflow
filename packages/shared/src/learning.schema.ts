@@ -18,10 +18,10 @@ export const StepTypeSchema = z.enum([
 export type StepType = z.infer<typeof StepTypeSchema>
 
 /** Типы шагов, не требующие проверки ответа (просто завершаются) */
-export const COMPLETABLE_STEP_TYPES: readonly StepType[] = ['TEXT', 'VIDEO'] as const
+export const COMPLETABLE_STEP_TYPES: StepType[] = ['TEXT', 'VIDEO'] as const
 
 /** Типы шагов с автоматической проверкой ответа */
-export const CHECKABLE_STEP_TYPES: readonly StepType[] = [
+export const CHECKABLE_STEP_TYPES: StepType[] = [
   'TEST_SINGLE',
   'TEST_MULTIPLE',
   'MATCHING',
@@ -32,7 +32,7 @@ export const CHECKABLE_STEP_TYPES: readonly StepType[] = [
 ] as const
 
 /** Ручная проверка: преподаватель должен посмотреть ответ */
-export const REVIEWABLE_STEP_TYPES: readonly StepType[] = ['FREE_TEXT'] as const
+export const REVIEWABLE_STEP_TYPES: StepType[] = ['FREE_TEXT'] as const
 
 // ─── Content Schemas ───
 

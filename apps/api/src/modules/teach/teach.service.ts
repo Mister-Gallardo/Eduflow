@@ -1,11 +1,13 @@
 import type { Prisma } from '@eduflow/db'
 import { StepStatus } from '@eduflow/db'
-import type {
-  GetPendingSubmissionsInput,
-  PendingSubmission,
-  PendingSubmissionsResult,
-  TeachCourse,
-  TeachStats,
+import {
+  type GetRepliesServiceInput,
+  type PendingSubmission,
+  type PendingSubmissionsResult,
+  REVIEWABLE_STEP_TYPES,
+  type ReviewReplyInput,
+  type TeachCourse,
+  type TeachStats,
 } from '@eduflow/shared'
 
 import type { AuthorizedContext } from '../../trpc/context.js'
@@ -118,99 +120,87 @@ export async function getTeachCoursesService(ctx: AuthorizedContext): Promise<Te
   }))
 }
 
-// ─── Pending Submissions ───
+// ─── Replies Helpers ───
 
-export async function getPendingSubmissionsService(
-  ctx: AuthorizedContext,
-  input: GetPendingSubmissionsInput,
-): Promise<PendingSubmissionsResult> {
-  const authorId = ctx.me.id
-  const status = input?.status ?? StepStatus.PENDING
-  const search = input?.search
-  const cursor = input?.cursor
-  const limit = input?.limit ?? 20
-
-  /**
-   * Базовый фильтр: только шаги из курсов данного автора с нужным статусом.
-   * `satisfies` гарантирует соответствие типу Prisma.UserProgressWhereInput,
-   * помогая избежать опечаток в глубоких связях.
-   */
-  const baseWhere = {
+function buildBaseWhere(
+  authorId: string,
+  status?: Prisma.UserProgressWhereInput['status'],
+): Prisma.UserProgressWhereInput {
+  return {
     status,
     step: {
+      type: {
+        in: REVIEWABLE_STEP_TYPES,
+      },
       lesson: {
         module: {
           course: { authorId },
         },
       },
     },
-  } satisfies Prisma.UserProgressWhereInput
+  }
+}
 
-  const searchFilter: Prisma.UserProgressWhereInput = search
-    ? {
-        OR: [
-          { user: { fullName: { contains: search, mode: 'insensitive' } } },
-          {
-            step: {
-              title: { contains: search, mode: 'insensitive' },
+function buildSearchFilter(search?: string): Prisma.UserProgressWhereInput {
+  if (!search) return {}
+  return {
+    OR: [
+      { user: { fullName: { contains: search, mode: 'insensitive' } } },
+      { step: { title: { contains: search, mode: 'insensitive' } } },
+      {
+        step: {
+          lesson: {
+            module: {
+              course: { title: { contains: search, mode: 'insensitive' } },
             },
           },
-          {
-            step: {
-              lesson: {
-                module: {
-                  course: { title: { contains: search, mode: 'insensitive' } },
-                },
-              },
-            },
-          },
-        ],
-      }
-    : {}
+        },
+      },
+    ],
+  }
+}
 
-  const items = await ctx.db.userProgress.findMany({
-    where: { AND: [baseWhere, searchFilter] },
-    orderBy: { updatedAt: 'desc' },
-    take: limit + 1,
-    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+const replySelect = {
+  id: true,
+  status: true,
+  answer: true,
+  reviewComment: true,
+  reviewedAt: true,
+  updatedAt: true,
+  user: {
+    select: { id: true, fullName: true },
+  },
+  step: {
     select: {
       id: true,
-      status: true,
-      answer: true,
-      updatedAt: true,
-      user: {
-        select: { id: true, fullName: true },
-      },
-      step: {
+      title: true,
+      type: true,
+      lesson: {
         select: {
-          id: true,
           title: true,
-          type: true,
-          lesson: {
+          module: {
             select: {
-              title: true,
-              module: {
-                select: {
-                  course: {
-                    select: { id: true, title: true },
-                  },
-                },
+              course: {
+                select: { id: true, title: true },
               },
             },
           },
         },
       },
     },
-  })
+  },
+} satisfies Prisma.UserProgressSelect
 
-  const hasMore = items.length > limit
-  const data = hasMore ? items.slice(0, limit) : items
+type ReplyQueryResult = Prisma.UserProgressGetPayload<{ select: typeof replySelect }>
 
-  const mapped: PendingSubmission[] = data.map((item) => ({
+function mapReply(item: ReplyQueryResult): PendingSubmission {
+  return {
     id: item.id,
     status: item.status,
     answer: item.answer,
     updatedAt: item.updatedAt,
+    reviewComment: item.reviewComment,
+    reviewedAt: item.reviewedAt,
     student: item.user,
     step: {
       id: item.step.id,
@@ -224,10 +214,106 @@ export async function getPendingSubmissionsService(
     lesson: {
       title: item.step.lesson.title,
     },
-  }))
+  }
+}
+
+// ─── Replies ───
+
+export async function getPendingRepliesService(
+  ctx: AuthorizedContext,
+  input: GetRepliesServiceInput,
+): Promise<PendingSubmissionsResult> {
+  const authorId = ctx.me.id
+  const search = input?.search
+  const cursor = input?.cursor
+  const limit = input?.limit ?? 20
+
+  const items = await ctx.db.userProgress.findMany({
+    where: {
+      AND: [buildBaseWhere(authorId, StepStatus.PENDING), buildSearchFilter(search)],
+    },
+    orderBy: { updatedAt: 'desc' },
+    take: limit + 1,
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    select: replySelect,
+  })
+
+  const hasMore = items.length > limit
+  const data = hasMore ? items.slice(0, limit) : items
 
   return {
-    items: mapped,
+    items: data.map(mapReply),
     nextCursor: hasMore ? (data[data.length - 1]?.id ?? null) : null,
   }
+}
+
+export async function getReviewedRepliesService(
+  ctx: AuthorizedContext,
+  input: GetRepliesServiceInput,
+): Promise<PendingSubmissionsResult> {
+  const authorId = ctx.me.id
+  const search = input?.search
+  const cursor = input?.cursor
+  const limit = input?.limit ?? 20
+
+  const items = await ctx.db.userProgress.findMany({
+    where: {
+      AND: [
+        buildBaseWhere(authorId, { in: [StepStatus.APPROVED, StepStatus.FAILED] }),
+        buildSearchFilter(search),
+      ],
+    },
+    orderBy: { updatedAt: 'desc' },
+    take: limit + 1,
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    select: replySelect,
+  })
+
+  const hasMore = items.length > limit
+  const data = hasMore ? items.slice(0, limit) : items
+
+  return {
+    items: data.map(mapReply),
+    nextCursor: hasMore ? (data[data.length - 1]?.id ?? null) : null,
+  }
+}
+
+// ─── Review Reply ───
+
+export async function reviewReplyService(
+  ctx: AuthorizedContext,
+  input: ReviewReplyInput,
+): Promise<void> {
+  const authorId = ctx.me.id
+
+  // Проверяем, что ответ существует и принадлежит курсу текущего автора
+  const progress = await ctx.db.userProgress.findUniqueOrThrow({
+    where: { id: input.id },
+    select: {
+      step: {
+        select: {
+          lesson: {
+            select: {
+              module: {
+                select: { course: { select: { authorId: true } } },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (progress.step.lesson.module.course.authorId !== authorId) {
+    throw new Error('Нет прав для проверки этого ответа')
+  }
+
+  await ctx.db.userProgress.update({
+    where: { id: input.id },
+    data: {
+      status: input.status,
+      reviewComment: input.comment ?? null,
+      reviewedAt: new Date(),
+    },
+  })
 }

@@ -65,17 +65,17 @@ export const getBaseOptionStyles = ({
   lineHeight: 1.4,
   cursor: isChecked ? 'default' : 'pointer',
   userSelect: 'none',
-  border: '2px solid',
+  border: '1px solid',
   borderRadius: '12px',
-  transition: 'all 0.2s',
+  transition: 'background-color 0.2s, border-color 0.2s, box-shadow 0.2s',
 
   borderColor: (theme) => {
     if (isChecked) {
       const color = getCorrectnessColor(theme, isCorrect)
-      return color ?? alpha(theme.palette.primary.main, 0.08)
+      return color ?? 'rgba(0, 0, 0, 0.23)'
     }
     if (isSubtle) return alpha(theme.palette.primary.main, 0.2)
-    return isActive ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.08)
+    return isActive ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.23)'
   },
 
   backgroundColor: (theme) => {
@@ -156,14 +156,14 @@ export const getIndicatorStyles = ({
   fontSize: 14,
   fontWeight: 600,
   transition: 'all 0.2s',
-  border: '2px solid',
+  border: '1px solid',
 
   borderColor: (theme) => {
     if (isChecked) {
       const color = getCorrectnessColor(theme, isCorrect)
-      return color ?? alpha(theme.palette.primary.main, 0.15)
+      return color ?? 'rgba(0, 0, 0, 0.23)'
     }
-    return isSelected ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.2)
+    return isSelected ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.23)'
   },
 
   backgroundColor: (theme) => {
@@ -194,7 +194,7 @@ export const getMatchingLeftCardStyles = (
   borderColor: (theme) => {
     if (isActive) return theme.palette.primary.main
     if (isMatched) return alpha(theme.palette.primary.main, 0.3)
-    return alpha(theme.palette.primary.main, 0.08)
+    return 'rgba(0, 0, 0, 0.23)'
   },
   backgroundColor: (theme) => {
     if (isChecked) return 'transparent'
@@ -217,7 +217,7 @@ export const getMatchingLeftCardStyles = (
 export const getMatchingSlotStyles = (isMatched: boolean, isDragOver: boolean): SxProps<Theme> => ({
   minHeight: ROW_MIN_HEIGHT,
   borderRadius: '12px',
-  border: isMatched ? 'none' : '2px dashed',
+  border: isMatched ? 'none' : '1px dashed',
   borderColor: (theme) => {
     if (isDragOver) return theme.palette.primary.main
     if (isMatched) return 'transparent'
@@ -248,7 +248,7 @@ export const getMatchingChipStyles = (
   borderColor: (theme) => {
     if (isChecked) {
       const color = getCorrectnessColor(theme, isCorrect)
-      return color ?? alpha(theme.palette.primary.main, 0.08)
+      return color ?? 'rgba(0, 0, 0, 0.23)'
     }
     if (isInPool) return alpha(theme.palette.primary.main, 0.2)
     return theme.palette.primary.main
@@ -268,14 +268,14 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
     },
 
     '& .MuiOutlinedInput-notchedOutline': {
-      transition: 'all 0.2s',
-      borderWidth: '2px',
+      transition: 'border-color 0.2s',
+      borderWidth: '1px',
       borderColor: (theme) => {
         if (isChecked) {
           const color = getCorrectnessColor(theme, isCorrect)
-          if (color) return `${color} !important`
+          if (color) return color
         }
-        return `${alpha(theme.palette.primary.main, 0.08)} !important`
+        return 'rgba(0, 0, 0, 0.23)'
       },
     },
 
@@ -283,10 +283,10 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
       borderColor: (theme) => {
         if (isChecked) {
           const color = getCorrectnessColor(theme, isCorrect)
-          if (color) return `${color} !important`
-          return `${alpha(theme.palette.primary.main, 0.08)} !important`
+          if (color) return color
+          return 'rgba(0, 0, 0, 0.23)'
         }
-        return `${theme.palette.primary.main} !important`
+        return theme.palette.primary.main
       },
     },
 
@@ -294,9 +294,9 @@ export const getInputStyles = ({ isChecked, isCorrect }: InputStylesParams): SxP
       borderColor: (theme) => {
         if (isChecked) {
           const color = getCorrectnessColor(theme, isCorrect)
-          if (color) return `${color} !important`
+          if (color) return color
         }
-        return `${theme.palette.primary.main} !important`
+        return theme.palette.primary.main
       },
     },
   },
@@ -312,42 +312,33 @@ export const getFreeTextStyles = ({ status }: FreeTextStylesParams): SxProps<The
       },
 
       '& .MuiOutlinedInput-notchedOutline': {
-        transition: 'all 0.2s',
-        borderWidth: '2px',
+        transition: 'border-color 0.2s',
+        borderWidth: '1px',
         borderColor: (theme) => {
           const color = getStatusColor(theme, status)
-          return color
-            ? `${color} !important`
-            : `${alpha(theme.palette.primary.main, 0.08)} !important`
+          return color ?? 'rgba(0, 0, 0, 0.23)'
         },
       },
 
       '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: (theme) => {
           const color = getStatusColor(theme, status)
-          return color ? `${color} !important` : `${theme.palette.primary.main} !important`
+          return color ?? theme.palette.primary.main
         },
       },
 
       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: (theme) => {
           const color = getStatusColor(theme, status)
-          return color ? `${color} !important` : `${theme.palette.primary.main} !important`
+          return color ?? theme.palette.primary.main
         },
       },
 
       '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
         borderColor: (theme) => {
           const color = getStatusColor(theme, status)
-          return color
-            ? `${color} !important`
-            : `${alpha(theme.palette.primary.main, 0.08)} !important`
+          return color ?? 'rgba(0, 0, 0, 0.23)'
         },
-      },
-
-      '& textarea': {
-        lineHeight: 1.7,
-        fontSize: 14,
       },
     },
   }

@@ -7,7 +7,7 @@ import { useIsMobile } from '@/shared/lib/useIsMobile'
 import { Result404 } from '@/shared/ui/feedback/result-404'
 import { PageContainer } from '@/shared/ui/layout/page-container'
 import { CourseSidebar } from '@/widgets/course-sidebar'
-import { Header, HeaderActions, LearnHeaderLeft, useHeaderActions } from '@/widgets/header'
+import { Header, HeaderActions, LearnHeaderLeft } from '@/widgets/header'
 import { StepsPanel } from '@/widgets/steps-panel'
 
 export const CourseLayout = () => {
@@ -18,13 +18,13 @@ export const CourseLayout = () => {
 
   const { state, context, navigation } = useCourseNavigation()
 
-  const headerActions = useHeaderActions({ withMobileMenu: false })
-
   return (
     <>
       <Header
         leftSlot={<LearnHeaderLeft sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
-        rightSlot={<HeaderActions actions={headerActions} edgeToEnd={true} />}
+        rightSlot={
+          <HeaderActions edgeToEnd={true} showNotificationButton={true} showAccountButton={true} />
+        }
         containerVariant="fluid"
       />
 

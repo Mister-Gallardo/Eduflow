@@ -3,6 +3,8 @@ export const paths = {
 
   auth: () => '/auth',
 
+  account: () => '/account',
+
   learn: () => '/learn',
 
   teach: () => '/teach',

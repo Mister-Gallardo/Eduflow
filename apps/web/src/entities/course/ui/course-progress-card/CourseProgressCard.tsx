@@ -76,7 +76,11 @@ export const CourseProgressCard = ({ course, onContinue }: CourseProgressCardPro
     >
       {/* Image Section */}
       <Box sx={imageContainerStyles}>
-        <CourseImage category={course.category} sx={{ height: '100%', borderRadius: 0 }}>
+        <CourseImage
+          category={course.category}
+          variant={isMobile ? 'card' : 'default'}
+          sx={{ height: { xs: 140, sm: '100%' }, borderRadius: 0 }}
+        >
           {isCompleted && (
             <Box sx={completedOverlayStyles}>
               <CheckCircleOutlineOutlinedIcon

@@ -5,7 +5,7 @@ export const enrolledCardStyles: SxProps<Theme> = {
   borderRadius: '20px',
   overflow: 'hidden',
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: { xs: 'column', sm: 'row' },
   border: '1px solid',
   borderColor: 'divider',
   cursor: 'pointer',
@@ -14,7 +14,7 @@ export const enrolledCardStyles: SxProps<Theme> = {
 }
 
 export const imageContainerStyles: SxProps<Theme> = {
-  width: { xs: 140, sm: 200 },
+  width: { xs: '100%', sm: 200 },
   flexShrink: 0,
   borderRadius: 0,
 }

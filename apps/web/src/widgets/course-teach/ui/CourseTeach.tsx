@@ -1,46 +1,72 @@
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
-import { alpha, Box, Typography, useTheme } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { CourseTeachCard } from '@/entities/course/ui/course-teach-card'
 import { trpc } from '@/shared/api/trpc'
+import cocoaImg from '@/shared/assets/images/cocoa.svg'
 import { paths } from '@/shared/config/paths'
-import type { TeachTab } from '@/widgets/course-teach/model'
-import { TeachStatBarSkeleton } from '@/widgets/course-teach/ui/teach-stats-bar/TeachStatsBarSkeleton'
 
+import type { StatusFilter, TeachTab } from '../model'
+import { useTeachReplies } from '../model'
+
+import { TeachCoursesSkeleton } from './teach-courses-skeleton/TeachCoursesSkeleton'
+import { TeachRepliesSkeleton } from './teach-replies-skeleton/TeachRepliesSkeleton'
 import { teachContainerStyles, teachGridStyles } from './CourseTeach.styles'
 import { CreateCourseCard } from './create-course-card'
-import { TeachStatsBar } from './teach-stats-bar'
+import { PendingRepliesSection } from './pending-replies-section'
+import { ReviewedRepliesSection } from './reviewed-replies-section'
+import { TeachRepliesFilters } from './teach-replies-filters'
+import { TeachStatBarSkeleton, TeachStatsBar } from './teach-stats-bar'
 import { TeachTabs } from './teach-tabs'
 
 export const CourseTeach = () => {
-  const theme = useTheme()
-
-  const navigate = useNavigate()
-
   const [selectedTab, setSelectedTab] = useState<TeachTab>('courses')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const { data: stats, isLoading: isStatsLoading } = trpc.teach.getStats.useQuery()
 
   const { data: courses = [], isLoading: isCoursesLoading } = trpc.teach.getCourses.useQuery(
     undefined,
     {
+      enabled: selectedTab === 'courses',
       placeholderData: (prev) => prev,
     },
   )
 
-  const handleCreateCourse = () => {
-    // TODO: Navigate to course creation page
+  const {
+    pendingQuery,
+    reviewedQuery,
+    pendingReplies,
+    reviewedReplies,
+    isLoading: isRepliesLoading,
+  } = useTeachReplies(statusFilter, searchQuery)
+
+  // ─── Accordion ───
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const effectiveExpandedId = expandedId ?? (pendingReplies[0]?.id || null)
+
+  const handleToggle = (id: string) => {
+    setExpandedId((prev) => {
+      const current = prev ?? pendingReplies[0]?.id
+      return current === id ? '' : id
+    })
   }
 
+  const navigate = useNavigate()
+
+  // ─── Handlers ───
   const handleCourseView = (courseId: string) => {
     void navigate(paths.course.view(courseId))
   }
 
   const handleCourseEdit = (courseId: string) => {
-    // TODO: Navigate to course edit page
     void navigate(paths.course.edit(courseId))
+  }
+
+  const handleCreateCourse = () => {
+    // TODO: Navigate to course creation page
   }
 
   return (
@@ -72,14 +98,12 @@ export const CourseTeach = () => {
           reviewCount={stats?.pendingReviewCount ?? 0}
         />
 
-        {/* Content */}
         {selectedTab === 'courses' && (
           <Box sx={teachGridStyles}>
-            {/* Create new course card */}
             <CreateCourseCard onClick={handleCreateCourse} />
-
-            {/* Course cards */}
-            {!isCoursesLoading &&
+            {isCoursesLoading ? (
+              <TeachCoursesSkeleton />
+            ) : (
               courses.map((course, index) => (
                 <CourseTeachCard
                   key={course.id}
@@ -88,31 +112,74 @@ export const CourseTeach = () => {
                   onView={handleCourseView}
                   onEdit={handleCourseEdit}
                 />
-              ))}
+              ))
+            )}
           </Box>
         )}
 
-        {selectedTab === 'reviews' && (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              py: 8,
-              bgcolor: alpha(theme.palette.primary.main, 0.02),
-              borderRadius: 4,
-            }}
-          >
-            <AssignmentOutlinedIcon
-              sx={{ fontSize: 64, color: alpha(theme.palette.primary.main, 0.3), mb: 2 }}
+        {selectedTab === 'replies' && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <TeachRepliesFilters
+              search={searchQuery}
+              onSearch={setSearchQuery}
+              status={statusFilter}
+              onStatusChange={(v) => setStatusFilter(v)}
             />
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-              Проверка ответов
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-              Здесь будет список ответов студентов на проверку
-            </Typography>
+
+            {isRepliesLoading && <TeachRepliesSkeleton />}
+
+            {statusFilter !== 'REVIEWED' &&
+              (pendingReplies.length !== 0 ? (
+                <PendingRepliesSection
+                  replies={pendingReplies}
+                  isLoading={pendingQuery.isLoading}
+                  hasNextPage={pendingQuery.hasNextPage}
+                  isFetchingNextPage={pendingQuery.isFetchingNextPage}
+                  fetchNextPage={pendingQuery.fetchNextPage}
+                  expandedId={effectiveExpandedId}
+                  onToggle={handleToggle}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    py: { xs: 4, md: 6 },
+                    textAlign: 'center',
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={cocoaImg}
+                    sx={{
+                      width: { xs: 120, md: 160 },
+                      height: 'auto',
+                      mb: 2,
+                      opacity: 0.8,
+                    }}
+                  />
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                    Все работы проверены!
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', maxWidth: 300 }}>
+                    Отличная работа! Время сделать перерыв
+                  </Typography>
+                </Box>
+              ))}
+
+            {statusFilter !== 'PENDING' && (
+              <ReviewedRepliesSection
+                replies={reviewedReplies}
+                isLoading={reviewedQuery.isLoading}
+                hasNextPage={reviewedQuery.hasNextPage}
+                isFetchingNextPage={reviewedQuery.isFetchingNextPage}
+                fetchNextPage={reviewedQuery.fetchNextPage}
+                expandedId={effectiveExpandedId}
+                onToggle={handleToggle}
+              />
+            )}
           </Box>
         )}
       </Box>

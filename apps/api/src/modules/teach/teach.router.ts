@@ -1,11 +1,13 @@
-import { zGetPendingSubmissionsInput } from '@eduflow/shared'
+import { zGetRepliesServiceInput, zReviewReplyInput } from '@eduflow/shared'
 
 import { protectedProcedure, router } from '../../trpc/trpc.js'
 
 import {
-  getPendingSubmissionsService,
+  getPendingRepliesService,
+  getReviewedRepliesService,
   getTeachCoursesService,
   getTeachStatsService,
+  reviewReplyService,
 } from './teach.service.js'
 
 export const teachRouter = router({
@@ -13,7 +15,15 @@ export const teachRouter = router({
 
   getCourses: protectedProcedure.query(({ ctx }) => getTeachCoursesService(ctx)),
 
-  getPendingSubmissions: protectedProcedure
-    .input(zGetPendingSubmissionsInput)
-    .query(({ ctx, input }) => getPendingSubmissionsService(ctx, input)),
+  getPendingReplies: protectedProcedure
+    .input(zGetRepliesServiceInput)
+    .query(({ ctx, input }) => getPendingRepliesService(ctx, input)),
+
+  getReviewedReplies: protectedProcedure
+    .input(zGetRepliesServiceInput)
+    .query(({ ctx, input }) => getReviewedRepliesService(ctx, input)),
+
+  reviewReply: protectedProcedure
+    .input(zReviewReplyInput)
+    .mutation(({ ctx, input }) => reviewReplyService(ctx, input)),
 })

@@ -22,7 +22,7 @@ interface TeachTabsProps {
 export const TeachTabs = ({ value, onChange, reviewCount }: TeachTabsProps) => {
   const tabs = [
     { value: 'courses' as const, label: 'Мои курсы' },
-    { value: 'reviews' as const, label: 'Проверка ответов', count: reviewCount },
+    { value: 'replies' as const, label: 'Проверка ответов', count: reviewCount },
   ]
 
   return (

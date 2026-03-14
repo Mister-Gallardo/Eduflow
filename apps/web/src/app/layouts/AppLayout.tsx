@@ -8,13 +8,7 @@ import { paths } from '@/shared/config/paths'
 import { useIsMobile } from '@/shared/lib/useIsMobile'
 import { Logo } from '@/shared/ui/data-display/logo'
 import { PageContainer } from '@/shared/ui/layout/page-container'
-import {
-  Header,
-  HeaderActions,
-  HeaderNavigation,
-  MobileNavigation,
-  useHeaderActions,
-} from '@/widgets/header'
+import { Header, HeaderActions, HeaderNavigation, MobileNavigation } from '@/widgets/header'
 
 const navigationItems = [
   {
@@ -39,12 +33,6 @@ export const AppLayout = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const headerActions = useHeaderActions({
-    withMobileMenu: true,
-    mobileMenuOpen,
-    toggleMobileMenu: () => setMobileMenuOpen((p) => !p),
-  })
-
   return (
     <>
       <Header
@@ -52,8 +40,12 @@ export const AppLayout = () => {
         centerSlot={<HeaderNavigation items={navigationItems} />}
         rightSlot={
           <HeaderActions
-            actions={headerActions}
             edgeToEnd={true}
+            showNotificationButton={true}
+            showAccountButton={true}
+            showMobileMenuButton={isMobile}
+            mobileMenuOpen={mobileMenuOpen}
+            setMobileMenuOpen={setMobileMenuOpen}
             showAuthButton={!user}
             isUserLoading={isUserLoading}
           />
