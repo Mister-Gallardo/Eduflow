@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { SidebarContext, useCourseNavigation } from '@/entities/course-navigation'
+import { AuthorNavButton } from '@/features/course-author-navigation'
 import { useIsMobile } from '@/shared/lib/useIsMobile'
 import { Result404 } from '@/shared/ui/feedback/result-404'
 import { PageContainer } from '@/shared/ui/layout/page-container'
@@ -101,7 +102,12 @@ export const CourseLayout = () => {
                 zIndex: theme.zIndex.layoutHigh,
               }}
             >
-              123
+              <AuthorNavButton
+                courseId={state.courseId}
+                courseTitle={state.courseTitle}
+                activeItem="preview"
+                stepId={state.stepId}
+              />
             </Box>
           )}
         </Box>
