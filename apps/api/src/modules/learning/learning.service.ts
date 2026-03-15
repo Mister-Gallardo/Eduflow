@@ -35,7 +35,7 @@ export const getCourseNavigationService = async (
     },
     include: {
       course: {
-        select: { title: true },
+        select: { title: true, authorId: true },
       },
     },
   })
@@ -111,7 +111,12 @@ export const getCourseNavigationService = async (
     })),
   }))
 
-  return { navigation, lastViewedStepId, courseTitle: enrollment.course.title }
+  return {
+    navigation,
+    lastViewedStepId,
+    courseTitle: enrollment.course.title,
+    authorId: enrollment.course.authorId,
+  }
 }
 
 export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepDataInput) => {

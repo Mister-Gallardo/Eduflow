@@ -13,6 +13,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import type { Dispatch, SetStateAction } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -94,8 +95,8 @@ export const HeaderActions = (props: HeaderActionsProps) => {
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
-  const utils = trpc.useUtils()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -106,17 +107,16 @@ const AccountMenu = () => {
   }
 
   const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: async () => {
-      void navigate(paths.home())
-
-      await utils.auth.getMe.invalidate()
+    onSettled: () => {
+      // После logout не рефетчим все запросы, чтобы не ловить 401/refresh race.
+      queryClient.clear()
     },
   })
 
   const performLogout = () => {
     handleClose()
-
-    setTimeout(() => logoutMutation.mutate(), 0)
+    void navigate(paths.home(), { replace: true })
+    logoutMutation.mutate()
   }
 
   return (

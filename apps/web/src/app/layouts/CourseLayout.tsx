@@ -16,7 +16,7 @@ export const CourseLayout = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(!isMobile)
 
-  const { state, context, navigation } = useCourseNavigation()
+  const { state, isUserAuthor, context, navigation } = useCourseNavigation()
 
   return (
     <>
@@ -88,6 +88,22 @@ export const CourseLayout = () => {
               </PageContainer>
             </Box>
           </Box>
+
+          {isUserAuthor && (
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 32,
+                right: {
+                  xs: 12,
+                  sm: 24,
+                },
+                zIndex: theme.zIndex.layoutHigh,
+              }}
+            >
+              123
+            </Box>
+          )}
         </Box>
       )}
     </>

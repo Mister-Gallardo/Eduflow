@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 
+import { useGetMe } from '@/entities/user'
 import { trpc } from '@/shared/api/trpc'
 
 import type { LearnOutletContext } from './types'
@@ -7,6 +8,8 @@ import { getCourseNavigationState } from './utils'
 
 export const useCourseNavigation = () => {
   const { courseId = '', stepId = '' } = useParams()
+
+  const { user } = useGetMe()
 
   const {
     data: courseNavigation,
@@ -49,6 +52,7 @@ export const useCourseNavigation = () => {
       shouldShow404,
       isCourseNavigationLoading,
     },
+    isUserAuthor: user?.id === courseNavigation?.authorId,
     context: outletContext,
     navigation: modules,
   }
