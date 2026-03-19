@@ -1,6 +1,7 @@
 import { AccessTime, TrendingUp } from '@mui/icons-material'
 import { alpha, Box, Chip, darken, Typography, useTheme } from '@mui/material'
 
+import { formatHours } from '@/entities/course/lib/format-hours'
 import { useIsMobile } from '@/shared/lib/useIsMobile'
 import { MotionPaper } from '@/shared/ui/animations/motion'
 
@@ -118,7 +119,7 @@ export const CoursePreviewCard = ({ course, onEnroll, isPending }: CourseCardPro
                 fontSize: '0.8rem',
               }}
             >
-              {duration}
+              {formatHours(duration)}
             </Typography>
           </Box>
         </Box>

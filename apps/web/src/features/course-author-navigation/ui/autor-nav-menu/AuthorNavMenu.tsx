@@ -3,8 +3,8 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
-import { Box, IconButton, Popover, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { Box, IconButton, MenuItem, MenuList, Popover, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 import { paths } from '@/shared/config/paths'
 
@@ -59,24 +59,6 @@ export const AuthorNavMenu = ({
   activeItem,
   stepId,
 }: AuthorNavMenuProps) => {
-  const navigate = useNavigate()
-
-  const handleItemClick = (key: (typeof MENU_ITEMS)[number]['key']) => {
-    onClose()
-
-    switch (key) {
-      case 'edit':
-        void navigate(paths.course.edit(courseId, stepId))
-        break
-      case 'preview':
-        void navigate(paths.course.view(courseId, stepId))
-        break
-      case 'settings':
-        void navigate(paths.teach())
-        break
-    }
-  }
-
   return (
     <Popover
       open={open}
@@ -110,20 +92,41 @@ export const AuthorNavMenu = ({
         </IconButton>
       </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', px: 2, py: 1.5, gap: 1 }}>
+      <MenuList
+        autoFocusItem={open}
+        variant="menu"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          px: 2,
+          py: 1.5,
+          gap: 1,
+          outline: 'none', // убираем системный контур
+        }}
+      >
         {MENU_ITEMS.map(({ key, icon, label, subtitle }) => {
           const isActive = key !== 'settings' && key === activeItem
 
           return (
-            <Box
+            <MenuItem
               key={key}
-              component="button"
-              onClick={() => handleItemClick(key)}
+              component={Link}
+              to={
+                key === 'edit'
+                  ? '/'
+                  : key === 'settings'
+                    ? paths.teach()
+                    : paths.course.view(courseId, stepId)
+              }
+              onClick={onClose}
               sx={{
                 ...AuthorNavMenuItemsStyles,
                 bgcolor: isActive ? 'primary.dark' : 'transparent',
                 color: isActive ? '#fff' : 'text.primary',
                 '&:hover': {
+                  bgcolor: isActive ? 'primary.dark' : 'action.hover',
+                },
+                '&.Mui-focusVisible': {
                   bgcolor: isActive ? 'primary.dark' : 'action.hover',
                 },
               }}
@@ -158,10 +161,10 @@ export const AuthorNavMenu = ({
                   {subtitle}
                 </Typography>
               </Box>
-            </Box>
+            </MenuItem>
           )
         })}
-      </Box>
+      </MenuList>
     </Popover>
   )
 }

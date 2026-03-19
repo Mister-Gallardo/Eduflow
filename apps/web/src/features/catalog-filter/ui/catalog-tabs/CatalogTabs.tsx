@@ -3,10 +3,10 @@ import { FilterTabs } from '@/shared/ui/data-display/filter-tabs'
 
 const CATEGORIES: FilterTab<string>[] = [
   { label: 'Часто выбирают', value: 'popular' },
-  { label: 'Разработка', value: 'development' },
-  { label: 'Дизайн', value: 'design' },
-  { label: 'Аналитика', value: 'analytics' },
-  { label: 'Маркетинг', value: 'marketing' },
+  { label: 'Разработка', value: 'DEVELOPMENT' },
+  { label: 'Дизайн', value: 'DESIGN' },
+  { label: 'Аналитика', value: 'ANALYTICS' },
+  { label: 'Маркетинг', value: 'MARKETING' },
 ]
 
 interface CatalogTabsProps {

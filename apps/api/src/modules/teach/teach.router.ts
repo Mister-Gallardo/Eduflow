@@ -1,10 +1,12 @@
 import { zGetRepliesServiceInput, zReviewReplyInput } from '@eduflow/shared'
+import { z } from 'zod'
 
 import { protectedProcedure, router } from '../../trpc/trpc.js'
 
 import {
   getPendingRepliesService,
   getReviewedRepliesService,
+  getTeachCourseByIdService,
   getTeachCoursesService,
   getTeachStatsService,
   reviewReplyService,
@@ -14,6 +16,10 @@ export const teachRouter = router({
   getStats: protectedProcedure.query(({ ctx }) => getTeachStatsService(ctx)),
 
   getCourses: protectedProcedure.query(({ ctx }) => getTeachCoursesService(ctx)),
+
+  getCourseById: protectedProcedure
+    .input(z.object({ courseId: z.string() }))
+    .query(({ ctx, input }) => getTeachCourseByIdService(ctx, input.courseId)),
 
   getPendingReplies: protectedProcedure
     .input(zGetRepliesServiceInput)

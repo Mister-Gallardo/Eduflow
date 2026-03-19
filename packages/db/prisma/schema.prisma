@@ -42,9 +42,9 @@ model Course {
   title       String
   description String
   price       Int
-  duration    String
+  duration    Int
   level       Level
-  category    String
+  category    Category
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -129,6 +129,13 @@ model UserProgress {
   @@unique([userId, stepId])
   @@index([userId])
   @@index([stepId])
+}
+
+enum Category {
+  DEVELOPMENT
+  DESIGN
+  ANALYTICS
+  MARKETING
 }
 
 enum Level {

@@ -12,6 +12,23 @@ import {
 
 import type { AuthorizedContext } from '../../trpc/context.js'
 
+// ─── Course By Id ───
+
+export async function getTeachCourseByIdService(ctx: AuthorizedContext, courseId: string) {
+  return ctx.db.course.findFirstOrThrow({
+    where: { id: courseId, authorId: ctx.me.id },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      price: true,
+      duration: true,
+      level: true,
+      category: true,
+    },
+  })
+}
+
 // ─── Stats ───
 
 export async function getTeachStatsService(ctx: AuthorizedContext): Promise<TeachStats> {

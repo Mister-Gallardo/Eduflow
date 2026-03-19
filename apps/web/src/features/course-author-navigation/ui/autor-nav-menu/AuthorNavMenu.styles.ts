@@ -50,6 +50,7 @@ export const AuthorNavMenuItemsStyles: SxProps<Theme> = {
   borderColor: 'divider',
   borderRadius: 3,
   textAlign: 'left',
+  cursor: 'pointer',
   transition: 'background-color 0.15s ease',
 }
 

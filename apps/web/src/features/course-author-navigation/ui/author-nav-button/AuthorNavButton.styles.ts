@@ -9,5 +9,6 @@ export const AuthorNavButtonStyles: SxProps<Theme> = {
   borderRadius: 999,
   bgcolor: 'primary.dark',
   color: '#fff',
+  cursor: 'pointer',
   boxShadow: (theme) => `0px 4px 16px ${theme.palette.primary.dark}66`,
 }

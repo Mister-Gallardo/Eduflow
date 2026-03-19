@@ -179,7 +179,7 @@ const AccountMenu = () => {
           </Typography>
         </MenuItem>
 
-        <Divider sx={{ my: 0.5 }} />
+        <Divider sx={{ my: 0.5, mx: 1 }} />
 
         <MenuItem
           onClick={performLogout}

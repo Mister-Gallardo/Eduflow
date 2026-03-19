@@ -1,11 +1,9 @@
 import { Box, Typography } from '@mui/material'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { CourseTeachCard } from '@/entities/course/ui/course-teach-card'
 import { trpc } from '@/shared/api/trpc'
 import cocoaImg from '@/shared/assets/images/cocoa.svg'
-import { paths } from '@/shared/config/paths'
 
 import type { StatusFilter, TeachTab } from '../model'
 import { useTeachReplies } from '../model'
@@ -54,17 +52,6 @@ export const CourseTeach = () => {
     })
   }
 
-  const navigate = useNavigate()
-
-  // ─── Handlers ───
-  const handleCourseView = (courseId: string) => {
-    void navigate(paths.course.view(courseId))
-  }
-
-  const handleCourseEdit = (courseId: string) => {
-    void navigate(paths.course.edit(courseId))
-  }
-
   const handleCreateCourse = () => {
     // TODO: Navigate to course creation page
   }
@@ -105,13 +92,7 @@ export const CourseTeach = () => {
               <TeachCoursesSkeleton />
             ) : (
               courses.map((course, index) => (
-                <CourseTeachCard
-                  key={course.id}
-                  course={course}
-                  index={index + 1}
-                  onView={handleCourseView}
-                  onEdit={handleCourseEdit}
-                />
+                <CourseTeachCard key={course.id} course={course} index={index + 1} />
               ))
             )}
           </Box>

@@ -1,5 +1,6 @@
+import { COURSE_CATEGORIES } from '@eduflow/shared'
 import { Box, Typography } from '@mui/material'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { CatalogSearchInput, CatalogTabs } from '@/features/catalog-filter'
 import { trpc } from '@/shared/api/trpc'
@@ -16,11 +17,11 @@ export const CourseCatalog = () => {
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
-  const queryParams = useMemo(() => {
+  const queryParams = (() => {
     const categories =
       selectedCategory === 'popular'
-        ? ['development', 'design', 'analytics', 'marketing']
-        : [selectedCategory]
+        ? [...COURSE_CATEGORIES]
+        : [selectedCategory as (typeof COURSE_CATEGORIES)[number]]
 
     return {
       search: debouncedSearch || undefined,
@@ -28,7 +29,7 @@ export const CourseCatalog = () => {
       sortBy: 'newest' as const,
       categories,
     }
-  }, [debouncedSearch, selectedCategory])
+  })()
 
   const { data: courses = [], isLoading: isCoursesLoading } = trpc.courses.getCourses.useQuery(
     queryParams,

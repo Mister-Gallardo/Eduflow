@@ -189,6 +189,18 @@ const theme = createTheme({
         },
       },
     },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '&.Mui-focusVisible': {
+            backgroundColor: theme.palette.action.hover,
+          },
+          '&:focus-visible': {
+            outline: 'none',
+          },
+        }),
+      },
+    },
   },
   zIndex: {
     background: -1,

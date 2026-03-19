@@ -8,7 +8,6 @@ export const courseTeachCardStyles: SxProps<Theme> = {
   flexDirection: 'column',
   border: '1px solid',
   borderColor: 'divider',
-  cursor: 'pointer',
   height: '100%',
   transition: 'box-shadow 0.2s ease',
   '&:hover': {
@@ -39,4 +38,31 @@ export const courseTeachCardFooterStyles: SxProps<Theme> = {
   alignItems: 'center',
   gap: 1,
   mt: 'auto',
+}
+
+export const courseTeachCardEditButtonStyles: SxProps<Theme> = {
+  py: 0.75,
+  display: 'flex',
+  justifyContent: 'center',
+  gap: 1,
+  flexGrow: 1,
+  color: '#fff',
+  borderRadius: 2,
+  backgroundColor: (theme) => theme.palette.primary.main,
+  ':hover': {
+    backgroundColor: (theme) => theme.palette.primary.dark,
+  },
+}
+
+export const courseTeachCardViewButtonStyles: SxProps<Theme> = {
+  p: 0.75,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  border: '1px solid',
+  borderColor: 'divider',
+  borderRadius: 2,
+  ':hover': {
+    backgroundColor: 'action.hover',
+  },
 }

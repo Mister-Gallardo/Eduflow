@@ -1,4 +1,4 @@
-import { db, Level, StepType } from '../src/index.js'
+import { Category, db, Level, StepType } from '../src/index.js'
 
 // --- Helper Functions to Generate Content ---
 
@@ -59,10 +59,10 @@ const createFreeTextContent = (question: string, minLength: number = 0) => ({
 
 // --- Data Definitions ---
 
-const categories = ['development', 'design', 'analytics', 'marketing']
+const categories = [Category.DEVELOPMENT, Category.DESIGN, Category.ANALYTICS, Category.MARKETING]
 
 const categoryTopics: Record<string, string[]> = {
-  development: [
+  DEVELOPMENT: [
     'Frontend: React 19 Mastery',
     'Backend Node.js & NestJS',
     'Go для высоконагруженных систем',
@@ -72,7 +72,7 @@ const categoryTopics: Record<string, string[]> = {
     'DevOps и CI/CD: Базовый курс',
     'Продвинутый TypeScript',
   ],
-  design: [
+  DESIGN: [
     'Основы UI/UX Дизайна',
     'Типографика как искусство',
     'Теория цвета и композиция',
@@ -82,7 +82,7 @@ const categoryTopics: Record<string, string[]> = {
     'Основы веб-анимации',
     'Паттерны мобильного дизайна',
   ],
-  analytics: [
+  ANALYTICS: [
     'Основы SQL для аналитиков',
     'Python в Data Science (Pandas)',
     'Машинное обучение Data Science',
@@ -92,7 +92,7 @@ const categoryTopics: Record<string, string[]> = {
     'Инженерия больших данных',
     'Спортивная аналитика',
   ],
-  marketing: [
+  MARKETING: [
     'Стратегия SEO-продвижения',
     'Контент-маркетинг',
     'Гид по SMM (Telegram, VK)',
@@ -189,7 +189,7 @@ async function main() {
           title: title,
           description: `Подробный курс по "${title}" в категории ${cat}.`,
           price: Math.floor(Math.random() * 20) * 1000,
-          duration: `${Math.floor(Math.random() * 40) + 10} часов`,
+          duration: Math.floor(Math.random() * 40) + 10,
           level: getRandomItem(levels),
           category: cat,
           authorId: testUserId!.id,

@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "Category" AS ENUM ('DEVELOPMENT', 'DESIGN', 'ANALYTICS', 'MARKETING');
+
+-- CreateEnum
 CREATE TYPE "Level" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
 
 -- CreateEnum
@@ -36,9 +39,9 @@ CREATE TABLE "Course" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
-    "duration" TEXT NOT NULL,
+    "duration" INTEGER NOT NULL,
     "level" "Level" NOT NULL,
-    "category" TEXT NOT NULL,
+    "category" "Category" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "authorId" TEXT NOT NULL,
@@ -95,6 +98,8 @@ CREATE TABLE "UserProgress" (
     "stepId" TEXT NOT NULL,
     "status" "StepStatus" NOT NULL DEFAULT 'NOT_STARTED',
     "answer" JSONB,
+    "reviewComment" TEXT,
+    "reviewedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

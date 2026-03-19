@@ -1,7 +1,8 @@
 import type { Prisma } from '@eduflow/db'
-import type { GetCoursesInput } from '@eduflow/shared'
+import type { GetCoursesInput, UpdateCourseInput } from '@eduflow/shared'
+import { TRPCError } from '@trpc/server'
 
-import type { Context } from '../../trpc/context.js'
+import type { AuthorizedContext, Context } from '../../trpc/context.js'
 
 export async function getCoursesService(ctx: Context, input: GetCoursesInput = {}) {
   const { search, categories, levels, minPrice, maxPrice, limit, sortBy } = input
@@ -57,4 +58,28 @@ export async function getCoursesService(ctx: Context, input: GetCoursesInput = {
   })
 
   return courses
+}
+
+// ─── Update Course ───
+
+export async function updateCourseService(ctx: AuthorizedContext, input: UpdateCourseInput) {
+  const course = await ctx.db.course.findUnique({
+    where: { id: input.id },
+    select: { authorId: true },
+  })
+
+  if (!course) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: 'Курс не найден' })
+  }
+
+  if (course.authorId !== ctx.me.id) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Нет прав для редактирования этого курса' })
+  }
+
+  const { id, ...rest } = input
+
+  return ctx.db.course.update({
+    where: { id },
+    data: rest,
+  })
 }
