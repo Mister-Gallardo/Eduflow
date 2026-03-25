@@ -106,17 +106,31 @@ const AccountMenu = () => {
     setAnchorEl(null)
   }
 
+  const utils = trpc.useUtils()
+
   const logoutMutation = trpc.auth.logout.useMutation({
     onSettled: () => {
-      // После logout не рефетчим все запросы, чтобы не ловить 401/refresh race.
-      queryClient.clear()
+      // Явно устанавливаем null для пользователя, чтобы UI сразу обновился (появилась кнопка Войти)
+      utils.auth.getMe.setData(undefined, null)
+
+      // Удаляем все запросы кроме 'auth', чтобы не оставлять старые данные в кэше
+      // и не триггерить перезапрос, который вызовет ошибку 401
+      queryClient.removeQueries({
+        predicate: (query) => {
+          const keyContext = query.queryKey[0] as string[]
+          return keyContext?.[0] !== 'auth'
+        },
+      })
     },
   })
 
   const performLogout = () => {
     handleClose()
-    void navigate(paths.home(), { replace: true })
-    logoutMutation.mutate()
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        void navigate(paths.home(), { replace: true })
+      },
+    })
   }
 
   return (
