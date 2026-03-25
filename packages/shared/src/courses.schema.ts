@@ -22,6 +22,7 @@ export const zGetCoursesInput = z
 export const zCourse = z.object({
   id: z.cuid(),
   title: z.string(),
+  description: z.string(),
   price: z.number(),
   duration: z.number(),
   category: z.string(),
@@ -38,10 +39,15 @@ export const zUpdateCourseInput = z.object({
   id: z.string(),
   title: z.string().min(1, 'Название обязательно').max(200),
   description: z.string().min(1, 'Описание обязательно').max(2000),
-  price: z.number().min(0, 'Цена не может быть отрицательной'),
-  duration: z.number().min(0).optional(),
+  price: z
+    .union([z.string(), z.number()])
+    .transform((val) => (val === '' || Number.isNaN(Number(val)) ? 0 : Number(val)))
+    .pipe(z.number().min(0, 'Цена не может быть отрицательной')),
+  duration: z
+    .union([z.string(), z.number()])
+    .transform((val) => (val === '' || Number.isNaN(Number(val)) ? 0 : Number(val)))
+    .pipe(z.number().min(0, 'Время не может быть отрицательным')),
   level: z.enum(COURSE_LEVELS),
   category: z.enum(COURSE_CATEGORIES),
 })
-
 export type UpdateCourseInput = z.infer<typeof zUpdateCourseInput>

@@ -1,0 +1,1 @@
+export { CourseEditorSidebar } from './ui'

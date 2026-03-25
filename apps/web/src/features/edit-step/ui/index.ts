@@ -1,3 +1,7 @@
+export { EditFreeTextStep } from './EditFreeTextStep'
+export { EditInputNumberStep } from './EditInputNumberStep'
+export { EditInputTextStep } from './EditInputTextStep'
 export { EditMatchingStep } from './EditMatchingStep'
 export { EditTestStep } from './EditTestStep'
 export { EditTextStep } from './EditTextStep'
+export { EditVideoStep } from './EditVideoStep'

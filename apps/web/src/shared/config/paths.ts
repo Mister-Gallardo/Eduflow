@@ -15,6 +15,8 @@ export const paths = {
     view: (courseId: string, stepId?: string) =>
       stepId ? `/course/${courseId}/step/${stepId}` : `/course/${courseId}`,
 
-    edit: (courseId: string, stepId?: string) => `${paths.course.view(courseId, stepId)}/edit`,
+    editPath: () => '/course/:courseId/edit',
+
+    edit: (courseId: string) => `/course/${courseId}/edit`,
   },
 } as const

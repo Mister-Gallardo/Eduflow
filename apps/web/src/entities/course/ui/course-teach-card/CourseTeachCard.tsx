@@ -127,7 +127,11 @@ export const CourseTeachCard = ({ course, index }: TeachCourseCardProps) => {
           </Box>
 
           <Box sx={courseTeachCardFooterStyles}>
-            <Box component={Link} to={'/'} sx={courseTeachCardEditButtonStyles}>
+            <Box
+              component={Link}
+              to={paths.course.edit(course.id)}
+              sx={courseTeachCardEditButtonStyles}
+            >
               <EditOutlinedIcon sx={{ fontSize: 16 }} />
               <Typography sx={{ fontWeight: 600, fontSize: 12, color: 'inherit' }}>
                 Редактировать

@@ -113,7 +113,7 @@ export const AuthorNavMenu = ({
               component={Link}
               to={
                 key === 'edit'
-                  ? '/'
+                  ? paths.course.edit(courseId)
                   : key === 'settings'
                     ? paths.teach()
                     : paths.course.view(courseId, stepId)

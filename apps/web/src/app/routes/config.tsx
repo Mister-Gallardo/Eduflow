@@ -5,7 +5,7 @@ import { HomePage } from '@/pages/home'
 import { paths } from '@/shared/config/paths'
 import { GlobalLoader } from '@/shared/ui/feedback/global-loader'
 
-import { AppLayout, AuthLayout, CourseLayout, RootLayout } from '../layouts'
+import { AppLayout, AuthLayout, CourseEditLayout, CourseSolveLayout, RootLayout } from '../layouts'
 
 export const routeConfig = createBrowserRouter([
   {
@@ -81,15 +81,31 @@ export const routeConfig = createBrowserRouter([
       {
         element: (
           <AuthGuard mode="private">
-            <CourseLayout />
+            <CourseSolveLayout />
           </AuthGuard>
         ),
         children: [
           {
             path: paths.course.path(),
             lazy: async () => {
-              const { CoursePage } = await import('@/pages/course')
-              return { Component: CoursePage }
+              const { CourseSolvePage } = await import('@/pages/course-solve')
+              return { Component: CourseSolvePage }
+            },
+          },
+        ],
+      },
+      {
+        element: (
+          <AuthGuard mode="private">
+            <CourseEditLayout />
+          </AuthGuard>
+        ),
+        children: [
+          {
+            path: paths.course.editPath(),
+            lazy: async () => {
+              const { CourseEditPage } = await import('@/pages/course-edit')
+              return { Component: CourseEditPage }
             },
           },
         ],

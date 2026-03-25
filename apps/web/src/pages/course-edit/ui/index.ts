@@ -1,0 +1,1 @@
+export { CourseEditPage } from './CourseEditPage'

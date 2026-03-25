@@ -1,5 +1,5 @@
 import { StepBody } from '@/widgets/step-body'
 
-export const CoursePage = () => {
+export const CourseSolvePage = () => {
   return <StepBody />
 }

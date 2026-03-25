@@ -11,7 +11,7 @@ import { CourseSidebar } from '@/widgets/course-sidebar'
 import { Header, HeaderActions, LearnHeaderLeft } from '@/widgets/header'
 import { StepsPanel } from '@/widgets/steps-panel'
 
-export const CourseLayout = () => {
+export const CourseSolveLayout = () => {
   const theme = useTheme()
   const isMobile = useIsMobile()
 

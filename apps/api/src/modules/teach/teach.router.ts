@@ -11,8 +11,11 @@ import {
   getTeachStatsService,
   reviewReplyService,
 } from './teach.service.js'
+import { teachEditorRouter } from './teach-editor.router.js'
 
 export const teachRouter = router({
+  editor: teachEditorRouter,
+
   getStats: protectedProcedure.query(({ ctx }) => getTeachStatsService(ctx)),
 
   getCourses: protectedProcedure.query(({ ctx }) => getTeachCoursesService(ctx)),

@@ -1,2 +1,6 @@
-export type { UpdateCourseInput as CourseSettingsFormSchema } from '@eduflow/shared'
-export { zUpdateCourseInput as courseSettingsFormSchema } from '@eduflow/shared'
+import { zUpdateCourseInput } from '@eduflow/shared'
+import type { z } from 'zod'
+
+export type CourseSettingsFormSchema = z.infer<typeof zUpdateCourseInput>
+export type CourseSettingsFormInput = z.input<typeof zUpdateCourseInput>
+export { zUpdateCourseInput as courseSettingsFormSchema }

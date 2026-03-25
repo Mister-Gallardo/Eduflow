@@ -87,18 +87,18 @@ export const validateAnswer = (
   switch (type) {
     case 'TEST_SINGLE': {
       const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
-      const correctOption = options?.find((o) => o.isCorrect)
-      const correctId = correctOption?.id ?? (content.correctOptionId as string | undefined)
+      const correctId =
+        (content.correctOptionId as string | undefined) ?? options?.find((o) => o.isCorrect)?.id
       const isCorrect = typeof userAnswer === 'string' && correctId === userAnswer
       return { isCorrect }
     }
 
     case 'TEST_MULTIPLE': {
       const options = content.options as { id: string; isCorrect?: boolean }[] | undefined
+      const correctOptions = options?.filter((o) => o.isCorrect)
       const correctIds = new Set(
-        options?.filter((o) => o.isCorrect).map((o) => o.id) ??
-          (content.correctOptionIds as string[] | undefined) ??
-          [],
+        (content.correctOptionIds as string[] | undefined) ??
+          (correctOptions && correctOptions.length > 0 ? correctOptions.map((o) => o.id) : []),
       )
       const userIds = new Set(Array.isArray(userAnswer) ? userAnswer.map(String) : [])
 
