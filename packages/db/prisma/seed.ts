@@ -1,4 +1,5 @@
 import { Category, db, Level, StepType } from '../src/index.js'
+import argon2 from 'argon2'
 
 // --- Helper Functions to Generate Content ---
 
@@ -172,10 +173,27 @@ async function main() {
   await db.module.deleteMany()
   await db.course.deleteMany()
 
-  const testUserId = await db.user.findUnique({
-    where: { email: 'name1@mail.ru' },
-    select: { id: true },
-  })
+  const passwordHash = async (password: string) =>
+    await argon2.hash(password, {
+      type: argon2.argon2id,
+      memoryCost: 19456,
+      timeCost: 2,
+      parallelism: 1,
+    })
+
+  const teacherData = [
+    { email: 'name1@mail.ru', fullName: 'Name1', password: 'Pass12345', role: 'TEACHER' as const },
+    { email: 'name2@mail.ru', fullName: 'Name2', password: 'Pass12345', role: 'TEACHER' as const },
+    { email: 'name3@mail.ru', fullName: 'Name3', password: 'Pass12345', role: 'TEACHER' as const },
+  ]
+
+  const teacherUsers = await Promise.all(
+    teacherData.map(async ({ password, ...data }) =>
+      db.user.create({
+        data: { ...data, passwordHash: await passwordHash(password) },
+      }),
+    ),
+  )
 
   // 4 категории
   for (const cat of categories) {
@@ -192,7 +210,7 @@ async function main() {
           duration: Math.floor(Math.random() * 40) + 10,
           level: getRandomItem(levels),
           category: cat,
-          authorId: testUserId!.id,
+          authorId: teacherUsers[0].id,
         },
       })
 

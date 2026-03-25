@@ -10,28 +10,32 @@ import { Logo } from '@/shared/ui/data-display/logo'
 import { PageContainer } from '@/shared/ui/layout/page-container'
 import { Header, HeaderActions, HeaderNavigation, MobileNavigation } from '@/widgets/header'
 
-const navigationItems = [
-  {
-    label: 'Каталог',
-    to: paths.home(),
-  },
-  {
-    label: 'Моё обучение',
-    to: paths.learn(),
-  },
-  {
-    label: 'Преподавание',
-    icon: <SchoolOutlinedIcon fontSize="small" />,
-    to: paths.teach(),
-  },
-]
-
 export const AppLayout = () => {
   const isMobile = useIsMobile()
 
   const { user, isUserLoading } = useGetMe()
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const navigationItems = [
+    {
+      label: 'Каталог',
+      to: paths.home(),
+    },
+    {
+      label: 'Моё обучение',
+      to: paths.learn(),
+    },
+    ...(user?.role === 'TEACHER'
+      ? [
+          {
+            label: 'Преподавание',
+            icon: <SchoolOutlinedIcon fontSize="small" />,
+            to: paths.teach(),
+          },
+        ]
+      : []),
+  ]
 
   return (
     <>

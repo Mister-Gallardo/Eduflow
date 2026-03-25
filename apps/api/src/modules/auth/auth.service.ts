@@ -1,5 +1,5 @@
 import type { Prisma, PrismaClient } from '@eduflow/db'
-import type { LoginInput, RegisterInput } from '@eduflow/shared'
+import type { LoginInput, RegisterInput, UserRole } from '@eduflow/shared'
 import { TRPCError } from '@trpc/server'
 
 import { ExpectedError } from '../../lib/error.js'
@@ -182,7 +182,7 @@ export async function logoutService(ctx: Context): Promise<{ ok: true }> {
   return { ok: true }
 }
 
-export function getMeService(ctx: Context): { id: string } | null {
+export async function getMeService(ctx: Context): Promise<{ id: string; role: UserRole } | null> {
   if (ctx.isTokenExpired) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Access token expired.' })
   }
@@ -191,7 +191,16 @@ export function getMeService(ctx: Context): { id: string } | null {
     return null
   }
 
+  const user = await ctx.db.user.findUnique({
+    where: { id: ctx.me.id },
+  })
+
+  if (!user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+  }
+
   return {
     id: ctx.me.id,
+    role: user.role,
   }
 }

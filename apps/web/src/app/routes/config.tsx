@@ -63,7 +63,7 @@ export const routeConfig = createBrowserRouter([
       },
       {
         element: (
-          <AuthGuard mode="private">
+          <AuthGuard mode="private" roles="TEACHER">
             <AppLayout />
           </AuthGuard>
         ),
@@ -96,7 +96,7 @@ export const routeConfig = createBrowserRouter([
       },
       {
         element: (
-          <AuthGuard mode="private">
+          <AuthGuard mode="private" roles="TEACHER">
             <CourseEditLayout />
           </AuthGuard>
         ),

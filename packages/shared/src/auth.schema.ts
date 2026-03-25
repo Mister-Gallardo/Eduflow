@@ -18,5 +18,8 @@ export const zLoginInput = z.object({
   password: z.string().min(1, 'Введите пароль'),
 })
 
+export const zUserRole = z.enum(['STUDENT', 'TEACHER']).default('STUDENT')
+
 export type RegisterInput = z.infer<typeof zRegisterInput>
 export type LoginInput = z.infer<typeof zLoginInput>
+export type UserRole = z.infer<typeof zUserRole>

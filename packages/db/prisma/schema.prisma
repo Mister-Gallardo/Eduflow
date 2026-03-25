@@ -13,6 +13,8 @@ model User {
   fullName     String
   passwordHash String
 
+  role Role @default(STUDENT)
+
   createdAt DateTime @default(now())
 
   sessions Session[]
@@ -129,6 +131,11 @@ model UserProgress {
   @@unique([userId, stepId])
   @@index([userId])
   @@index([stepId])
+}
+
+enum Role {
+  STUDENT
+  TEACHER
 }
 
 enum Category {
