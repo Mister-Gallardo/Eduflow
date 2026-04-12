@@ -81,6 +81,7 @@ export const StepBody = () => {
         stepId={stepId}
         status={step.userProgress?.status}
         savedAnswer={step.userProgress?.answer}
+        reviewComment={step.userProgress?.reviewComment}
       />
 
       <StepNavigation prevStepId={prevStepId} nextStepId={nextStepId} courseId={courseId} />

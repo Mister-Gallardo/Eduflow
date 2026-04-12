@@ -5,6 +5,7 @@ import { alpha } from '@mui/material/styles'
 import { stepQuestionStyles } from '@/shared/ui/styles/typography'
 
 import { getFreeTextStyles } from '../../../lib/utils'
+import { ReviewComment } from '../../review-comment'
 
 import { freeTextFooterStyles } from './FreeTextStep.styles'
 
@@ -14,6 +15,7 @@ export interface FreeTextStepProps {
   isSubmitted: boolean
   status?: StepStatus
   onChange: (value: string) => void
+  reviewComment?: string | null
 }
 
 export const FreeTextStep = ({
@@ -22,6 +24,7 @@ export const FreeTextStep = ({
   value,
   status,
   onChange,
+  reviewComment,
 }: FreeTextStepProps) => {
   const minLength = content.minLength ?? 0
   const charCount = value.trim().length
@@ -73,6 +76,8 @@ export const FreeTextStep = ({
           {minLength > 0 && ` / ${minLength}`}
         </Typography>
       </Box>
+
+      {reviewComment && <ReviewComment comment={reviewComment} />}
     </Box>
   )
 }

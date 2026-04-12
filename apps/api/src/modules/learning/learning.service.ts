@@ -130,7 +130,7 @@ export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepD
   // Получаем прогресс юзера по этому шагу
   let userProgress = await ctx.db.userProgress.findUnique({
     where: { userId_stepId: { userId: ctx.me.id, stepId } },
-    select: { status: true, answer: true },
+    select: { status: true, answer: true, reviewComment: true },
   })
 
   const isCompletableStep = COMPLETABLE_STEP_TYPES.includes(step.type)
@@ -140,7 +140,7 @@ export const getStepDataService = async (ctx: AuthorizedContext, input: GetStepD
       where: { userId_stepId: { userId: ctx.me.id, stepId } },
       update: { status: StepStatus.APPROVED, updatedAt: new Date() },
       create: { userId: ctx.me.id, stepId, status: StepStatus.APPROVED },
-      select: { status: true, answer: true },
+      select: { status: true, answer: true, reviewComment: true },
     })
   }
 

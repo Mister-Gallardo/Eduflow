@@ -40,4 +40,5 @@ export interface SolveFreeTextStepProps {
   stepId: string
   status?: StepStatus
   savedAnswer?: string | null
+  reviewComment?: string | null
 }

@@ -10,6 +10,7 @@ export const SolveFreeTextStep = ({
   stepId,
   status,
   savedAnswer,
+  reviewComment,
 }: SolveFreeTextStepProps) => {
   const { value, isSubmitted, isPending, canSubmit, onChange, onSubmit, onRetry } = useFreeTextStep(
     { content, courseId, stepId, status, savedAnswer },
@@ -23,6 +24,7 @@ export const SolveFreeTextStep = ({
         isSubmitted={isSubmitted}
         status={status}
         onChange={onChange}
+        reviewComment={reviewComment}
       />
       <StepSubmitActions
         status={status}

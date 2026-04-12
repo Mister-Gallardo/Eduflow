@@ -37,6 +37,7 @@ interface StepRendererViewProps {
   stepId: string
   status?: StepStatus
   savedAnswer?: unknown
+  reviewComment?: string | null
 }
 
 /**
@@ -56,7 +57,7 @@ export const StepRenderer = (props: StepRendererProps) => {
   const { step, mode = 'view' } = props
 
   if (mode === 'view') {
-    const { courseId, stepId, status, savedAnswer } = props as StepRendererViewProps
+    const { courseId, stepId, status, savedAnswer, reviewComment } = props as StepRendererViewProps
 
     switch (step.type) {
       case 'TEXT':
@@ -115,6 +116,7 @@ export const StepRenderer = (props: StepRendererProps) => {
             stepId={stepId}
             status={status}
             savedAnswer={savedAnswer as string | null | undefined}
+            reviewComment={reviewComment}
           />
         )
 
