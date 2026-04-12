@@ -24,9 +24,13 @@ export default defineConfig([
     '**/*.tsbuildinfo',
     'eslint.config.mjs',
     '*/jest.config.mjs',
+    '**/*.test.ts',
+    '**/*.test.tsx',
+    'vitest.config.ts',
     'jest.config.mjs',
     'packages/db/prisma/seed.ts',
     'packages/db/prisma.config.ts',
+    'setupTests.ts',
   ]),
 
   /* -------------------------------------------------- */
@@ -51,7 +55,7 @@ export default defineConfig([
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['*.mjs', 'eslint.config.mjs'],
+          allowDefaultProject: ['*.mjs', 'eslint.config.mjs', 'setupTests.ts'],
         },
         tsconfigRootDir: import.meta.dirname,
       },
@@ -209,6 +213,20 @@ export default defineConfig([
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
     },
   },
 ])

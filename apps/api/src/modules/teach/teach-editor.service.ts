@@ -23,6 +23,8 @@ import { TRPCError } from '@trpc/server'
 
 import type { AuthorizedContext } from '../../trpc/context.js'
 
+import { assertTeacher } from './lib/utils.js'
+
 // ─── Helpers ───
 
 /**
@@ -30,6 +32,7 @@ import type { AuthorizedContext } from '../../trpc/context.js'
  * Выбрасывает NOT_FOUND или FORBIDDEN при нарушении условий.
  */
 async function assertCourseOwner(ctx: AuthorizedContext, courseId: string): Promise<void> {
+  await assertTeacher(ctx)
   const course = await ctx.db.course.findUnique({
     where: { id: courseId },
     select: { authorId: true },
@@ -149,6 +152,8 @@ export async function createCourseService(
   ctx: AuthorizedContext,
   input: CreateCourseInput,
 ): Promise<CreatedCourse> {
+  await assertTeacher(ctx)
+
   return ctx.db.course.create({
     data: {
       ...input,

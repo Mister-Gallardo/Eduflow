@@ -12,9 +12,12 @@ import {
 
 import type { AuthorizedContext } from '../../trpc/context.js'
 
+import { assertTeacher } from './lib/utils.js'
+
 // ─── Course By Id ───
 
 export async function getTeachCourseByIdService(ctx: AuthorizedContext, courseId: string) {
+  await assertTeacher(ctx)
   return ctx.db.course.findFirstOrThrow({
     where: { id: courseId, authorId: ctx.me.id },
     select: {
@@ -32,6 +35,7 @@ export async function getTeachCourseByIdService(ctx: AuthorizedContext, courseId
 // ─── Stats ───
 
 export async function getTeachStatsService(ctx: AuthorizedContext): Promise<TeachStats> {
+  await assertTeacher(ctx)
   const authorId = ctx.me.id
 
   const [totalCourses, totalStudents, totalCompletedSteps, pendingReviewCount] = await Promise.all([
@@ -62,6 +66,7 @@ export async function getTeachStatsService(ctx: AuthorizedContext): Promise<Teac
 // ─── Courses ───
 
 export async function getTeachCoursesService(ctx: AuthorizedContext): Promise<TeachCourse[]> {
+  await assertTeacher(ctx)
   const authorId = ctx.me.id
 
   const courses = await ctx.db.course.findMany({
@@ -240,6 +245,7 @@ export async function getPendingRepliesService(
   ctx: AuthorizedContext,
   input: GetRepliesServiceInput,
 ): Promise<PendingSubmissionsResult> {
+  await assertTeacher(ctx)
   const authorId = ctx.me.id
   const search = input?.search
   const cursor = input?.cursor
@@ -268,6 +274,7 @@ export async function getReviewedRepliesService(
   ctx: AuthorizedContext,
   input: GetRepliesServiceInput,
 ): Promise<PendingSubmissionsResult> {
+  await assertTeacher(ctx)
   const authorId = ctx.me.id
   const search = input?.search
   const cursor = input?.cursor
@@ -301,6 +308,7 @@ export async function reviewReplyService(
   ctx: AuthorizedContext,
   input: ReviewReplyInput,
 ): Promise<void> {
+  await assertTeacher(ctx)
   const authorId = ctx.me.id
 
   // Проверяем, что ответ существует и принадлежит курсу текущего автора

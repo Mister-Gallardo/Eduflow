@@ -175,11 +175,11 @@ const SortableItemWrapper = ({
 
 // ─── Drag Handle ───
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DragHandle = ({
   listeners,
   sx,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   listeners: Record<string, any> | undefined
   sx?: SxProps<Theme>
 }) => {
