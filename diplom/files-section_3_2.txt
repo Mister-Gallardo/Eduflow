@@ -1,0 +1,31 @@
+# ── 1. ХРАНЕНИЕ ДАННЫХ И СХЕМЫ БЕЗОПАСНОСТИ ──
+# Описание моделей User и Session, а также ролевой модели (Role enum)
+packages/db/prisma/schema.prisma
+
+packages/shared/src/learning.schema.ts
+
+# ── 5. КЛИЕНТСКАЯ БЕЗОПАСНОСТЬ ──
+# Интеграция tRPC с авторизацией (передача credentials)
+apps/web/src/shared/api/trpc.ts
+apps/web/src/app/providers/TrpcProvider.tsx
+# Слой защиты роутов на клиенте (PrivateRoute / AuthGuard)
+apps/web/src/app/routes/config.tsx
+apps/web/src/app/routes/AppRouter.tsx
+apps/web/src/entities/user/model/useGetMe.ts
+apps/web/src/features/auth/ui/auth-guard/AuthGuard.tsx
+# Глобальное состояние авторизации пользователя
+apps/web/src/features/auth/ui/register-form/RegisterForm.tsx
+apps/web/src/widgets/header/ui/header-actions/HeaderActions.tsx
+apps/web/src/app/layouts/CourseSolveLayout.tsx
+apps/web/src/entities/course-navigation/ui/step-item/StepItem.tsx
+apps/web/src/entities/step-content/ui/StepRenderer.tsx
+apps/web/src/entities/step-content/ui/step-types/matching-step/MatchingStep.tsx
+apps/web/src/features/solve-step/ui/solve-matching-step/SolveMatchingStep.tsx
+apps/web/src/features/solve-step/model/use-matching-step.ts
+apps/web/src/features/edit-step/ui/EditMatchingStep.tsx
+apps/web/src/features/edit-step/model/use-matching-step-form.ts
+apps/web/src/widgets/step-body/ui/StepBody.tsx
+apps/web/src/widgets/course-teach/ui/CourseTeach.tsx
+apps/web/src/widgets/step-editor-body/ui/StepEditorBody.tsx
+apps/web/src/app/App.tsx
+apps/web/src/main.tsx

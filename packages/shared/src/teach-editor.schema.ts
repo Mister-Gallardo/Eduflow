@@ -3,10 +3,12 @@ import { z } from 'zod'
 import { COURSE_CATEGORIES, COURSE_LEVELS } from './courses.schema.js'
 import type { StepTypeSchema } from './learning.schema.js'
 import {
+  FillGapsContentSchema,
   FreeTextContentSchema,
   InputNumberContentSchema,
   InputTextContentSchema,
   MatchingContentSchema,
+  OrderingContentSchema,
   TestMultipleContentSchema,
   TestSingleContentSchema,
   TextContentSchema,
@@ -21,9 +23,11 @@ export const EDITOR_STEP_TYPES = [
   'TEST_SINGLE',
   'TEST_MULTIPLE',
   'MATCHING',
+  'ORDERING',
   'INPUT_TEXT',
   'INPUT_NUMBER',
   'FREE_TEXT',
+  'FILL_GAPS',
 ] as const
 
 export const EditorStepTypeSchema = z.enum(EDITOR_STEP_TYPES)
@@ -37,9 +41,11 @@ export const StepContentInputSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('TEST_SINGLE'), content: TestSingleContentSchema }),
   z.object({ type: z.literal('TEST_MULTIPLE'), content: TestMultipleContentSchema }),
   z.object({ type: z.literal('MATCHING'), content: MatchingContentSchema }),
+  z.object({ type: z.literal('ORDERING'), content: OrderingContentSchema }),
   z.object({ type: z.literal('INPUT_TEXT'), content: InputTextContentSchema }),
   z.object({ type: z.literal('INPUT_NUMBER'), content: InputNumberContentSchema }),
   z.object({ type: z.literal('FREE_TEXT'), content: FreeTextContentSchema }),
+  z.object({ type: z.literal('FILL_GAPS'), content: FillGapsContentSchema }),
 ])
 
 export type StepContentInput = z.infer<typeof StepContentInputSchema>

@@ -4,14 +4,19 @@ import { useCallback, useState } from 'react'
 
 import { useCourseEditorContext } from '@/entities/course-editor'
 import {
+  EditFillGapsStep,
   EditFreeTextStep,
   EditInputNumberStep,
   EditInputTextStep,
   EditMatchingStep,
+  EditOrderingStep,
   EditTestStep,
   EditTextStep,
   EditVideoStep,
+  restoreRawText,
+  useFillGapsStepForm,
   useMatchingStepForm,
+  useOrderingStepForm,
   useTestStepForm,
   useTextStepForm,
 } from '@/features/edit-step'
@@ -24,9 +29,11 @@ const STEP_TYPE_LABELS: Record<EditorStepType, string> = {
   TEST_SINGLE: 'Тест (один)',
   TEST_MULTIPLE: 'Тест (несколько)',
   MATCHING: 'Соответствие',
+  ORDERING: 'Правильный порядок',
   INPUT_TEXT: 'Ввод текста',
   INPUT_NUMBER: 'Ввод числа',
   FREE_TEXT: 'Свободный ответ',
+  FILL_GAPS: 'Пропуски',
 }
 
 // ─── Main Component ───
@@ -148,12 +155,16 @@ const StepContentEditor = ({ type, content, onSave }: StepContentEditorProps) =>
       return <TestEditor testType={type} content={content} onSave={onSave} />
     case 'MATCHING':
       return <MatchingEditor content={content} onSave={onSave} />
+    case 'ORDERING':
+      return <OrderingEditor content={content} onSave={onSave} />
     case 'INPUT_TEXT':
       return <InputTextEditor content={content} onSave={onSave} />
     case 'INPUT_NUMBER':
       return <InputNumberEditor content={content} onSave={onSave} />
     case 'FREE_TEXT':
       return <FreeTextEditor content={content} onSave={onSave} />
+    case 'FILL_GAPS':
+      return <FillGapsEditor content={content} onSave={onSave} />
     default:
       return (
         <Typography variant="body2" color="error">
@@ -277,6 +288,35 @@ const MatchingEditor = ({ content, onSave }: EditorProps) => {
   )
 }
 
+const OrderingEditor = ({ content, onSave }: EditorProps) => {
+  const typedContent = content as {
+    items?: { id: string; content: string }[]
+    correctOrder?: string[]
+  } | null
+
+  const initialItems = typedContent?.items?.map((item) => ({
+    id: item.id,
+    content: item.content,
+  }))
+
+  const form = useOrderingStepForm(initialItems)
+
+  const handleSave = () => {
+    onSave(form.getContent())
+  }
+
+  return (
+    <Box onBlur={handleSave}>
+      <EditOrderingStep
+        items={form.items}
+        onAddItem={form.addItem}
+        onRemoveItem={form.removeItem}
+        onUpdateItem={form.updateItem}
+      />
+    </Box>
+  )
+}
+
 const InputTextEditor = ({ content, onSave }: EditorProps) => {
   const typedContent = content as {
     question?: string
@@ -354,6 +394,34 @@ const FreeTextEditor = ({ content, onSave }: EditorProps) => {
         minLength={minLength}
         onQuestionChange={setQuestion}
         onMinLengthChange={setMinLength}
+      />
+    </Box>
+  )
+}
+
+const FillGapsEditor = ({ content, onSave }: EditorProps) => {
+  const typedContent = content as {
+    text?: string
+    gaps?: { id: string; correctAnswer?: string }[]
+  } | null
+
+  const initialRawText =
+    typedContent?.text && typedContent?.gaps
+      ? restoreRawText(typedContent.text, typedContent.gaps)
+      : ''
+
+  const form = useFillGapsStepForm(initialRawText)
+
+  const handleSave = () => {
+    onSave(form.getContent())
+  }
+
+  return (
+    <Box onBlur={handleSave}>
+      <EditFillGapsStep
+        rawText={form.rawText}
+        gapCount={form.gapCount}
+        onRawTextChange={form.setRawText}
       />
     </Box>
   )

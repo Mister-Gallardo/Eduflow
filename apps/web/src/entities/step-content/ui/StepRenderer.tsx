@@ -13,6 +13,18 @@ const SolveMatchingStep = lazy(() =>
   })),
 )
 
+const SolveOrderingStep = lazy(() =>
+  import('@/features/solve-step/ui/solve-ordering-step').then((m) => ({
+    default: m.SolveOrderingStep,
+  })),
+)
+
+const SolveFillGapsStep = lazy(() =>
+  import('@/features/solve-step/ui/solve-fill-gaps-step').then((m) => ({
+    default: m.SolveFillGapsStep,
+  })),
+)
+
 const SolveVideoStep = lazy(() =>
   import('@/features/solve-step/ui/solve-video-step').then((m) => ({
     default: m.SolveVideoStep,
@@ -93,6 +105,19 @@ export const StepRenderer = (props: StepRendererProps) => {
           </Suspense>
         )
 
+      case 'ORDERING':
+        return (
+          <Suspense fallback={<StepContentSkeleton />}>
+            <SolveOrderingStep
+              content={step.content}
+              courseId={courseId}
+              stepId={stepId}
+              status={status}
+              savedAnswer={savedAnswer as string[] | null | undefined}
+            />
+          </Suspense>
+        )
+
       case 'INPUT_TEXT':
       case 'INPUT_NUMBER':
         return (
@@ -120,10 +145,24 @@ export const StepRenderer = (props: StepRendererProps) => {
           />
         )
 
+      case 'FILL_GAPS':
+        return (
+          <Suspense fallback={<StepContentSkeleton />}>
+            <SolveFillGapsStep
+              key={stepId}
+              content={step.content}
+              courseId={courseId}
+              stepId={stepId}
+              status={status}
+              savedAnswer={savedAnswer as Record<string, string> | null | undefined}
+            />
+          </Suspense>
+        )
+
       default:
         return (
           <Typography variant="h6" color="error">
-            Тип контента &quot;{step.type}&quot; пока не поддерживается
+            Тип контента &quot;{(step as { type: string }).type}&quot; пока не поддерживается
           </Typography>
         )
     }
@@ -162,6 +201,24 @@ export const StepRenderer = (props: StepRendererProps) => {
         </Suspense>
       )
 
+    case 'ORDERING':
+      return (
+        <Suspense fallback={<StepContentSkeleton />}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, fontStyle: 'italic' }}>
+            Для редактирования шага используйте useOrderingStepForm из features/edit-step.
+          </Typography>
+        </Suspense>
+      )
+
+    case 'FILL_GAPS':
+      return (
+        <Suspense fallback={<StepContentSkeleton />}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, fontStyle: 'italic' }}>
+            Для редактирования шага используйте useFillGapsStepForm из features/edit-step.
+          </Typography>
+        </Suspense>
+      )
+
     case 'INPUT_TEXT':
     case 'INPUT_NUMBER':
       return (
@@ -175,7 +232,7 @@ export const StepRenderer = (props: StepRendererProps) => {
     default:
       return (
         <Typography variant="h6" color="error">
-          Тип контента &quot;{step.type}&quot; пока не поддерживается
+          Тип контента &quot;{(step as { type: string }).type}&quot; пока не поддерживается
         </Typography>
       )
   }

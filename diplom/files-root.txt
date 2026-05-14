@@ -1,0 +1,12 @@
+# Корневые конфигурационные файлы проекта
+# Добавляй/удаляй строки — каждая строка = путь к файлу от корня проекта
+# Строки начинающиеся с # игнорируются
+
+package.json
+pnpm-workspace.yaml
+tsconfig.base.json
+tsconfig.json
+vitest.config.ts
+eslint.config.mjs
+.prettierrc.yaml
+.lintstagedrc.mjs

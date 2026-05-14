@@ -1,0 +1,60 @@
+# ============================================================
+# Файлы для раздела диплома:
+# "2.4 Разработка модели информационной безопасности и системы управления сессиями"
+# ============================================================
+
+# ── 1. ХРАНЕНИЕ ДАННЫХ И СХЕМЫ БЕЗОПАСНОСТИ ──
+# Описание моделей User и Session, а также ролевой модели (Role enum)
+packages/db/prisma/schema.prisma
+packages/db/prisma/seed.ts
+
+# Валидация входных данных для регистрации и входа (Zod-схемы)
+packages/shared/src/learning.schema.ts
+
+packages/logger/src/index.ts
+packages/logger/package.json
+
+apps/api/src/app.ts
+apps/api/src/server.ts
+
+# ── 2. ЯДРО СИСТЕМЫ АУТЕНТИФИКАЦИИ (AUTH MODULE) ──
+# Маршрутизация запросов аутентификации
+apps/api/src/modules/auth/auth.router.ts
+# Бизнес-логика: login, register, logout, refresh-tokens
+apps/api/src/modules/auth/auth.service.ts
+# Работа с БД в контексте безопасности (поиск пользователя, создание сессий)
+apps/api/src/modules/auth/session.repository.ts
+
+# ── 3. КРИПТОГРАФИЯ И МЕХАНИЗМЫ ЗАЩИТЫ (LIB) ──
+# Хэширование паролей (использование Argon2id)
+apps/api/src/modules/auth/lib/argon2.ts
+# Работа с JWT: генерация, верификация, сроки жизни access-токенов
+apps/api/src/modules/auth/lib/jwt.ts
+# Конфигурация Cookies (HttpOnly, Secure, SameSite) — защита от XSS
+apps/api/src/modules/auth/lib/cookies.ts
+# Логика обновления токенов и защиты от повторного использования (Refresh Token Rotation)
+apps/api/src/modules/auth/lib/refresh.ts
+apps/api/src/modules/auth/lib/password.ts
+
+# ── 4. ИНФРАСТРУКТУРА ДОСТУПА И MIDDLEWARE ──
+# Формирование контекста запроса (извлечение пользователя из сессии/куки)
+apps/api/src/trpc/context.ts
+# Защищенные процедуры (protectedProcedure) и проверка ролей (RBAC)
+apps/api/src/trpc/trpc.ts
+apps/api/src/trpc/router.ts
+# Очистка истекших сессий (фоновая задача)
+apps/api/src/cron/cleanupSessions.job.ts
+apps/api/src/cron/index.ts
+# Валидация секретов окружения (JWT_SECRET и др.)
+apps/api/src/lib/env.ts
+
+apps/api/src/modules/courses/courses.service.ts
+
+apps/api/src/modules/enrollment/enrollment.service.ts
+
+apps/api/src/modules/learning/lib/utils.ts
+apps/api/src/modules/learning/learning.service.ts
+
+apps/api/src/modules/teach/lib/utils.ts
+apps/api/src/modules/teach/teach-editor.service.ts
+apps/api/src/modules/teach/teach.service.ts

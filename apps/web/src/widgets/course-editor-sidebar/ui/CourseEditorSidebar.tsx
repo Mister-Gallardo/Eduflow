@@ -27,7 +27,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import OndemandVideoOutlinedIcon from '@mui/icons-material/OndemandVideoOutlined'
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
+import ReorderOutlinedIcon from '@mui/icons-material/ReorderOutlined'
 import ShortTextIcon from '@mui/icons-material/ShortText'
+import SpaceBarOutlinedIcon from '@mui/icons-material/SpaceBarOutlined'
 import TextFieldsOutlinedIcon from '@mui/icons-material/TextFieldsOutlined'
 import type { SxProps, Theme } from '@mui/material'
 import {
@@ -56,9 +58,11 @@ const STEP_TYPE_ICONS: Record<string, ReactElement> = {
   TEST_SINGLE: <RadioButtonCheckedIcon sx={{ fontSize: 16 }} />,
   TEST_MULTIPLE: <CheckBoxOutlinedIcon sx={{ fontSize: 16 }} />,
   MATCHING: <CompareArrowsIcon sx={{ fontSize: 16 }} />,
+  ORDERING: <ReorderOutlinedIcon sx={{ fontSize: 16 }} />,
   INPUT_TEXT: <TextFieldsOutlinedIcon sx={{ fontSize: 16 }} />,
   INPUT_NUMBER: <ShortTextIcon sx={{ fontSize: 16 }} />,
   FREE_TEXT: <QuizOutlinedIcon sx={{ fontSize: 16 }} />,
+  FILL_GAPS: <SpaceBarOutlinedIcon sx={{ fontSize: 16 }} />,
 }
 
 // ─── Editable Text Component ───

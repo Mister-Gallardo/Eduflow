@@ -1,0 +1,46 @@
+# ============================================================
+# Файлы для раздела диплома:
+# "2.1 Формализация объектно-информационной модели и проектирование БД"
+# ============================================================
+
+# ── 1. СХЕМА ДАННЫХ (Prisma) — ядро раздела ──
+# Полное описание всех моделей, связей, enum-ов, индексов
+packages/db/prisma/schema.prisma
+
+# ── 2. SQL-МИГРАЦИИ — реальный DDL, типы, ключи, ограничения ──
+packages/db/prisma/migrations/20260317120250_init/migration.sql
+packages/db/prisma/migrations/20260325122535_add_role_to_user/migration.sql
+
+# ── 3. КОНФИГУРАЦИЯ Prisma ──
+packages/db/prisma.config.ts
+packages/db/package.json
+
+# ── 4. КЛИЕНТ БД — singleton, adapter, логирование ──
+packages/db/src/index.ts
+
+# ── 5. SEED (заполнение тестовыми данными) — показывает структуру content (Json) ──
+packages/db/prisma/seed.ts
+
+# ── 6. ZOD-СХЕМЫ ВАЛИДАЦИИ — бизнес-ограничения поверх модели ──
+# Отражают контракт между фронтом и бэком по каждой сущности
+packages/shared/src/index.ts
+packages/shared/src/auth.schema.ts
+packages/shared/src/courses.schema.ts
+packages/shared/src/learning.schema.ts
+packages/shared/src/teach.schema.ts
+packages/shared/src/teach-editor.schema.ts
+packages/shared/src/utils.ts
+
+# ── 7. СЕРВИСЫ БЭКЕНДА — SQL-запросы через Prisma Client ──
+# Показывают как модель используется: join-ы, фильтры, агрегации
+apps/api/src/modules/auth/auth.service.ts
+apps/api/src/modules/courses/courses.service.ts
+apps/api/src/modules/enrollment/enrollment.service.ts
+apps/api/src/modules/learning/learning.service.ts
+apps/api/src/modules/teach/teach.service.ts
+apps/api/src/modules/teach/teach-editor.service.ts
+
+# ── 8. ТИПЫ — доменные интерфейсы ──
+apps/api/src/modules/auth/auth.types.ts
+apps/api/src/modules/enrollment/enrollment.types.ts
+apps/api/src/modules/learning/learning.types.ts

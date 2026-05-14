@@ -5,7 +5,9 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows'
 import OndemandVideoOutlinedIcon from '@mui/icons-material/OndemandVideoOutlined'
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
+import ReorderOutlinedIcon from '@mui/icons-material/ReorderOutlined'
 import ShortTextIcon from '@mui/icons-material/ShortText'
+import SpaceBarOutlinedIcon from '@mui/icons-material/SpaceBarOutlined'
 import TextFieldsOutlinedIcon from '@mui/icons-material/TextFieldsOutlined'
 import { ListItemIcon, Menu, MenuItem, Typography } from '@mui/material'
 import type { ReactElement } from 'react'
@@ -40,6 +42,11 @@ const STEP_TYPE_OPTIONS: { type: EditorStepType; label: string; icon: ReactEleme
     icon: <CompareArrowsIcon sx={{ fontSize: 18 }} />,
   },
   {
+    type: 'ORDERING',
+    label: 'Правильный порядок',
+    icon: <ReorderOutlinedIcon sx={{ fontSize: 18 }} />,
+  },
+  {
     type: 'INPUT_TEXT',
     label: 'Ввод текста',
     icon: <TextFieldsOutlinedIcon sx={{ fontSize: 18 }} />,
@@ -53,6 +60,11 @@ const STEP_TYPE_OPTIONS: { type: EditorStepType; label: string; icon: ReactEleme
     type: 'FREE_TEXT',
     label: 'Свободный ответ',
     icon: <QuizOutlinedIcon sx={{ fontSize: 18 }} />,
+  },
+  {
+    type: 'FILL_GAPS',
+    label: 'Пропуски',
+    icon: <SpaceBarOutlinedIcon sx={{ fontSize: 18 }} />,
   },
 ]
 

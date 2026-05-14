@@ -1,6 +1,8 @@
 import type {
+  FillGapsContent,
   FreeTextContent,
   MatchingContent,
+  OrderingContent,
   StepStatus,
   TestMultipleContent,
   TestSingleContent,
@@ -25,6 +27,14 @@ export interface SolveMatchingStepProps {
   savedAnswer?: Record<string, string> | null
 }
 
+export interface SolveOrderingStepProps {
+  content: OrderingContent
+  courseId: string
+  stepId: string
+  status?: StepStatus
+  savedAnswer?: string[] | null
+}
+
 export interface SolveInputStepProps {
   content: { question: string }
   stepType: 'INPUT_TEXT' | 'INPUT_NUMBER'
@@ -41,4 +51,12 @@ export interface SolveFreeTextStepProps {
   status?: StepStatus
   savedAnswer?: string | null
   reviewComment?: string | null
+}
+
+export interface SolveFillGapsStepProps {
+  content: FillGapsContent
+  courseId: string
+  stepId: string
+  status?: StepStatus
+  savedAnswer?: Record<string, string> | null
 }

@@ -1,0 +1,20 @@
+# Файлы пакетов: packages/db, packages/shared, packages/logger
+# Добавляй/удаляй строки — каждая строка = путь к файлу от корня проекта
+# Строки начинающиеся с # игнорируются
+
+packages/db/prisma/schema.prisma
+packages/db/src/index.ts
+packages/db/package.json
+packages/shared/src/__tests__/auth.schema.test.ts
+packages/shared/src/__tests__/learning.schema.test.ts
+packages/shared/src/__tests__/utils.test.ts
+packages/shared/src/auth.schema.ts
+packages/shared/src/courses.schema.ts
+packages/shared/src/index.ts
+packages/shared/src/learning.schema.ts
+packages/shared/src/teach-editor.schema.ts
+packages/shared/src/teach.schema.ts
+packages/shared/src/utils.ts
+packages/shared/package.json
+packages/logger/src/index.ts
+packages/logger/package.json

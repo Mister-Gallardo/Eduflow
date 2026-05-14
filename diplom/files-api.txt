@@ -1,0 +1,41 @@
+# Файлы бэкенда: apps/api
+# Добавляй/удаляй строки — каждая строка = путь к файлу от корня проекта
+# Строки начинающиеся с # игнорируются
+
+apps/api/package.json
+apps/api/tsconfig.json
+apps/api/src/app.ts
+apps/api/src/cron/cleanupSessions.job.ts
+apps/api/src/cron/index.ts
+apps/api/src/lib/env.ts
+apps/api/src/lib/error.ts
+apps/api/src/lib/utils.ts
+apps/api/src/modules/auth/auth.router.ts
+apps/api/src/modules/auth/auth.service.ts
+apps/api/src/modules/auth/auth.types.ts
+apps/api/src/modules/auth/lib/argon2.ts
+apps/api/src/modules/auth/lib/cookies.ts
+apps/api/src/modules/auth/lib/jwt.ts
+apps/api/src/modules/auth/lib/password.ts
+apps/api/src/modules/auth/lib/refresh.ts
+apps/api/src/modules/auth/session.repository.ts
+apps/api/src/modules/courses/courses.repository.ts
+apps/api/src/modules/courses/courses.router.ts
+apps/api/src/modules/courses/courses.service.ts
+apps/api/src/modules/enrollment/enrollment.router.ts
+apps/api/src/modules/enrollment/enrollment.service.ts
+apps/api/src/modules/enrollment/enrollment.types.ts
+apps/api/src/modules/learning/learning.repository.ts
+apps/api/src/modules/learning/learning.router.ts
+apps/api/src/modules/learning/learning.service.ts
+apps/api/src/modules/learning/learning.types.ts
+apps/api/src/modules/learning/lib/utils.ts
+apps/api/src/modules/teach/lib/utils.ts
+apps/api/src/modules/teach/teach-editor.router.ts
+apps/api/src/modules/teach/teach-editor.service.ts
+apps/api/src/modules/teach/teach.router.ts
+apps/api/src/modules/teach/teach.service.ts
+apps/api/src/server.ts
+apps/api/src/trpc/context.ts
+apps/api/src/trpc/router.ts
+apps/api/src/trpc/trpc.ts

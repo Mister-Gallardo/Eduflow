@@ -15,6 +15,9 @@ describe('teach.service', () => {
       userProgress: {
         count: vi.fn(),
       },
+      user: {
+        findUnique: vi.fn(),
+      },
     },
     isTokenExpired: false,
     req: {} as any,
@@ -27,6 +30,7 @@ describe('teach.service', () => {
 
   describe('getTeachStatsService', () => {
     it('returns accumulated statistics for teacher courses', async () => {
+      mockCtx.db.user.findUnique.mockResolvedValue({ role: 'TEACHER' })
       mockCtx.db.course.count.mockResolvedValueOnce(5)
       mockCtx.db.enrollment.count.mockResolvedValueOnce(150)
       // _totalCompletedSteps, pendingReviewCount
@@ -46,6 +50,7 @@ describe('teach.service', () => {
 
     it('returns zeros if teacher has no stats yet', async () => {
       mockCtx.db.course.count.mockResolvedValueOnce(0)
+      mockCtx.db.user.findUnique.mockResolvedValue({ role: 'TEACHER' })
       mockCtx.db.enrollment.count.mockResolvedValueOnce(0)
       mockCtx.db.userProgress.count.mockResolvedValueOnce(0)
       mockCtx.db.userProgress.count.mockResolvedValueOnce(0)

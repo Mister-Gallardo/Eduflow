@@ -1,6 +1,8 @@
+export { SolveFillGapsStep } from './solve-fill-gaps-step'
 export { SolveFreeTextStep } from './solve-free-text-step'
 export { SolveInputStep } from './solve-input-step'
 export { SolveMatchingStep } from './solve-matching-step'
+export { SolveOrderingStep } from './solve-ordering-step'
 export { SolveTestStep } from './solve-test-step'
 export { SolveTextStep } from './solve-text-step'
 export { SolveVideoStep } from './solve-video-step'

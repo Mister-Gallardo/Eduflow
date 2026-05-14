@@ -1,0 +1,70 @@
+# ============================================================
+# Файлы для раздела диплома:
+# "2.2 Обоснование выбора технологического стека и архитектурных паттернов"
+# ============================================================
+
+# ── 1. ИНФРАСТРУКТУРА МОНОРЕПОЗИТОРИЯ (pnpm workspaces, TypeScript) ──
+# Показывает структуру зависимостей, тулинг и базовые настройки компиляции
+package.json
+pnpm-workspace.yaml
+tsconfig.base.json
+
+# ── 2. КОНТРОЛЬ ПОДДЕРЖИВАЕМОСТИ И КАЧЕСТВА КОДА (Linting, Git hooks) ──
+# Обоснование статического анализатора и хуков
+eslint.config.mjs
+.prettierrc.yaml
+.lintstagedrc.mjs
+.husky/pre-commit
+
+# ── 3. АРХИТЕКТУРА И СТЕК СЕРВЕРНОЙ ЧАСТИ (Modular Monolith, Express, tRPC) ──
+# Инициализация приложения, роутинг, middleware, контекст запросов
+apps/api/package.json
+apps/api/src/server.ts
+apps/api/src/app.ts
+apps/api/src/lib/env.ts
+apps/api/src/lib/utils.ts
+apps/api/src/trpc/trpc.ts
+apps/api/src/trpc/router.ts
+apps/api/src/trpc/context.ts
+apps/api/src/modules/auth/auth.service.ts
+apps/api/src/modules/auth/session.repository.ts
+apps/api/src/modules/auth/auth.router.ts
+apps/api/src/modules/auth/lib/argon2.ts
+apps/api/src/modules/auth/lib/jwt.ts
+apps/api/src/modules/auth/lib/cookies.ts
+apps/api/src/modules/auth/lib/password.ts
+apps/api/src/modules/auth/lib/refresh.ts
+apps/api/src/modules/learning/__tests__/learning.service.test.ts
+apps/api/src/modules/learning/learning.service.ts
+apps/api/src/modules/learning/learning.repository.ts
+apps/api/src/modules/learning/learning.router.ts
+apps/api/src/modules/learning/lib/utils.ts
+apps/api/src/modules/learning/lib/__tests__/validate-answer.test.ts
+apps/api/src/modules/learning/lib/__tests__/strip-answers.test.ts
+
+# ── 4. АРХИТЕКТУРА И СТЕК КЛИЕНТСКОЙ ЧАСТИ (FSD, React, Vite, MUI) ──
+# Инициализация FSD, конфигурация Vite (React Compiler), провайдеры данных
+apps/web/package.json
+apps/web/vite.config.ts
+apps/web/src/main.tsx
+apps/web/src/app/App.tsx
+apps/web/src/app/providers/TrpcProvider.tsx
+apps/web/src/shared/api/trpc.ts
+apps/web/src/shared/config/env.ts
+apps/web/src/shared/lib/useIsMobile.ts
+apps/web/src/features/auth/ui/login-form/LoginForm.tsx
+apps/web/src/features/edit-step/model/use-fill-gaps-step-form.ts
+apps/web/src/features/edit-step/ui/EditFillGapsStep.tsx
+apps/web/src/features/solve-step/ui/solve-fill-gaps-step/SolveFillGapsStep.tsx
+
+# ── 5. ИЗОЛЯЦИЯ ПАКЕТОВ (Shared, Logger) ──
+# Обоснование выноса общего кода и модуля логирования (Winston/Pino)
+packages/logger/package.json
+packages/logger/src/index.ts
+packages/shared/src/index.ts
+packages/shared/package.json
+packages/shared/src/learning.schema.ts
+packages/db/package.json
+packages/db/src/index.ts
+packages/db/prisma/schema.prisma
+packages/db/prisma/seed.ts

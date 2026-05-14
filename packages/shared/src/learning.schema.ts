@@ -8,10 +8,12 @@ export const StepTypeSchema = z.enum([
   'TEST_SINGLE',
   'TEST_MULTIPLE',
   'MATCHING',
-  'ORDERING',
   'INPUT_TEXT',
   'INPUT_NUMBER',
   'FREE_TEXT',
+
+  // пока не реализовываем
+  'ORDERING',
   'FILL_GAPS',
 ])
 

@@ -1,8 +1,3 @@
----
-name: fsd-architecture
-description: Архитектурный стандарт FSD для Fullstack проекта (React, Vite, Prisma, tRPC, MUI)
----
-
 # Skill: FSD Architecture & Fullstack Integration
 
 ## Context
@@ -15,28 +10,27 @@ Project Stack: React, Vite, TypeScript, pnpm, FSD (Feature-Sliced Design), MUI, 
 
 Follow the layers strictly:
 
-- **Shared**: Reusable UI (MUI based), API clients (tRPC), utils, constants. Shared layer should NOT have a root index.ts. Use segment-based imports.
-- **Entities**: Business entities (e.g., User, Product). Только логика и данные сущности.
-- **Features**: Взаимодействия (например, AddToCart, AuthByEmail).
-- **Widgets**: Композиция entities и features (Header, ProductCard).
-- **Pages**: Сборка страниц из виджетов.
+- **Shared**: Reusable UI (MUI based), API clients (tRPC), utils, constants.
+- **Entities**: Business entities (e.g., User, Product). Only logic and data related to the entity.
+- **Features**: User interactions (e.g., AddToCart, AuthByEmail).
+- **Widgets**: Composition of entities and features (e.g., Header, ProductCard).
+- **Pages**: Full pages composed of widgets.
 
 ### 2. Component Guidelines
 
-- Use **MUI** (Material UI) for all base components.
-- Use **Framer Motion** for animations (always use `motion.` components).
-- Every FSD slice MUST have a **Public API** (`index.ts`) exporting ONLY needed parts.
-- Files: Use PascalCase for components (.tsx) and kebab-case for utilities (.ts).
-- Exception: Static UI components used only on one page can remain in page/ui.
+- Use **MUI** for base components.
+- Use **Framer Motion** for animations (prefix animations with `motion.` from `framer-motion`).
+- Every FSD slice must have a **Public API** (`index.ts` file) exporting only necessary parts.
+- Files should be named in `kebab-case`.
 
-### 3. Fullstack & pnpm
+### 3. Fullstack & Tools
 
 - Package Manager: Always use **pnpm**.
 - Database: Use **Prisma**. After schema changes, run `pnpm prisma generate`.
-- API: Use **tRPC**. Update backend routers before frontend hooks.
+- Communication: Use **tRPC** for API calls. If a new procedure is needed, update the backend router first.
 
 ### 4. Code Style
 
-- Functional Components + Arrow Functions.
-- TS interfaces for props.
-- Use project ESLint/Prettier.
+- Use Functional Components with Arrow Functions.
+- Use TypeScript interfaces instead of types for props.
+- Follow the project's Prettier and ESLint configs.

@@ -1,0 +1,1779 @@
+================================================================
+ПРОЕКТ: Eduflow — Платформа онлайн-обучения
+АРХИТЕКТУРА: Fullstack Monorepo (pnpm workspaces)
+СТЕК: React + Vite (frontend) | Express + tRPC (backend) | Prisma + PostgreSQL (DB)
+ПАТТЕРН: Feature-Sliced Design (FSD) на фронтенде
+================================================================
+
+Структура монорепозитория:
+├── apps/
+│   ├── api/         — Backend (Express, tRPC, Prisma Client)
+│   └── web/         — Frontend (React, Vite, MUI, tRPC Client)
+├── packages/
+│   ├── db/          — Prisma schema, миграции, клиент БД
+│   ├── shared/      — Общие типы и утилиты (Zod-схемы)
+│   └── logger/      — Логгер (pino)
+
+FSD-слои фронтенда (apps/web/src):
+├── app/       — Инициализация приложения, провайдеры, роутинг
+├── pages/     — Страницы (композиция виджетов и фич)
+├── widgets/   — Самостоятельные блоки UI (хедер, сайдбар)
+├── features/  — Бизнес-фичи (авторизация, решение шагов)
+├── entities/  — Бизнес-сущности (курс, урок, шаг)
+├── shared/    — Переиспользуемое (UI-kit, API, конфиг, утилиты)
+
+================================================================
+СОДЕРЖИМОЕ ФАЙЛОВ ПРОЕКТА НИЖЕ
+================================================================
+
+
+СТРУКТУРА ДИРЕКТОРИЙ (дерево):
+----------------------------------------------------------------
+./
+├── README.md
+├── apps
+│   ├── api
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   ├── src
+│   │   │   ├── app.ts
+│   │   │   ├── cron
+│   │   │   │   ├── cleanupSessions.job.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── lib
+│   │   │   │   ├── env.ts
+│   │   │   │   ├── error.ts
+│   │   │   │   └── utils.ts
+│   │   │   ├── modules
+│   │   │   │   ├── auth
+│   │   │   │   ├── courses
+│   │   │   │   ├── enrollment
+│   │   │   │   ├── learning
+│   │   │   │   └── teach
+│   │   │   ├── server.ts
+│   │   │   └── trpc
+│   │   │       ├── context.ts
+│   │   │       ├── router.ts
+│   │   │       └── trpc.ts
+│   │   ├── tsconfig.eslint.json
+│   │   └── tsconfig.json
+│   └── web
+│       ├── README.md
+│       ├── index.html
+│       ├── package.json
+│       ├── public
+│       │   ├── favicon.svg
+│       │   └── robots.txt
+│       ├── src
+│       │   ├── app
+│       │   │   ├── App.tsx
+│       │   │   ├── layouts
+│       │   │   ├── providers
+│       │   │   └── routes
+│       │   ├── entities
+│       │   │   ├── course
+│       │   │   ├── course-editor
+│       │   │   ├── course-navigation
+│       │   │   ├── step-content
+│       │   │   └── user
+│       │   ├── features
+│       │   │   ├── auth
+│       │   │   ├── catalog-filter
+│       │   │   ├── course-author-navigation
+│       │   │   ├── course-settings
+│       │   │   ├── edit-step
+│       │   │   ├── enrolled-filter
+│       │   │   └── solve-step
+│       │   ├── main.tsx
+│       │   ├── pages
+│       │   │   ├── auth
+│       │   │   ├── course-edit
+│       │   │   ├── course-solve
+│       │   │   ├── home
+│       │   │   ├── learn
+│       │   │   ├── not-found
+│       │   │   └── teach
+│       │   ├── shared
+│       │   │   ├── api
+│       │   │   ├── assets
+│       │   │   ├── config
+│       │   │   ├── lib
+│       │   │   └── ui
+│       │   └── widgets
+│       │       ├── course-catalog
+│       │       ├── course-editor-sidebar
+│       │       ├── course-library
+│       │       ├── course-sidebar
+│       │       ├── course-teach
+│       │       ├── header
+│       │       ├── hero-section
+│       │       ├── step-body
+│       │       ├── step-editor-body
+│       │       └── steps-panel
+│       ├── tsconfig.app.json
+│       ├── tsconfig.eslint.json
+│       ├── tsconfig.json
+│       ├── tsconfig.node.json
+│       └── vite.config.ts
+├── diplom
+│   ├── eduflow-code-dump.txt
+│   ├── files-api.txt
+│   ├── files-arch-section.txt
+│   ├── files-db-section.txt
+│   ├── files-packages.txt
+│   ├── files-root.txt
+│   ├── files-section_2_3.txt
+│   ├── files-section_2_4.txt
+│   ├── files-section_3_1.txt
+│   ├── files-section_3_2.txt
+│   ├── files-section_3_3.txt
+│   ├── files-web.txt
+│   └── generate-code-dump.sh
+├── eslint.config.mjs
+├── package.json
+├── packages
+│   ├── db
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   ├── prisma
+│   │   │   ├── migrations
+│   │   │   │   ├── 20260317120250_init
+│   │   │   │   ├── 20260325122535_add_role_to_user
+│   │   │   │   └── migration_lock.toml
+│   │   │   ├── schema.prisma
+│   │   │   └── seed.ts
+│   │   ├── prisma.config.ts
+│   │   ├── src
+│   │   │   └── index.ts
+│   │   ├── tsconfig.eslint.json
+│   │   └── tsconfig.json
+│   ├── logger
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   ├── src
+│   │   │   └── index.ts
+│   │   ├── tsconfig.eslint.json
+│   │   └── tsconfig.json
+│   └── shared
+│       ├── README.md
+│       ├── package.json
+│       ├── src
+│       │   ├── __tests__
+│       │   │   ├── auth.schema.test.ts
+│       │   │   ├── learning.schema.test.ts
+│       │   │   └── utils.test.ts
+│       │   ├── auth.schema.ts
+│       │   ├── courses.schema.ts
+│       │   ├── index.ts
+│       │   ├── learning.schema.ts
+│       │   ├── teach-editor.schema.ts
+│       │   ├── teach.schema.ts
+│       │   └── utils.ts
+│       ├── tsconfig.eslint.json
+│       └── tsconfig.json
+├── pnpm-workspace.yaml
+├── setupTests.ts
+├── tsconfig.base.json
+├── tsconfig.json
+└── vitest.config.ts
+
+72 directories, 75 files
+----------------------------------------------------------------
+
+╔══════════════════════════════════════════════════════════╗
+║  РАЗДЕЛ: files-section_3_3
+╚══════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: vitest.config.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { defineConfig } from 'vitest/config'
+import path from 'path'
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['apps/*/src/**/*.test.ts', 'apps/*/src/**/*.test.tsx', 'packages/*/src/**/*.test.ts'],
+    setupFiles: ['./setupTests.ts'],
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'apps/web/src'),
+    },
+  },
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: setupTests.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import '@testing-library/jest-dom'
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: tsconfig.base.json
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "compilerOptions": {
+    "target": "ES2023",
+
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "erasableSyntaxOnly": true
+  }
+}
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: tsconfig.json
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "files": [],
+  "references": [
+    { "path": "./apps/web" },
+    { "path": "./apps/api" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/db" }
+  ]
+}
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: pnpm-workspace.yaml
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+packages:
+  - "apps/*"
+  - "packages/*"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: package.json
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "name": "eduflow",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.27.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "api": "pnpm --filter @eduflow/api",
+    "web": "pnpm --filter @eduflow/web",
+    "db": "pnpm --filter @eduflow/db",
+    "shared": "pnpm --filter @eduflow/shared",
+    "logger": "pnpm --filter @eduflow/logger",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --fix --cache",
+    "lint:api": "pnpm api exec eslint . --cache",
+    "lint:fix:api": "pnpm api exec eslint . --fix --cache",
+    "lint:web": "pnpm web exec eslint . --cache",
+    "lint:fix:web": "pnpm web exec eslint . --fix --cache",
+    "lint:db": "pnpm db exec eslint . --cache",
+    "lint:fix:db": "pnpm db exec eslint . --fix --cache",
+    "lint:shared": "pnpm shared exec eslint . --cache",
+    "lint:fix:shared": "pnpm shared exec eslint . --fix --cache",
+    "lint:logger": "pnpm logger exec eslint . --cache",
+    "lint:fix:logger": "pnpm logger exec eslint . --fix --cache",
+    "types": "pnpm -r types",
+    "dev": "pnpm -r --parallel dev",
+    "prettify": "pnpm -r --parallel format",
+    "prepare": "husky",
+    "postinstall": "pnpm db pg",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^17.23.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "jsdom": "^29.0.1",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.1",
+    "vitest": "^4.1.2"
+  }
+}
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: eslint.config.mjs
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
+import eslintJs from '@eslint/js'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import nodePlugin from 'eslint-plugin-n'
+import globals from 'globals'
+import hooksPlugin from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+
+const RESTRICTED_RELATIVE_IMPORTS = {
+  group: ['**/packages/**', '**/apps/**', '**/api/src/**', '**/web/src/**'],
+  message:
+    'Do not reference the internal directory structure. Use workspace aliases (e.g., @eduflow/db) defined in package.json.',
+}
+
+export default defineConfig([
+  /* -------------------------------------------------- */
+  /* Global ignores                                     */
+  /* -------------------------------------------------- */
+  globalIgnores([
+    'node_modules/',
+    '**/dist/',
+    '**/*.d.ts',
+    '**/*.tsbuildinfo',
+    'eslint.config.mjs',
+    '*/jest.config.mjs',
+    '**/*.test.ts',
+    '**/*.test.tsx',
+    'vitest.config.ts',
+    'jest.config.mjs',
+    'packages/db/prisma/seed.ts',
+    'packages/db/prisma.config.ts',
+    'setupTests.ts',
+  ]),
+
+  /* -------------------------------------------------- */
+  /* Base JS rules                                      */
+  /* -------------------------------------------------- */
+  eslintJs.configs.recommended,
+
+  /* -------------------------------------------------- */
+  /* TypeScript (type-aware)                            */
+  /* -------------------------------------------------- */
+  ...tseslint.configs.stylisticTypeChecked,
+  ...tseslint.configs.recommendedTypeChecked,
+
+  /* -------------------------------------------------- */
+  /* Shared parser options                              */
+  /* -------------------------------------------------- */
+  {
+    plugins: {
+      'simple-import-sort': simpleImportSort,
+    },
+
+    languageOptions: {
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['*.mjs', 'eslint.config.mjs', 'setupTests.ts'],
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      /* ---------- IMPORT SORT (simple-import-sort) ---------- */
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [RESTRICTED_RELATIVE_IMPORTS],
+        },
+      ],
+      // 'import/no-relative-packages': 'error', // Disabled for performance
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [
+            // 1. env imports first
+            ['^.+/env(\\..*)?$'],
+            // 2. Side effect imports (e.g., polyfills)
+            ['^\\u0000'],
+            // 3. Node.js builtins
+            ['^node:'],
+            // 4. External packages
+            ['^@?\\w'],
+            // 5. Internal packages (aliases starting with @/ or ~)
+            ['^@/', '^~'],
+            // 6. Parent imports (../)
+            ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+            // 7. Sibling imports (./)
+            ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+            // 8. Style imports at the end
+            ['^.+\\.s?css$'],
+          ],
+        },
+      ],
+      'simple-import-sort/exports': 'error',
+      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-new': 'off',
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+    },
+  },
+
+  /* -------------------------------------------------- */
+  /* 🟦 BACKEND — apps/api                              */
+  /* -------------------------------------------------- */
+  {
+    files: ['apps/api/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    plugins: {
+      n: nodePlugin,
+    },
+    rules: {
+      'n/no-process-env': 'error',
+    },
+  },
+
+  /* -------------------------------------------------- */
+  /* 🟩 FRONTEND — apps/web                             */
+  /* -------------------------------------------------- */
+  {
+    files: ['apps/web/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': hooksPlugin,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...hooksPlugin.configs.recommended.rules,
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        { checksVoidReturn: { attributes: false } },
+      ],
+
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@eduflow/api', '@eduflow/api/**'],
+              allowTypeImports: true,
+              message: 'Only types are allowed to be imported from backend workspace',
+            },
+            {
+              group: ['**/api/src/**'],
+              message: 'Use workspace aliases (e.g. @eduflow/api) instead of relative paths.',
+            },
+          ],
+        },
+      ],
+
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@eduflow/db',
+              message: 'Server-only package. Do not import in web.',
+            },
+            {
+              name: '@eduflow/logger',
+              message: 'Server-only package. Do not import in web.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@eduflow/db/*', '@eduflow/logger/*'],
+              message: 'Server-only package. Do not import in web.',
+            },
+            // Re-apply the relative import restriction
+            RESTRICTED_RELATIVE_IMPORTS,
+          ],
+        },
+      ],
+
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: '[object.type=MetaProperty][property.name=env]',
+          message: 'Use instead import { env } from "shared/config"',
+        },
+      ],
+    },
+  },
+
+  /* -------------------------------------------------- */
+  /* 🟩 🟦 Packages                                      */
+  /* -------------------------------------------------- */
+  {
+    files: ['packages/**/*.{ts,tsx}'],
+    plugins: {
+      // n: nodePlugin,
+    },
+    rules: {
+      // 'n/no-process-env': 'error',
+    },
+  },
+
+  /* -------------------------------------------------- */
+  /* 🛠 CONFIG FILES FIX (Root configs)                 */
+  /* -------------------------------------------------- */
+  {
+    files: ['*.mjs'],
+    // Применяем это только к файлам в корне
+    ignores: ['apps/**/*', 'packages/**/*'],
+    rules: {
+      // Отключаем правила, требующие строгой типизации для конфигов
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+    },
+  },
+])
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: .prettierrc.yaml
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+semi: false
+singleQuote: true
+trailingComma: all
+printWidth: 100
+tabWidth: 2
+useTabs: false
+arrowParens: always
+endOfLine: lf
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: .nvmrc
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+24.11.1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: .lintstagedrc.mjs
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+export default {
+  // Backend файлы (apps/api)
+  // 'apps/api/**/*.{ts,tsx,js,jsx}': [
+  //   'eslint --cache --cache-location ./node_modules/.cache/.eslintcache --fix',
+  //   'prettier --log-level warn --write',
+  // ],
+
+  // // Webapp файлы (apps/web)
+  // 'apps/web/**/*.{ts,tsx,js,jsx}': [
+  //   'eslint --cache --cache-location ./node_modules/.cache/.eslintcache --fix',
+  //   'prettier --log-level warn --write',
+  // ],
+
+  // // Shared файлы (packages/shared, packages/trpc)
+  // 'packages/**/*.{ts,tsx,js,jsx}': [
+  //   'eslint --cache --cache-location ./node_modules/.cache/.eslintcache --fix',
+  //   'prettier --log-level warn --write',
+  // ],
+
+  // Сразу для всего
+  '**/*.{ts,tsx,js,jsx}': ['eslint --cache --fix', 'prettier --log-level warn --write'],
+
+  // Styles (так как stylelint убрали, оставляем только prettier)
+  '**/*.{scss,css}': ['prettier --log-level warn --write'],
+
+  // Prisma 
+  'prisma/**/*.prisma': ['prisma format'],
+
+  // Config files
+  '**/*.{json,yml,yaml,md}': ['prettier --log-level warn --write'],
+}
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: .husky/pre-commit
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#!/bin/sh
+set -e
+
+# Форматируем staged файлы
+pnpm lint-staged --allow-empty
+
+# Проверка типов TypeScript
+pnpm types
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: packages/shared/src/__tests__/learning.schema.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { describe, expect, it } from 'vitest'
+
+import {
+  FillGapsContentSchema,
+  InputNumberContentSchema,
+  InputTextContentSchema,
+  MatchingContentSchema,
+  OrderingContentSchema,
+  StepAnswerSchema,
+  TestSingleContentSchema,
+  zCheckStepInput,
+} from '../learning.schema.js'
+
+// ─── StepAnswerSchema ───
+
+describe('StepAnswerSchema', () => {
+  it('принимает строку', () => {
+    expect(StepAnswerSchema.safeParse('opt-1').success).toBe(true)
+  })
+
+  it('принимает число', () => {
+    expect(StepAnswerSchema.safeParse(42).success).toBe(true)
+  })
+
+  it('принимает массив строк', () => {
+    expect(StepAnswerSchema.safeParse(['a', 'b']).success).toBe(true)
+  })
+
+  it('принимает Record<string, string>', () => {
+    expect(StepAnswerSchema.safeParse({ g1: 'answer' }).success).toBe(true)
+  })
+
+  it('отклоняет boolean', () => {
+    expect(StepAnswerSchema.safeParse(true).success).toBe(false)
+  })
+
+  it('отклоняет null', () => {
+    expect(StepAnswerSchema.safeParse(null).success).toBe(false)
+  })
+})
+
+// ─── zCheckStepInput ───
+
+describe('zCheckStepInput', () => {
+  it('пропускает корректные данные', () => {
+    const result = zCheckStepInput.safeParse({
+      courseId: 'course-1',
+      stepId: 'step-1',
+      answer: 'opt-1',
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('отклоняет без courseId', () => {
+    const result = zCheckStepInput.safeParse({
+      stepId: 'step-1',
+      answer: 'opt-1',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('отклоняет без answer', () => {
+    const result = zCheckStepInput.safeParse({
+      courseId: 'course-1',
+      stepId: 'step-1',
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+// ─── Content Schemas ───
+
+describe('TestSingleContentSchema', () => {
+  it('валидирует корректный контент теста', () => {
+    const result = TestSingleContentSchema.safeParse({
+      question: 'Вопрос?',
+      options: [{ id: '1', text: 'Вариант' }],
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('отклоняет без question', () => {
+    const result = TestSingleContentSchema.safeParse({
+      options: [{ id: '1', text: 'Вариант' }],
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('MatchingContentSchema', () => {
+  it('валидирует корректный контент сопоставления', () => {
+    const result = MatchingContentSchema.safeParse({
+      left: [{ id: 'l1', content: 'A' }],
+      right: [{ id: 'r1', content: 'B' }],
+    })
+    expect(result.success).toBe(true)
+  })
+})
+
+describe('OrderingContentSchema', () => {
+  it('валидирует корректный контент упорядочивания', () => {
+    const result = OrderingContentSchema.safeParse({
+      items: [{ id: 'i1', content: 'Шаг 1' }],
+    })
+    expect(result.success).toBe(true)
+  })
+})
+
+describe('InputTextContentSchema', () => {
+  it('валидирует корректный контент текстового ввода', () => {
+    const result = InputTextContentSchema.safeParse({
+      question: 'Введите ответ',
+    })
+    expect(result.success).toBe(true)
+  })
+})
+
+describe('InputNumberContentSchema', () => {
+  it('валидирует корректный контент числового ввода', () => {
+    const result = InputNumberContentSchema.safeParse({
+      question: 'Введите число',
+      correctAnswer: 42,
+    })
+    expect(result.success).toBe(true)
+  })
+})
+
+describe('FillGapsContentSchema', () => {
+  it('валидирует корректный контент заполнения пропусков', () => {
+    const result = FillGapsContentSchema.safeParse({
+      text: 'Текст с пропусками',
+      gaps: [{ id: 'g1', type: 'text' }],
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('отклоняет gap с неизвестным type', () => {
+    const result = FillGapsContentSchema.safeParse({
+      text: 'Текст',
+      gaps: [{ id: 'g1', type: 'unknown' }],
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: packages/shared/src/__tests__/utils.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { describe, expect, it } from 'vitest'
+
+import { isFunction, omit, pick } from '../utils.js'
+
+// ─── omit ───
+
+describe('omit', () => {
+  it('удаляет указанные ключи из объекта', () => {
+    const obj = { a: 1, b: 2, c: 3 }
+    const result = omit(obj, ['b', 'c'])
+    expect(result).toEqual({ a: 1 })
+  })
+
+  it('возвращает копию, не мутируя оригинал', () => {
+    const obj = { a: 1, b: 2 }
+    const result = omit(obj, ['a'])
+    expect(result).toEqual({ b: 2 })
+    expect(obj).toEqual({ a: 1, b: 2 })
+  })
+
+  it('возвращает полную копию при пустом массиве ключей', () => {
+    const obj = { x: 10, y: 20 }
+    const result = omit(obj, [])
+    expect(result).toEqual({ x: 10, y: 20 })
+  })
+})
+
+// ─── pick ───
+
+describe('pick', () => {
+  it('оставляет только указанные ключи', () => {
+    const obj = { a: 1, b: 2, c: 3 }
+    const result = pick(obj, ['a', 'c'])
+    expect(result).toEqual({ a: 1, c: 3 })
+  })
+
+  it('возвращает пустой объект при пустом массиве ключей', () => {
+    const obj = { a: 1, b: 2 }
+    const result = pick(obj, [])
+    expect(result).toEqual({})
+  })
+
+  it('игнорирует несуществующие ключи', () => {
+    const obj = { a: 1 } as Record<string, unknown>
+    const result = pick(obj, ['a', 'z'] as const)
+    expect(result).toEqual({ a: 1 })
+  })
+})
+
+// ─── isFunction ───
+
+describe('isFunction', () => {
+  it('возвращает true для функции', () => {
+    expect(isFunction(() => {})).toBe(true)
+  })
+
+  it('возвращает true для именованной функции', () => {
+    function named() {}
+    expect(isFunction(named)).toBe(true)
+  })
+
+  it('возвращает false для строки', () => {
+    expect(isFunction('hello')).toBe(false)
+  })
+
+  it('возвращает false для числа', () => {
+    expect(isFunction(42)).toBe(false)
+  })
+
+  it('возвращает false для null', () => {
+    expect(isFunction(null)).toBe(false)
+  })
+
+  it('возвращает false для объекта', () => {
+    expect(isFunction({})).toBe(false)
+  })
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: packages/logger/src/index.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { EOL } from 'node:os'
+
+import { isFunction, omit } from '@eduflow/shared'
+import debug from 'debug'
+import pc from 'picocolors'
+import { serializeError } from 'serialize-error'
+import type { Logform } from 'winston'
+import winston from 'winston'
+import * as yaml from 'yaml'
+
+const NODE_ENV = process.env.NODE_ENV ?? 'development'
+const APP_NAMESPACE = process.env.APP_NAMESPACE ?? 'eduflow:api'
+
+/* ------------------------------------------------------------------ */
+/* redact sensitive fields                                            */
+/* ------------------------------------------------------------------ */
+
+const SENSITIVE_KEYS = new Set([
+  'password',
+  'newPassword',
+  'oldPassword',
+  'token',
+  'accessToken',
+  'refreshToken',
+  'authorization',
+  'signature',
+  'apiKey',
+])
+
+const redactFormat = winston.format((info: Logform.TransformableInfo) => {
+  const seen = new WeakSet<object>()
+
+  const redact = (value: unknown): unknown => {
+    if (!value || typeof value !== 'object') return value
+    if (seen.has(value)) return value
+
+    seen.add(value)
+
+    // Обрабатываем массивы и объекты рекурсивно
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        value[i] = redact(value[i])
+      }
+      return value
+    }
+
+    const record = value as Record<string, unknown>
+
+    for (const key of Object.keys(record)) {
+      if (SENSITIVE_KEYS.has(key)) {
+        record[key] = '[REDACTED]'
+      } else {
+        record[key] = redact(record[key])
+      }
+    }
+    return value
+  }
+
+  redact(info)
+  return info
+})
+
+/* ------------------------------------------------------------------ */
+/* helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+type LogMeta = Record<string, unknown>
+
+const safeCloneMeta = (meta?: LogMeta): LogMeta | undefined => {
+  if (!meta) return meta
+  try {
+    return structuredClone(meta)
+  } catch {
+    return { ...meta }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* dev formatter                                                      */
+/* ------------------------------------------------------------------ */
+
+const devFormatter = winston.format.printf((info) => {
+  const level = info.level as 'info' | 'error' | 'debug'
+  const timestamp = typeof info.timestamp === 'string' ? info.timestamp : ''
+  const logType = typeof info.logType === 'string' ? info.logType : ''
+  const message = String(info.message)
+
+  const colorByLevel = {
+    info: pc.blue,
+    error: pc.red,
+    debug: pc.cyan,
+  } as const
+
+  const header = `${
+    colorByLevel[level]?.(`${level}${logType ? ` ${logType}` : ''}`) ?? level
+  } ${pc.green(timestamp)}`
+
+  // Используем NODE_ENV
+  const meta = omit(info as Record<string, unknown>, [
+    'level',
+    'logType',
+    'timestamp',
+    'message',
+    'service',
+    'nodeEnv',
+    'hostEnv',
+  ])
+
+  const metaBlock =
+    Object.keys(meta).length > 0
+      ? EOL + yaml.stringify(meta, (_k, v) => (isFunction(v) ? '[Function]' : v)).trim()
+      : ''
+
+  return `${EOL}${header}${EOL}${message}${metaBlock}${EOL}`
+})
+
+/* ------------------------------------------------------------------ */
+/* winston logger                                                     */
+/* ------------------------------------------------------------------ */
+
+export const winstonLogger = winston.createLogger({
+  // Уровень логирования зависит от NODE_ENV
+  level: NODE_ENV === 'production' ? 'info' : 'debug',
+  defaultMeta: {
+    service: 'backend',
+    nodeEnv: NODE_ENV,
+  },
+  format: winston.format.combine(
+    redactFormat(),
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: NODE_ENV === 'development' ? devFormatter : winston.format.json(),
+    }),
+  ],
+})
+
+/* ------------------------------------------------------------------ */
+/* public logger API                                                  */
+/* ------------------------------------------------------------------ */
+
+export const logger = {
+  info(logType: string, message: string, meta?: LogMeta) {
+    if (!debug.enabled(`${APP_NAMESPACE}:${logType}`)) return
+    const clonedMeta = safeCloneMeta(meta)
+    winstonLogger.info(message, { logType, ...clonedMeta })
+  },
+
+  debug(logType: string, message: string, meta?: LogMeta) {
+    if (!debug.enabled(`${APP_NAMESPACE}:${logType}`)) return
+    const clonedMeta = safeCloneMeta(meta)
+    winstonLogger.debug(message, { logType, ...clonedMeta })
+  },
+
+  error(logType: string, error: unknown, meta?: LogMeta) {
+    if (!debug.enabled(`${APP_NAMESPACE}:${logType}`)) return
+
+    const clonedMeta = safeCloneMeta(meta)
+
+    if (typeof error === 'string') {
+      winstonLogger.error(error, { logType, ...clonedMeta })
+      return
+    }
+
+    const serialized = serializeError(error)
+
+    const message =
+      typeof serialized === 'object' &&
+      serialized !== null &&
+      typeof (serialized as { message?: unknown }).message === 'string'
+        ? (serialized as { message: string }).message
+        : 'Unknown error'
+
+    const errorStack =
+      typeof serialized === 'object' &&
+      serialized !== null &&
+      typeof (serialized as { stack?: unknown }).stack === 'string'
+        ? (serialized as { stack?: string }).stack
+        : undefined
+
+    winstonLogger.error(message, {
+      logType,
+      errorStack: errorStack,
+      ...clonedMeta,
+    })
+  },
+}
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: apps/api/src/modules/enrollment/__tests__/enrollment.service.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { TRPCError } from '@trpc/server'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { checkEnrollmentService, enrollService } from '../enrollment.service.js'
+
+describe('enrollment.service', () => {
+  const mockCtx = {
+    me: { id: 'user-1', sessionId: 'session-1' },
+    db: {
+      course: {
+        findUnique: vi.fn(),
+      },
+      enrollment: {
+        findUnique: vi.fn(),
+        create: vi.fn(),
+        findMany: vi.fn(),
+      },
+      userProgress: {
+        findMany: vi.fn(),
+      },
+    },
+    isTokenExpired: false,
+    req: {} as any,
+    res: {} as any,
+  } as any
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe('enrollService', () => {
+    it('creates enrollment successfully', async () => {
+      mockCtx.db.course.findUnique.mockResolvedValueOnce({ id: 'course-1' })
+      mockCtx.db.enrollment.findUnique.mockResolvedValueOnce(null)
+      mockCtx.db.enrollment.create.mockResolvedValueOnce({ id: 'enrollment-1' })
+
+      const result = await enrollService(mockCtx, { courseId: 'course-1' })
+
+      expect(result).toEqual({ success: true })
+      expect(mockCtx.db.enrollment.create).toHaveBeenCalledWith({
+        data: { userId: 'user-1', courseId: 'course-1' },
+      })
+    })
+
+    it('returns success message if already enrolled', async () => {
+      mockCtx.db.course.findUnique.mockResolvedValueOnce({ id: 'course-1' })
+      mockCtx.db.enrollment.findUnique.mockResolvedValueOnce({ id: 'enrollment-1' })
+
+      const result = await enrollService(mockCtx, { courseId: 'course-1' })
+
+      expect(result).toEqual({ success: true, message: 'Already enrolled' })
+      expect(mockCtx.db.enrollment.create).not.toHaveBeenCalled()
+    })
+
+    it('throws NOT_FOUND if course does not exist', async () => {
+      mockCtx.db.course.findUnique.mockResolvedValueOnce(null)
+
+      await expect(enrollService(mockCtx, { courseId: 'course-1' })).rejects.toThrow(TRPCError)
+      await expect(enrollService(mockCtx, { courseId: 'course-1' })).rejects.toThrow(
+        'Course not found',
+      )
+    })
+  })
+
+  describe('checkEnrollmentService', () => {
+    it('returns enrollment if user is enrolled', async () => {
+      const mockEnrollment = { id: 'enrollment-1', courseId: 'course-1', userId: 'user-1' }
+      mockCtx.db.enrollment.findUnique.mockResolvedValueOnce(mockEnrollment)
+
+      const result = await checkEnrollmentService(mockCtx, { courseId: 'course-1' })
+
+      expect(result).toEqual(mockEnrollment)
+    })
+
+    it('throws FORBIDDEN if user is not enrolled', async () => {
+      mockCtx.db.enrollment.findUnique.mockResolvedValueOnce(null)
+
+      await expect(checkEnrollmentService(mockCtx, { courseId: 'course-1' })).rejects.toThrow(
+        TRPCError,
+      )
+      await expect(checkEnrollmentService(mockCtx, { courseId: 'course-1' })).rejects.toThrow(
+        'Not enrolled in this course',
+      )
+    })
+  })
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: apps/api/src/modules/learning/__tests__/learning.service.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { checkStepService } from '../learning.service.js'
+import * as validationUtils from '../lib/utils.js'
+
+vi.mock('../lib/utils.js', () => ({
+  validateAnswer: vi.fn(),
+  stripAnswers: vi.fn(),
+}))
+
+vi.mock('../enrollment/enrollment.service.js', () => ({
+  checkEnrollmentService: vi.fn().mockResolvedValue(true),
+}))
+
+vi.mock('../learning.repository.js', () => ({
+  getStepOrThrow: vi.fn().mockImplementation((_ctx, _courseId, stepId) => {
+    return {
+      id: stepId,
+      type: 'TEST_SINGLE',
+      content: { question: 'test?' },
+    }
+  }),
+}))
+
+describe('learning.service', () => {
+  const mockCtx = {
+    me: { id: 'user-1', sessionId: 'session-1' },
+    db: {
+      userProgress: {
+        findUnique: vi.fn(),
+        upsert: vi.fn(),
+      },
+      step: {
+        findUnique: vi.fn(),
+      },
+      enrollment: {
+        findUnique: vi.fn(),
+      },
+    },
+    isTokenExpired: false,
+    req: {} as any,
+    res: {} as any,
+  } as any
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe('checkStepService', () => {
+    it('returns isCorrect: true and updates progress on valid answer', async () => {
+      vi.mocked(validationUtils.validateAnswer).mockReturnValueOnce({ isCorrect: true })
+      mockCtx.db.userProgress.findUnique.mockResolvedValueOnce(null)
+      mockCtx.db.userProgress.upsert.mockResolvedValueOnce({ id: 'prog-1' })
+      mockCtx.db.enrollment.findUnique.mockResolvedValueOnce({ id: 'enr-1' })
+
+      const result = await checkStepService(mockCtx, {
+        courseId: 'course-1',
+        stepId: 'step-1',
+        answer: 'opt-1',
+      })
+
+      expect(result).toEqual({ isCorrect: true })
+      expect(mockCtx.db.userProgress.upsert).toHaveBeenCalled()
+    })
+
+    it('returns isCorrect: false and updates progress on invalid answer', async () => {
+      vi.mocked(validationUtils.validateAnswer).mockReturnValueOnce({ isCorrect: false })
+      mockCtx.db.userProgress.findUnique.mockResolvedValueOnce(null)
+      mockCtx.db.userProgress.upsert.mockResolvedValueOnce({ id: 'prog-1' })
+      mockCtx.db.enrollment.findUnique.mockResolvedValueOnce({ id: 'enr-1' })
+
+      const result = await checkStepService(mockCtx, {
+        courseId: 'course-1',
+        stepId: 'step-1',
+        answer: 'opt-2',
+      })
+
+      expect(result).toEqual({ isCorrect: false })
+      expect(mockCtx.db.userProgress.upsert).toHaveBeenCalled()
+    })
+  })
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: apps/api/src/modules/teach/__tests__/teach.service.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { getTeachStatsService } from '../teach.service.js'
+
+describe('teach.service', () => {
+  const mockCtx = {
+    me: { id: 'teacher-1', sessionId: 'session-1' },
+    db: {
+      course: {
+        count: vi.fn(),
+      },
+      enrollment: {
+        count: vi.fn(),
+      },
+      userProgress: {
+        count: vi.fn(),
+      },
+      user: {
+        findUnique: vi.fn(),
+      },
+    },
+    isTokenExpired: false,
+    req: {} as any,
+    res: {} as any,
+  } as any
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe('getTeachStatsService', () => {
+    it('returns accumulated statistics for teacher courses', async () => {
+      mockCtx.db.user.findUnique.mockResolvedValue({ role: 'TEACHER' })
+      mockCtx.db.course.count.mockResolvedValueOnce(5)
+      mockCtx.db.enrollment.count.mockResolvedValueOnce(150)
+      // _totalCompletedSteps, pendingReviewCount
+      mockCtx.db.userProgress.count.mockResolvedValueOnce(300)
+      mockCtx.db.userProgress.count.mockResolvedValueOnce(12)
+
+      const result = await getTeachStatsService(mockCtx)
+
+      expect(result).toEqual({
+        totalCourses: 5,
+        totalStudents: 150,
+        totalCompletedSteps: 300,
+        pendingReviewCount: 12,
+      })
+      expect(mockCtx.db.course.count).toHaveBeenCalledWith({ where: { authorId: 'teacher-1' } })
+    })
+
+    it('returns zeros if teacher has no stats yet', async () => {
+      mockCtx.db.course.count.mockResolvedValueOnce(0)
+      mockCtx.db.user.findUnique.mockResolvedValue({ role: 'TEACHER' })
+      mockCtx.db.enrollment.count.mockResolvedValueOnce(0)
+      mockCtx.db.userProgress.count.mockResolvedValueOnce(0)
+      mockCtx.db.userProgress.count.mockResolvedValueOnce(0)
+
+      const result = await getTeachStatsService(mockCtx)
+
+      expect(result).toEqual({
+        totalCourses: 0,
+        totalStudents: 0,
+        totalCompletedSteps: 0,
+        pendingReviewCount: 0,
+      })
+    })
+  })
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: apps/api/src/modules/learning/lib/__tests__/validate-answer.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { describe, expect, it } from 'vitest'
+
+import { validateAnswer } from '../utils.js'
+
+// ─── TEST_SINGLE ───
+
+describe('validateAnswer — TEST_SINGLE', () => {
+  const content = {
+    question: 'Какой язык используется в Eduflow?',
+    options: [
+      { id: 'opt-1', text: 'Python', isCorrect: false },
+      { id: 'opt-2', text: 'TypeScript', isCorrect: true },
+      { id: 'opt-3', text: 'Java', isCorrect: false },
+    ],
+    correctOptionId: 'opt-2',
+  }
+
+  it('возвращает isCorrect: true при правильном ответе', () => {
+    const result = validateAnswer(content, 'TEST_SINGLE', 'opt-2')
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('возвращает isCorrect: false при неправильном ответе', () => {
+    const result = validateAnswer(content, 'TEST_SINGLE', 'opt-1')
+    expect(result).toEqual({ isCorrect: false })
+  })
+
+  it('возвращает isCorrect: false при пустой строке', () => {
+    const result = validateAnswer(content, 'TEST_SINGLE', '')
+    expect(result).toEqual({ isCorrect: false })
+  })
+})
+
+// ─── TEST_MULTIPLE ───
+
+describe('validateAnswer — TEST_MULTIPLE', () => {
+  const content = {
+    question: 'Выберите фреймворки JavaScript',
+    options: [
+      { id: 'opt-1', text: 'React', isCorrect: true },
+      { id: 'opt-2', text: 'Django', isCorrect: false },
+      { id: 'opt-3', text: 'Vue', isCorrect: true },
+    ],
+    correctOptionIds: ['opt-1', 'opt-3'],
+  }
+
+  it('возвращает isCorrect: true при всех правильных ответах', () => {
+    const result = validateAnswer(content, 'TEST_MULTIPLE', ['opt-1', 'opt-3'])
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('возвращает isCorrect: false при неполном наборе ответов', () => {
+    const result = validateAnswer(content, 'TEST_MULTIPLE', ['opt-1'])
+    expect(result).toEqual({ isCorrect: false })
+  })
+
+  it('возвращает isCorrect: false при лишнем ответе', () => {
+    const result = validateAnswer(content, 'TEST_MULTIPLE', ['opt-1', 'opt-2', 'opt-3'])
+    expect(result).toEqual({ isCorrect: false })
+  })
+
+  it('не зависит от порядка ответов', () => {
+    const result = validateAnswer(content, 'TEST_MULTIPLE', ['opt-3', 'opt-1'])
+    expect(result).toEqual({ isCorrect: true })
+  })
+})
+
+// ─── MATCHING ───
+
+describe('validateAnswer — MATCHING', () => {
+  const content = {
+    left: [
+      { id: 'l1', content: 'React' },
+      { id: 'l2', content: 'Express' },
+    ],
+    right: [
+      { id: 'r1', content: 'Frontend' },
+      { id: 'r2', content: 'Backend' },
+    ],
+    pairs: [
+      { leftId: 'l1', rightId: 'r1' },
+      { leftId: 'l2', rightId: 'r2' },
+    ],
+  }
+
+  it('возвращает isCorrect: true при правильных парах', () => {
+    const result = validateAnswer(content, 'MATCHING', { l1: 'r1', l2: 'r2' })
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('возвращает isCorrect: false при перепутанных парах', () => {
+    const result = validateAnswer(content, 'MATCHING', { l1: 'r2', l2: 'r1' })
+    expect(result).toEqual({ isCorrect: false })
+  })
+
+  it('возвращает isCorrect: false при неполных парах', () => {
+    const result = validateAnswer(content, 'MATCHING', { l1: 'r1' })
+    expect(result).toEqual({ isCorrect: false })
+  })
+})
+
+// ─── ORDERING ───
+
+describe('validateAnswer — ORDERING', () => {
+  const content = {
+    items: [
+      { id: 'i1', content: 'Шаг 1' },
+      { id: 'i2', content: 'Шаг 2' },
+      { id: 'i3', content: 'Шаг 3' },
+    ],
+    correctOrder: ['i1', 'i2', 'i3'],
+  }
+
+  it('возвращает isCorrect: true при правильном порядке', () => {
+    const result = validateAnswer(content, 'ORDERING', ['i1', 'i2', 'i3'])
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('возвращает isCorrect: false при неправильном порядке', () => {
+    const result = validateAnswer(content, 'ORDERING', ['i3', 'i1', 'i2'])
+    expect(result).toEqual({ isCorrect: false })
+  })
+})
+
+// ─── INPUT_TEXT ───
+
+describe('validateAnswer — INPUT_TEXT', () => {
+  const content = {
+    question: 'Столица России?',
+    correctAnswers: ['Москва', 'москва'],
+  }
+
+  it('возвращает isCorrect: true при точном ответе', () => {
+    const result = validateAnswer(content, 'INPUT_TEXT', 'Москва')
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('не учитывает регистр', () => {
+    const result = validateAnswer(content, 'INPUT_TEXT', 'МОСКВА')
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('игнорирует лишние пробелы', () => {
+    const result = validateAnswer(content, 'INPUT_TEXT', '  Москва  ')
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('возвращает isCorrect: false при неправильном ответе', () => {
+    const result = validateAnswer(content, 'INPUT_TEXT', 'Петербург')
+    expect(result).toEqual({ isCorrect: false })
+  })
+})
+
+// ─── INPUT_NUMBER ───
+
+describe('validateAnswer — INPUT_NUMBER', () => {
+  const content = {
+    question: 'Сколько будет 2 + 2?',
+    correctAnswer: 4,
+  }
+
+  it('возвращает isCorrect: true при правильном числе', () => {
+    const result = validateAnswer(content, 'INPUT_NUMBER', 4)
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('принимает строковое представление числа', () => {
+    const result = validateAnswer(content, 'INPUT_NUMBER', '4')
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('возвращает isCorrect: false при неправильном числе', () => {
+    const result = validateAnswer(content, 'INPUT_NUMBER', 5)
+    expect(result).toEqual({ isCorrect: false })
+  })
+})
+
+// ─── FILL_GAPS ───
+
+describe('validateAnswer — FILL_GAPS', () => {
+  const content = {
+    text: 'Язык ___ используется для типизации',
+    gaps: [
+      { id: 'g1', type: 'text', correctAnswer: 'TypeScript' },
+      { id: 'g2', type: 'text', correctAnswer: 'JavaScript' },
+    ],
+  }
+
+  it('возвращает isCorrect: true при всех правильных пропусках', () => {
+    const result = validateAnswer(content, 'FILL_GAPS', {
+      g1: 'TypeScript',
+      g2: 'JavaScript',
+    })
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('не учитывает регистр', () => {
+    const result = validateAnswer(content, 'FILL_GAPS', {
+      g1: 'typescript',
+      g2: 'javascript',
+    })
+    expect(result).toEqual({ isCorrect: true })
+  })
+
+  it('возвращает isCorrect: false при ошибке хотя бы в одном пропуске', () => {
+    const result = validateAnswer(content, 'FILL_GAPS', {
+      g1: 'TypeScript',
+      g2: 'Python',
+    })
+    expect(result).toEqual({ isCorrect: false })
+  })
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: apps/api/src/modules/learning/lib/__tests__/strip-answers.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { describe, expect, it } from 'vitest'
+
+import { stripAnswers } from '../utils.js'
+
+describe('stripAnswers — TEXT / VIDEO / FREE_TEXT', () => {
+  it('возвращает контент без изменений для TEXT', () => {
+    const content = { html: '<p>Учебный материал</p>' }
+    const result = stripAnswers(content, 'TEXT')
+    expect(result).toEqual(content)
+  })
+
+  it('возвращает контент без изменений для VIDEO', () => {
+    const content = { url: 'https://example.com/video.mp4' }
+    const result = stripAnswers(content, 'VIDEO')
+    expect(result).toEqual(content)
+  })
+
+  it('возвращает контент без изменений для FREE_TEXT', () => {
+    const content = { question: 'Напишите эссе', minLength: 100 }
+    const result = stripAnswers(content, 'FREE_TEXT')
+    expect(result).toEqual(content)
+  })
+})
+
+describe('stripAnswers — TEST_SINGLE', () => {
+  it('удаляет isCorrect из опций и correctOptionId', () => {
+    const content = {
+      question: 'Вопрос?',
+      options: [
+        { id: 'a', text: 'Вариант A', isCorrect: true },
+        { id: 'b', text: 'Вариант B', isCorrect: false },
+      ],
+      correctOptionId: 'a',
+    }
+
+    const result = stripAnswers(content, 'TEST_SINGLE')
+
+    expect(result).not.toHaveProperty('correctOptionId')
+    for (const opt of result.options as Record<string, unknown>[]) {
+      expect(opt).not.toHaveProperty('isCorrect')
+    }
+    // Остальные поля сохранены
+    expect((result.options as { id: string }[])[0].id).toBe('a')
+  })
+})
+
+describe('stripAnswers — TEST_MULTIPLE', () => {
+  it('удаляет isCorrect из опций и correctOptionIds', () => {
+    const content = {
+      question: 'Выберите несколько',
+      options: [
+        { id: 'a', text: 'A', isCorrect: true },
+        { id: 'b', text: 'B', isCorrect: true },
+        { id: 'c', text: 'C', isCorrect: false },
+      ],
+      correctOptionIds: ['a', 'b'],
+    }
+
+    const result = stripAnswers(content, 'TEST_MULTIPLE')
+
+    expect(result).not.toHaveProperty('correctOptionIds')
+    for (const opt of result.options as Record<string, unknown>[]) {
+      expect(opt).not.toHaveProperty('isCorrect')
+    }
+  })
+})
+
+describe('stripAnswers — MATCHING', () => {
+  it('удаляет pairs и перемешивает right', () => {
+    const content = {
+      left: [{ id: 'l1', content: 'A' }],
+      right: [{ id: 'r1', content: 'B' }],
+      pairs: [{ leftId: 'l1', rightId: 'r1' }],
+    }
+
+    const result = stripAnswers(content, 'MATCHING')
+
+    expect(result).not.toHaveProperty('pairs')
+    expect(result.right).toBeDefined()
+    expect(result.left).toBeDefined()
+  })
+})
+
+describe('stripAnswers — ORDERING', () => {
+  it('удаляет correctOrder и перемешивает items', () => {
+    const content = {
+      items: [
+        { id: 'i1', content: 'Шаг 1' },
+        { id: 'i2', content: 'Шаг 2' },
+      ],
+      correctOrder: ['i1', 'i2'],
+    }
+
+    const result = stripAnswers(content, 'ORDERING')
+
+    expect(result).not.toHaveProperty('correctOrder')
+    expect(result.items).toBeDefined()
+    expect(result.items).toHaveLength(2)
+  })
+})
+
+describe('stripAnswers — INPUT_TEXT', () => {
+  it('удаляет correctAnswers', () => {
+    const content = {
+      question: 'Столица?',
+      correctAnswers: ['Москва'],
+    }
+
+    const result = stripAnswers(content, 'INPUT_TEXT')
+
+    expect(result).not.toHaveProperty('correctAnswers')
+    expect(result.question).toBe('Столица?')
+  })
+})
+
+describe('stripAnswers — INPUT_NUMBER', () => {
+  it('удаляет correctAnswer', () => {
+    const content = {
+      question: '2 + 2 = ?',
+      correctAnswer: 4,
+    }
+
+    const result = stripAnswers(content, 'INPUT_NUMBER')
+
+    expect(result).not.toHaveProperty('correctAnswer')
+    expect(result.question).toBe('2 + 2 = ?')
+  })
+})
+
+describe('stripAnswers — FILL_GAPS', () => {
+  it('удаляет correctAnswer из каждого gap', () => {
+    const content = {
+      text: 'Пропуски в тексте',
+      gaps: [
+        { id: 'g1', type: 'text', correctAnswer: 'ответ1' },
+        { id: 'g2', type: 'select', options: ['a', 'b'], correctAnswer: 'a' },
+      ],
+    }
+
+    const result = stripAnswers(content, 'FILL_GAPS')
+    const gaps = result.gaps as Record<string, unknown>[]
+
+    for (const gap of gaps) {
+      expect(gap).not.toHaveProperty('correctAnswer')
+    }
+    // Остальные поля сохранены
+    expect((gaps[0] as { id: string }).id).toBe('g1')
+  })
+})
+
+describe('stripAnswers — не мутирует исходный объект', () => {
+  it('оригинальный контент остаётся нетронутым', () => {
+    const content = {
+      question: 'Вопрос',
+      correctAnswer: 42,
+    }
+
+    const contentCopy = structuredClone(content)
+    stripAnswers(content, 'INPUT_NUMBER')
+
+    expect(content).toEqual(contentCopy)
+  })
+})
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 FILE: apps/web/src/features/solve-step/model/__tests__/use-input-step.test.ts
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { act, renderHook } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { useInputStep } from '../use-input-step'
+
+// Мокаем TRPC action, так как нам нужна только локальная логика хука
+const mockMutate = vi.fn()
+const mockSetIsSubmitted = vi.fn()
+const mockSetIsCorrect = vi.fn()
+
+vi.mock('../use-step-action', () => ({
+  useStepAction: () => ({
+    isSubmitted: false,
+    isCorrect: false,
+    isPending: false,
+    mutate: mockMutate,
+    setIsSubmitted: mockSetIsSubmitted,
+    setIsCorrect: mockSetIsCorrect,
+  }),
+}))
+
+describe('useInputStep', () => {
+  const defaultProps = {
+    content: { question: 'test?' },
+    stepType: 'INPUT_TEXT' as const,
+    courseId: 'c1',
+    stepId: 's1',
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('initializes with empty value if no savedAnswer', () => {
+    const { result } = renderHook(() => useInputStep(defaultProps))
+
+    expect(result.current.value).toBe('')
+    expect(result.current.canCheck).toBe(false)
+  })
+
+  it('initializes with string value if savedAnswer provided', () => {
+    const { result } = renderHook(() =>
+      useInputStep({ ...defaultProps, savedAnswer: 'test answer' }),
+    )
+
+    expect(result.current.value).toBe('test answer')
+    expect(result.current.canCheck).toBe(true)
+  })
+
+  it('updates value correctly text and becomes checable', () => {
+    const { result } = renderHook(() => useInputStep(defaultProps))
+
+    act(() => {
+      result.current.onChange('new test answer')
+    })
+
+    expect(result.current.value).toBe('new test answer')
+    expect(result.current.canCheck).toBe(true)
+  })
+
+  it('calls mutate on handleCheck with correct value', () => {
+    const { result } = renderHook(() => useInputStep({ ...defaultProps, savedAnswer: 'valid' }))
+
+    act(() => {
+      result.current.onCheck()
+    })
+
+    expect(mockMutate).toHaveBeenCalledWith({
+      courseId: 'c1',
+      stepId: 's1',
+      answer: 'valid',
+    })
+  })
+
+  it('does not call mutate if value is purely whitespace', () => {
+    const { result } = renderHook(() => useInputStep(defaultProps))
+
+    act(() => {
+      result.current.onChange('   ')
+    })
+
+    expect(result.current.canCheck).toBe(false)
+
+    act(() => {
+      result.current.onCheck()
+    })
+
+    expect(mockMutate).not.toHaveBeenCalled()
+  })
+})
